@@ -39,6 +39,12 @@ from .cards import (
     load_cards,
     load_cards_with_failures,
 )
+from .client import (
+    LemmaClient,
+    LemmaToolError,
+    connect_lemma_session,
+    connect_lemma_stdio,
+)
 from .dimensional import (
     AXES,
     dims_equal,
@@ -46,6 +52,12 @@ from .dimensional import (
     stringify_dims,
 )
 from .engine import run_hypothesis_checks
+from .tools import (
+    cards_get,
+    cards_list,
+    hypothesis_crosscheck,
+    ops_get,
+)
 from .types import (
     Card,
     CheckSeverity,
@@ -129,4 +141,14 @@ __all__ = [
     "is_dimensionless",
     # engine
     "run_hypothesis_checks",
+    # tools (pure-Python implementations of the MCP tool surface)
+    "cards_list",
+    "cards_get",
+    "ops_get",
+    "hypothesis_crosscheck",
+    # MCP client
+    "LemmaClient",
+    "LemmaToolError",
+    "connect_lemma_stdio",
+    "connect_lemma_session",
 ]

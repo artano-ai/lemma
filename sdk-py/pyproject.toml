@@ -29,6 +29,7 @@ dependencies = [
   "jsonschema>=4.21",
   "typer>=0.12",
   "rich>=13.7",
+  "mcp>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -40,6 +41,7 @@ dev = [
 
 [project.scripts]
 lemma = "artano_lemma.cli:main"
+lemma-mcp = "artano_lemma.server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["artano_lemma"]

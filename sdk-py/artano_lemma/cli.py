@@ -1,12 +1,13 @@
 """Command-line entry point for ``lemma``.
 
 A small inspection surface over the bundled cards corpus, rendered
-with Typer + Rich.
+with Typer + Rich, plus an MCP server entry point.
 
 * ``lemma list``                — print every card id with its kind, name, and domain
 * ``lemma show <id>``           — pretty-print one card as syntax-highlighted JSON
 * ``lemma paths``               — print resolved cards / schema paths
 * ``lemma authors <id>``        — show every contributor who touched the card (from git log)
+* ``lemma serve``               — run the Lemma MCP server over stdio (alias for ``lemma-mcp``)
 """
 
 from __future__ import annotations
@@ -313,6 +314,19 @@ def _git_log_for(path: Path) -> list[dict[str, str]]:
             }
         )
     return entries
+
+
+@app.command("serve")
+def serve_cmd() -> None:
+    """Run the Lemma MCP server over stdio.
+
+    Equivalent to the standalone ``lemma-mcp`` console script.
+    Provided as an ``lemma`` subcommand for agent runtimes that
+    prefer a single binary in their MCP config.
+    """
+    from .server import main as run_server
+
+    run_server()
 
 
 def main() -> None:

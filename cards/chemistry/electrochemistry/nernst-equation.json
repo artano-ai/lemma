@@ -1,0 +1,40 @@
+{
+  "kind": "principle",
+  "id": "nernst-equation",
+  "version": "1.0.0",
+  "name": "Nernst equation for electrochemical cell potentials",
+  "domain": "chemistry-electrochemistry",
+  "principles": [
+    "free-energy / cell-potential relation (Delta G = -n F E)",
+    "thermodynamic equilibrium of redox half-reactions",
+    "concentration dependence of electrode potential"
+  ],
+  "formulaTeX": "E = E^{\\circ} \\;-\\; \\frac{R\\, T}{n\\, F}\\, \\ln Q",
+  "conventions": [
+    "E is the cell (or electrode) potential in volts",
+    "E^circ is the standard cell potential (or standard reduction potential), tabulated at 25 deg C with all activities = 1",
+    "n is the number of electrons transferred in the balanced redox half-reaction",
+    "F = 96485.33212 C/mol (Faraday constant)",
+    "R = 8.31446 J/(mol K), T in kelvin",
+    "Q is the reaction quotient: ratio of activities of products to reactants raised to their stoichiometric coefficients (use concentrations as approximation in dilute solutions; partial pressures for gases)",
+    "at T = 298.15 K (25 deg C), the prefactor RT/F = 0.02569 V; combined with ln 10 conversion: E = E^circ - (0.0592 V / n) log10(Q)"
+  ],
+  "expectedLimits": [
+    "Q = 1 (standard conditions): E = E^circ — operational definition of standard potential",
+    "Q -> 0 (products absent): E -> +infinity (reaction strongly favours products, drives forward)",
+    "Q -> infinity (reactants absent): E -> -infinity (reaction strongly favours reactants, drives backward)",
+    "equilibrium (Delta G = 0): E = 0 and Q = K, the equilibrium constant; Nernst gives ln K = n F E^circ / (R T)",
+    "membrane potential limit (concentration cell, E^circ = 0): E = -(RT / nF) ln([X]_in / [X]_out); basis of Nernst potential in physiology",
+    "non-ideal electrolytes: replace concentrations by activities (use activity coefficients gamma_i)"
+  ],
+  "references": [
+    "Nernst (1888) — Die elektromotorische Wirksamkeit der Ionen",
+    "Atkins — Physical Chemistry, ch.7",
+    "Bard & Faulkner — Electrochemical Methods: Fundamentals and Applications, ch.2",
+    "IUPAC Gold Book — entry: Nernst equation"
+  ],
+  "validationEnvelopes": {
+    "gasConstant_J_per_molK": [8.31446, 8.31447],
+    "faradayConstant_C_per_mol": [96485.33, 96485.34]
+  }
+}

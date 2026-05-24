@@ -1,0 +1,36 @@
+{
+  "kind": "principle",
+  "id": "boltzmann-entropy",
+  "version": "1.0.0",
+  "name": "Boltzmann entropy and the second law of thermodynamics",
+  "domain": "physics-thermodynamics",
+  "principles": [
+    "statistical foundation of the second law",
+    "entropy as logarithm of microstate count",
+    "equiprobability of accessible microstates (microcanonical postulate)"
+  ],
+  "formulaTeX": "S = k_B \\ln W \\quad\\text{(Boltzmann)} \\qquad \\Delta S_{\\mathrm{universe}} \\;\\ge\\; 0",
+  "conventions": [
+    "W is the multiplicity: number of microstates compatible with a given macrostate (energy, volume, particle number)",
+    "k_B = 1.380649 x 10^-23 J/K (exact, defined value since 2019 SI redefinition)",
+    "entropy of the universe = system + surroundings; only the total is constrained by the second law",
+    "differential form for thermodynamic entropy of a closed system: dS >= delta Q / T, with equality for reversible processes",
+    "for ideal gases the Sackur-Tetrode equation gives S(N, V, U) explicitly",
+    "absolute zero of entropy fixed by the third law: S -> 0 as T -> 0 for a perfect crystal (W = 1, ln W = 0)"
+  ],
+  "expectedLimits": [
+    "T = 0 (perfect crystal): W = 1, S = 0 (third law)",
+    "reversible process in an isolated system: dS = 0; entropy is a constant of the motion in the strict reversible limit",
+    "irreversible process in an isolated system: dS > 0; equality only at thermodynamic equilibrium",
+    "two systems in thermal contact: heat flows from higher T to lower T until temperatures equalise (entropy maximum)",
+    "free expansion of an ideal gas (V_1 -> V_2): Delta S = N k_B ln(V_2/V_1) > 0",
+    "Boltzmann H-theorem (kinetic theory): -H functional decreases under collisions, microscopic justification of second law"
+  ],
+  "references": [
+    "Boltzmann (1877) — Über die Beziehung zwischen dem zweiten Hauptsatze...",
+    "Gibbs (1902) — Elementary Principles in Statistical Mechanics",
+    "Callen — Thermodynamics and an Introduction to Thermostatistics, ch.4",
+    "Reif — Fundamentals of Statistical and Thermal Physics, ch.3-4",
+    "BIPM — SI Brochure 9th ed. (defining value of k_B)"
+  ]
+}

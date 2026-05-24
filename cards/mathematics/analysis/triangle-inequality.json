@@ -1,0 +1,34 @@
+{
+  "kind": "principle",
+  "id": "triangle-inequality",
+  "version": "1.0.0",
+  "name": "Triangle inequality for normed vector spaces",
+  "domain": "mathematics-analysis",
+  "principles": [
+    "norm axiom: subadditivity of length",
+    "Euclidean geometry: third side bounded by the sum of the other two",
+    "Cauchy-Schwarz as the proof step in inner-product spaces"
+  ],
+  "formulaTeX": "\\|\\mathbf{u} + \\mathbf{v}\\| \\;\\le\\; \\|\\mathbf{u}\\| + \\|\\mathbf{v}\\|",
+  "conventions": [
+    "||.|| is any norm on a real or complex vector space V",
+    "extends to L^p norms (1 <= p <= infinity) via the Minkowski inequality",
+    "metric-space form: d(x, z) <= d(x, y) + d(y, z) for any metric d",
+    "absolute-value form on R: |a + b| <= |a| + |b|",
+    "complex modulus: |z + w| <= |z| + |w| (subset of the normed-space form)"
+  ],
+  "expectedLimits": [
+    "equality holds iff u and v are parallel and point in the same direction (i.e. v = lambda u for some lambda >= 0)",
+    "u = 0 or v = 0: equality is trivial (||u + v|| = ||u|| or ||v||, equal to the right-hand side)",
+    "anti-parallel u and v: strict inequality; ||u + v|| can be much smaller than ||u|| + ||v||",
+    "reverse triangle inequality: |||u|| - ||v||| <= ||u - v||  — useful for Lipschitz continuity arguments",
+    "polygon generalisation: ||sum_i u_i|| <= sum_i ||u_i|| for any finite (or absolutely convergent) sum",
+    "integral form (Minkowski for L^p): ||f + g||_p <= ||f||_p + ||g||_p for 1 <= p <= infinity"
+  ],
+  "references": [
+    "Euclid — Elements, Book I, Proposition 20 (geometric origin in Euclidean plane)",
+    "Minkowski (1896) — Geometrie der Zahlen (general L^p form)",
+    "Rudin — Principles of Mathematical Analysis, ch.4",
+    "Conway — A Course in Functional Analysis, ch.1"
+  ]
+}

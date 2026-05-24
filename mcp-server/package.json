@@ -1,0 +1,38 @@
+{
+  "name": "@artano-ai/mcp-server",
+  "version": "0.1.0",
+  "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and scientific computing helpers (Siesta parsers, SLURM script generation, RAG retrieval) to any MCP-compatible client.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "lemma-mcp-server": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --env-file-if-exists=.env.local --import=tsx src/index.ts",
+    "start": "node --env-file-if-exists=.env.local dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node --env-file-if-exists=.env.local --import=tsx scripts/smoke-test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@google/genai": "^1.50.1",
+    "@huggingface/transformers": "^3.6.0",
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "kind": "principle",
+  "id": "conservation-of-momentum",
+  "version": "1.0.0",
+  "name": "Conservation of linear momentum",
+  "domain": "physics-classical-mechanics",
+  "principles": [
+    "Newton's third law (action-reaction)",
+    "translational symmetry of space (Noether's theorem)",
+    "closed-system invariance"
+  ],
+  "formulaTeX": "\\sum_i \\mathbf{p}_i \\;=\\; \\mathrm{const} \\quad\\text{(closed system, no external forces)}",
+  "conventions": [
+    "p_i = m_i v_i is the linear momentum vector of particle i",
+    "vector equation: each component (x, y, z) is independently conserved when net external force vanishes along that direction",
+    "applies to a closed system: total external force on the system is zero (or sum of external impulses negligible over the interaction)",
+    "valid in any inertial reference frame; values differ between frames but conservation holds in each",
+    "relativistic generalisation: p = gamma m v with gamma = 1/sqrt(1 - v^2/c^2) — same conservation statement applies"
+  ],
+  "expectedLimits": [
+    "elastic collision: total momentum AND total kinetic energy conserved",
+    "inelastic collision: total momentum conserved, kinetic energy not conserved (some converted to heat / deformation)",
+    "perfectly inelastic collision: bodies stick together; final velocity v_f = (sum m_i v_i) / (sum m_i)",
+    "explosion / fragmentation: a single body splits — total momentum of fragments equals initial momentum",
+    "centre-of-mass frame: total momentum is zero by definition; collisions look symmetric",
+    "external force present: dp/dt = F_ext (Newton's 2nd law for the centre of mass) — momentum changes at the rate of impulse delivered"
+  ],
+  "references": [
+    "Newton (1687) — Philosophiae Naturalis Principia Mathematica, Book I",
+    "Halliday, Resnick & Walker — Fundamentals of Physics, ch.9",
+    "Goldstein, Poole & Safko — Classical Mechanics, ch.1",
+    "Noether (1918) — Invariante Variationsprobleme (symmetry/conservation correspondence)"
+  ]
+}

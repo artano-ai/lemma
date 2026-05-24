@@ -1,0 +1,88 @@
+{
+  "kind": "ops",
+  "id": "slurm-marenostrum5-gpp-compute",
+  "version": "1.0.0",
+  "name": "SLURM job submission template — MareNostrum 5 GPP partition",
+  "description": "Parameterised SLURM batch script for the gpp_compute partition of MareNostrum 5 (BSC). Each MN5 GPP node has 112 cores (Intel Sapphire Rapids); typical jobs request 1–8 nodes and bind OpenMP threads to cores via OMP_NUM_THREADS = cpus-per-task. Compatible with Siesta, CP2K, OpenFOAM, and other MPI+OpenMP scientific codes. Validated against MN5 documentation (April 2026).",
+  "parameters": [
+    {
+      "key": "jobName",
+      "label": "Job name",
+      "defaultValue": "atomira-job",
+      "required": true,
+      "note": "Appears in queue listing and in the SLURM output filename pattern."
+    },
+    {
+      "key": "partition",
+      "label": "Partition",
+      "defaultValue": "gpp_compute",
+      "required": true,
+      "note": "MN5 GPP partitions: gpp_compute (production), gpp_debug (≤1 hour test runs), gpp_bsccs (BSC-CCS reservations). Use acc_compute for GPU jobs."
+    },
+    {
+      "key": "nodes",
+      "label": "Number of nodes",
+      "defaultValue": "1",
+      "required": true,
+      "note": "MN5 GPP scales smoothly to ~8–16 nodes for most scientific workloads. Beyond that, communication patterns dominate; profile first."
+    },
+    {
+      "key": "tasksPerNode",
+      "label": "MPI tasks per node",
+      "defaultValue": "8",
+      "required": true,
+      "note": "Constraint: tasksPerNode * cpusPerTask ≤ 112 (cores per MN5 GPP node)."
+    },
+    {
+      "key": "cpusPerTask",
+      "label": "OpenMP threads per task",
+      "defaultValue": "14",
+      "required": true,
+      "note": "Constraint: tasksPerNode * cpusPerTask ≤ 112. Defaults give 8 MPI × 14 OpenMP = 112 threads per node, cleanly filling the socket."
+    },
+    {
+      "key": "timeLimit",
+      "label": "Wall-time limit",
+      "defaultValue": "02:00:00",
+      "required": true,
+      "note": "Format HH:MM:SS or D-HH:MM:SS. gpp_compute hard cap is 72 hours (3 days); request only what you need."
+    },
+    {
+      "key": "qos",
+      "label": "QOS (Quality of Service)",
+      "defaultValue": "gp_bscls",
+      "required": false,
+      "note": "Pick based on your project allocation; gp_debug for short test runs."
+    },
+    {
+      "key": "account",
+      "label": "Charge account",
+      "defaultValue": "",
+      "required": false,
+      "note": "Project / group code that GPU-hours are billed to."
+    },
+    {
+      "key": "command",
+      "label": "Application command",
+      "defaultValue": "siesta < input.fdf > output.out",
+      "required": true,
+      "note": "The actual binary + arguments. Typically wrapped in srun --cpu-bind=cores when tasks > 1."
+    }
+  ],
+  "validation": [
+    "tasksPerNode * cpusPerTask ≤ 112 (MN5 GPP node has exactly 112 cores)",
+    "timeLimit must match HH:MM:SS or D-HH:MM:SS regex; reject other formats",
+    "partition must be one of gpp_compute, gpp_debug, gpp_bsccs (or acc_* for GPU)",
+    "if partition starts with acc_, gpusPerNode must be set (default 4 for MN5 ACC)",
+    "if partition starts with gpp_, gpusPerNode must NOT be set (CPU partition)",
+    "OMP_NUM_THREADS environment variable must equal cpusPerTask",
+    "OMP_PROC_BIND=close + OMP_PLACES=cores recommended for memory-locality",
+    "srun --cpu-bind=cores required when total tasks > 1 to avoid thread migration",
+    "output and error filenames default to <jobName>-%j.out / .err if not specified"
+  ],
+  "references": [
+    "BSC MareNostrum 5 user guide — https://www.bsc.es/supportkc/docs/MareNostrum5/",
+    "SLURM Workload Manager documentation — https://slurm.schedmd.com/sbatch.html",
+    "Hager & Wellein — Introduction to High Performance Computing for Scientists and Engineers, ch.6 (OpenMP placement)"
+  ]
+}

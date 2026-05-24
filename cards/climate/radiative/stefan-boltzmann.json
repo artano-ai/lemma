@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "stefan-boltzmann-radiation",
+  "version": "1.0.0",
+  "name": "Stefan-Boltzmann radiation balance",
+  "domain": "climate-radiative",
+  "principles": [
+    "thermal blackbody emission",
+    "radiative energy conservation",
+    "Planck's law integrated over frequency"
+  ],
+  "formulaTeX": "P / A = \\sigma\\, T^4",
+  "conventions": [
+    "T in kelvin (absolute temperature)",
+    "P/A is the radiative power per unit surface area (W/m^2)",
+    "sigma = 5.670374419 x 10^-8 W m^-2 K^-4 (Stefan-Boltzmann constant)",
+    "valid for an ideal blackbody emitter (emissivity epsilon = 1); for a grey body, multiply by epsilon",
+    "for Earth's energy balance: sigma T_eq^4 = (1 - alpha) S / 4, where alpha is planetary albedo and S is solar constant"
+  ],
+  "expectedLimits": [
+    "T = 0: P/A = 0 (no thermal emission at zero kelvin)",
+    "T -> infinity: P/A -> infinity (T^4 divergence)",
+    "small delta T: linearised heat balance, dF/dT = 4 sigma T^3 (Planck feedback parameter)",
+    "Earth equilibrium temperature without atmosphere: T_eq = ((1-alpha) S / (4 sigma))^(1/4) ~ 255 K"
+  ],
+  "references": [
+    "Stefan (1879) — empirical T^4 law from radiation experiments",
+    "Boltzmann (1884) — thermodynamic derivation",
+    "Hartmann — Global Physical Climatology, ch.2",
+    "IPCC AR6 WG1 — Chapter 7 (Radiative Forcing and Climate Sensitivity)"
+  ],
+  "validationEnvelopes": {
+    "stefanBoltzmannSigma_W_per_m2K4": [5.670374e-8, 5.670375e-8]
+  }
+}

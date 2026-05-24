@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "cfl-stability-condition",
+  "version": "1.0.0",
+  "name": "Courant-Friedrichs-Lewy stability condition for explicit hyperbolic schemes",
+  "domain": "numerical-methods-pde",
+  "principles": [
+    "domain of dependence",
+    "hyperbolic PDE characteristic propagation",
+    "explicit time-stepping stability"
+  ],
+  "formulaTeX": "C \\;=\\; \\frac{|u|\\, \\Delta t}{\\Delta x} \\;\\le\\; C_{\\max}",
+  "conventions": [
+    "C is the Courant number (dimensionless)",
+    "u is the maximum wave / advection speed in the system",
+    "delta t is the time step; delta x is the spatial grid spacing",
+    "C_max is method-dependent: C_max = 1 for first-order upwind on the linear advection equation; smaller for higher-order or multi-dimensional schemes",
+    "in 2D / 3D: C = max_d (|u_d| delta t / delta x_d), summed over dimensions for some schemes",
+    "applies to explicit time-stepping; implicit schemes can be stable for any C but pay per-step solver cost"
+  ],
+  "expectedLimits": [
+    "C < C_max:  scheme is stable for the linear test problem (necessary, not always sufficient — von Neumann analysis confirms)",
+    "C = C_max:  marginal stability; small perturbations may grow due to round-off",
+    "C > C_max:  exponential instability; the discrete domain of dependence excludes the continuous one",
+    "delta t, delta x -> 0 with C fixed:  consistent + stable -> convergent (Lax equivalence theorem)",
+    "diffusion-only equations (parabolic): different stability bound, e.g. C_diff = D delta t / delta x^2 <= 1/2 for explicit forward Euler",
+    "stiff systems: explicit CFL forces impractically small delta t -> use implicit / IMEX schemes"
+  ],
+  "references": [
+    "Courant, Friedrichs & Lewy (1928) — Über die partiellen Differenzengleichungen der mathematischen Physik",
+    "Lax & Wendroff (1960) — Systems of conservation laws",
+    "LeVeque — Finite Difference Methods for Ordinary and Partial Differential Equations, ch.10",
+    "Strikwerda — Finite Difference Schemes and Partial Differential Equations, ch.1"
+  ]
+}

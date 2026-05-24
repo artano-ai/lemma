@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "co2-greenhouse-forcing",
+  "version": "1.0.0",
+  "name": "CO2 radiative forcing — logarithmic concentration dependence",
+  "domain": "climate-radiative-forcing",
+  "principles": [
+    "infrared band saturation of CO2 absorption lines",
+    "top-of-atmosphere radiative balance perturbation",
+    "logarithmic forcing as a consequence of band-wing scaling"
+  ],
+  "formulaTeX": "\\Delta F = \\alpha \\, \\ln\\!\\left(\\frac{C}{C_0}\\right)",
+  "conventions": [
+    "Delta F is the instantaneous top-of-atmosphere radiative forcing (W/m^2) due to changing CO2 concentration",
+    "C is the current atmospheric CO2 mixing ratio (ppm); C_0 is a reference, typically pre-industrial 280 ppm",
+    "alpha ~ 5.35 W/m^2 is the empirical coefficient (Myhre et al. 1998); IPCC AR6 uses a slightly refined form including N2O and CH4 cross-terms",
+    "doubling CO2 (C / C_0 = 2): Delta F ~ 5.35 * ln 2 ~ 3.71 W/m^2 (the standard '2xCO2' radiative forcing)",
+    "valid for clear-sky, all-sky averages; cloud feedbacks and ice-albedo feedbacks are SEPARATE corrections, not in this expression",
+    "logarithmic form holds in the moderate-concentration regime (~50-1000 ppm); breaks down at very low or very high CO2"
+  ],
+  "expectedLimits": [
+    "C = C_0:  Delta F = 0 (reference state)",
+    "C / C_0 = 2 (doubling):  Delta F ~ 3.71 W/m^2 (canonical climate-sensitivity benchmark)",
+    "C / C_0 = 4 (quadrupling):  Delta F ~ 7.42 W/m^2 (logarithmic, so each doubling adds the same amount)",
+    "C -> 0:  Delta F -> -infinity formally; physically, the absorption lines unsaturate and the linear-in-concentration regime kicks in",
+    "C very large (>> 1000 ppm):  band-wing scaling breaks down; deviation from log law; full line-by-line radiative transfer required",
+    "equilibrium climate sensitivity (ECS) = (Delta F) / lambda where lambda is the climate-feedback parameter; ECS for 2xCO2 forcing is the canonical 1.5-4.5 K range (IPCC AR6)"
+  ],
+  "references": [
+    "Myhre, Highwood, Shine & Stordal (1998) — New estimates of radiative forcing due to well mixed greenhouse gases, Geophys. Res. Lett.",
+    "IPCC AR6 WG1 — Chapter 7, Table 7.SM.1 (radiative forcing parameterisations)",
+    "Hartmann — Global Physical Climatology, ch.3",
+    "Pierrehumbert — Principles of Planetary Climate, ch.4"
+  ]
+}

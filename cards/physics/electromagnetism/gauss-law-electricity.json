@@ -1,0 +1,39 @@
+{
+  "kind": "principle",
+  "id": "gauss-law-electricity",
+  "version": "1.0.0",
+  "name": "Gauss's law for the electric field",
+  "domain": "physics-electromagnetism",
+  "principles": [
+    "Coulomb's inverse-square law in integral form",
+    "divergence theorem applied to flux of E",
+    "electric charge as the source of the electric field"
+  ],
+  "formulaTeX": "\\oint_{\\partial V} \\mathbf{E} \\cdot d\\mathbf{A} \\;=\\; \\frac{Q_{\\mathrm{enc}}}{\\varepsilon_0} \\qquad\\Longleftrightarrow\\qquad \\nabla \\cdot \\mathbf{E} \\;=\\; \\frac{\\rho}{\\varepsilon_0}",
+  "conventions": [
+    "E is the electric field; rho is the charge density",
+    "Q_enc is the total electric charge enclosed by the closed surface partial V",
+    "outward-pointing normal for dA on the closed surface",
+    "epsilon_0 = 8.8541878128 x 10^-12 F/m (vacuum permittivity)",
+    "vacuum form: in matter, replace epsilon_0 by epsilon = epsilon_r epsilon_0 and rho by rho_free, defining D = epsilon_0 E + P with div D = rho_free",
+    "first of Maxwell's four equations; with Faraday, Ampère-Maxwell, and div B = 0, gives the full classical theory of electromagnetism"
+  ],
+  "expectedLimits": [
+    "Q_enc = 0: net outward flux is zero; field lines passing through the surface enter and exit in equal measure",
+    "spherically symmetric charge: E(r) = (1/(4 pi epsilon_0)) Q_enc(r) / r^2 — recovers Coulomb's law",
+    "infinite line charge (linear density lambda): E(r) = lambda / (2 pi epsilon_0 r); cylindrical Gaussian surface",
+    "infinite plane (surface density sigma): E = sigma / (2 epsilon_0) on each side; pillbox Gaussian surface",
+    "conductor in electrostatic equilibrium: E inside = 0, all excess charge on the outer surface",
+    "differential form derived from integral via divergence theorem: requires E to be sufficiently smooth (point charges produce delta functions in rho)"
+  ],
+  "references": [
+    "Gauss (1813) — original divergence theorem reasoning",
+    "Maxwell (1865) — A Dynamical Theory of the Electromagnetic Field",
+    "Jackson — Classical Electrodynamics, ch.1",
+    "Griffiths — Introduction to Electrodynamics, ch.2",
+    "BIPM — SI Brochure (defining value of epsilon_0)"
+  ],
+  "validationEnvelopes": {
+    "vacuumPermittivity_F_per_m": [8.854187812e-12, 8.854187814e-12]
+  }
+}

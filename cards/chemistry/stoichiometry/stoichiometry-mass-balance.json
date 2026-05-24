@@ -1,0 +1,30 @@
+{
+  "kind": "principle",
+  "id": "stoichiometry-mass-balance",
+  "version": "1.0.0",
+  "name": "Stoichiometric mass and atom balance in chemical reactions",
+  "domain": "chemistry-stoichiometry",
+  "principles": [
+    "conservation of mass (Lavoisier)",
+    "conservation of atoms per element",
+    "conservation of total charge"
+  ],
+  "formulaTeX": "\\sum_i \\nu_i^{(\\mathrm{reactant})} \\,A_i \\;\\longrightarrow\\; \\sum_j \\nu_j^{(\\mathrm{product})} \\,B_j",
+  "conventions": [
+    "stoichiometric coefficients nu are positive integers (or rational with a common denominator)",
+    "each side balanced per element: sum nu * count(element) reactants = sum nu * count(element) products",
+    "each side balanced for total charge: sum nu * charge reactants = sum nu * charge products",
+    "phase labels (s, l, g, aq) do not affect balance — only atom and charge counts do"
+  ],
+  "expectedLimits": [
+    "closed system: total mass conserved exactly (delta m = 0)",
+    "each element: atom count conserved exactly",
+    "ionic / redox reactions: total charge conserved exactly",
+    "nuclear reactions: mass-energy conservation replaces atom conservation (E = delta m c^2)"
+  ],
+  "references": [
+    "Lavoisier (1789) — Traité Élémentaire de Chimie",
+    "Dalton (1808) — A New System of Chemical Philosophy",
+    "IUPAC — Quantities, Units and Symbols in Physical Chemistry"
+  ]
+}

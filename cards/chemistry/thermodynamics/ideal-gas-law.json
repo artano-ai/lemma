@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "ideal-gas-law",
+  "version": "1.0.0",
+  "name": "Ideal gas equation of state (PV = nRT)",
+  "domain": "chemistry-thermodynamics",
+  "principles": [
+    "kinetic theory of gases",
+    "point particles, no inter-molecular forces",
+    "elastic collisions"
+  ],
+  "formulaTeX": "P V = n R T",
+  "conventions": [
+    "T in kelvin (absolute temperature, not deg C or deg F)",
+    "P in pascal, V in m^3, n in mol when using R = 8.314 J/(mol K)",
+    "n is the amount of substance, not particle count",
+    "R is the universal gas constant — same for every gas"
+  ],
+  "expectedLimits": [
+    "low P, high T: exact (point particles + no interactions)",
+    "isothermal (T const): P V = const (Boyle's law)",
+    "isobaric (P const): V/T = const (Charles's law)",
+    "isochoric (V const): P/T = const (Gay-Lussac's law)",
+    "high P or low T: van der Waals corrections required",
+    "T -> 0: ideal-gas law breaks (real gases liquefy / quantum statistics dominate)"
+  ],
+  "references": [
+    "Atkins — Physical Chemistry, ch.1",
+    "Clausius (1857) — kinetic theory derivation",
+    "NIST — CODATA value of R"
+  ],
+  "validationEnvelopes": {
+    "gasConstant_J_per_molK": [8.314, 8.315]
+  }
+}

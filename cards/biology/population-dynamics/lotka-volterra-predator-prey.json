@@ -1,0 +1,36 @@
+{
+  "kind": "principle",
+  "id": "lotka-volterra-predator-prey",
+  "version": "1.0.0",
+  "name": "Lotka-Volterra predator-prey equations",
+  "domain": "biology-population-dynamics",
+  "principles": [
+    "mass-action law applied to ecological encounters",
+    "exponential intrinsic growth / decay with bilinear coupling",
+    "deterministic, well-mixed two-species ecosystem"
+  ],
+  "formulaTeX": "\\dot{x} = \\alpha\\, x \\;-\\; \\beta\\, x\\, y, \\qquad \\dot{y} = \\delta\\, x\\, y \\;-\\; \\gamma\\, y",
+  "conventions": [
+    "x(t) is the prey population; y(t) is the predator population",
+    "alpha > 0 is the prey intrinsic growth rate (per capita, in absence of predators)",
+    "beta > 0 is the predation rate (rate of prey loss per predator-prey encounter)",
+    "delta > 0 is the predator's per-capita gain from consuming prey (efficiency-times-encounter-rate)",
+    "gamma > 0 is the predator intrinsic death rate (per capita, in absence of prey)",
+    "well-mixed assumption: spatial structure ignored; populations treated as continuous variables (large-N limit)"
+  ],
+  "expectedLimits": [
+    "y = 0 (no predators): dot x = alpha x — pure Malthusian exponential prey growth",
+    "x = 0 (no prey): dot y = -gamma y — exponential predator decay to extinction",
+    "fixed points: trivial (0, 0) — unstable saddle; coexistence (gamma/delta, alpha/beta) — neutrally stable centre",
+    "trajectories around the coexistence fixed point are closed orbits (conserved quantity: V(x, y) = delta x - gamma ln x + beta y - alpha ln y)",
+    "small perturbations from the fixed point: linearised oscillations with angular frequency omega = sqrt(alpha gamma)",
+    "limit-cycle behaviour fragile: any logistic / saturation correction (carrying capacity, functional response) destroys the closed orbits and replaces them with damped or limit-cycle dynamics",
+    "stochastic limit (small populations): demographic noise can drive extinction of one species, breaking the deterministic picture"
+  ],
+  "references": [
+    "Lotka (1925) — Elements of Physical Biology",
+    "Volterra (1926) — Variazioni e fluttuazioni del numero d'individui in specie animali conviventi, Memorie della Reale Accademia dei Lincei",
+    "Murray — Mathematical Biology I: An Introduction, ch.3",
+    "Edelstein-Keshet — Mathematical Models in Biology, ch.6"
+  ]
+}

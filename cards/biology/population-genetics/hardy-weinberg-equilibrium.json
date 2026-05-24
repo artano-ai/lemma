@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "hardy-weinberg-equilibrium",
+  "version": "1.0.0",
+  "name": "Hardy-Weinberg equilibrium for allele frequencies",
+  "domain": "biology-population-genetics",
+  "principles": [
+    "random mating in a panmictic population",
+    "allele-frequency conservation in absence of selection / mutation / migration / drift",
+    "binomial sampling of diploid genotypes"
+  ],
+  "formulaTeX": "p^2 + 2pq + q^2 = 1, \\qquad p + q = 1",
+  "conventions": [
+    "p is the frequency of the dominant allele A; q is the frequency of the recessive allele a",
+    "p^2 = frequency of homozygous dominant genotype AA; 2pq = frequency of heterozygote Aa; q^2 = frequency of homozygous recessive aa",
+    "diploid, biallelic locus; multi-allelic generalisation: (p_1 + p_2 + ... + p_k)^2 with all i, j cross terms",
+    "sex-linked genes: separate equations for male / female; equilibrium reached over multiple generations",
+    "deviations measured as F = (H_exp - H_obs)/H_exp, the inbreeding coefficient (F = 0 under HWE, F > 0 under inbreeding, F < 0 under assortative outbreeding)"
+  ],
+  "expectedLimits": [
+    "p = 1, q = 0 (monomorphic): all individuals are AA; equilibrium is trivially preserved",
+    "p = q = 0.5 (maximum heterozygote): genotype frequencies AA : Aa : aa = 0.25 : 0.5 : 0.25",
+    "small population (N small): random genetic drift dominates; allele frequencies fluctuate over generations and HWE assumption fails",
+    "directional selection on aa (relative fitness w_aa < 1): q decreases each generation, deviation from HWE; equilibrium re-established only after fitness equalises",
+    "non-random mating (assortative or inbreeding): excess homozygotes (F > 0); HWE not satisfied",
+    "migration / gene flow: allele frequencies converge across populations; transient deviation from HWE",
+    "mutation rate mu: equilibrium frequencies shift slightly; HWE remains a good approximation for typical mu ~ 10^-8"
+  ],
+  "references": [
+    "Hardy (1908) — Mendelian Proportions in a Mixed Population, Science",
+    "Weinberg (1908) — Über den Nachweis der Vererbung beim Menschen",
+    "Hartl & Clark — Principles of Population Genetics, ch.2-3",
+    "Crow & Kimura — An Introduction to Population Genetics Theory, ch.1"
+  ]
+}

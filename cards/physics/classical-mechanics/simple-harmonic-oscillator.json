@@ -1,0 +1,34 @@
+{
+  "kind": "principle",
+  "id": "simple-harmonic-oscillator",
+  "version": "1.0.0",
+  "name": "Simple harmonic oscillator (Hooke's law)",
+  "domain": "physics-classical-mechanics",
+  "principles": [
+    "linear restoring force",
+    "Hooke's law for small displacements",
+    "energy conservation in conservative systems"
+  ],
+  "formulaTeX": "m\\, \\ddot{x} = -k\\, x \\quad\\Longrightarrow\\quad x(t) = A\\, \\cos(\\omega\\, t + \\varphi),\\quad \\omega = \\sqrt{k/m}",
+  "conventions": [
+    "x is displacement from equilibrium; positive x corresponds to compression or extension by convention",
+    "k > 0 is the spring (stiffness) constant in N/m",
+    "m > 0 is the inertial mass in kg",
+    "no damping (ideal oscillator); friction adds a -gamma x_dot term for damped SHO",
+    "no external driving force; periodic forcing converts this to a driven harmonic oscillator",
+    "small-amplitude approximation: real systems deviate from Hooke's law at large displacements"
+  ],
+  "expectedLimits": [
+    "t = 0: x = A cos(phi), v = -A omega sin(phi) — set by initial conditions",
+    "natural angular frequency: omega = sqrt(k/m); period T = 2 pi sqrt(m/k); independent of amplitude",
+    "total mechanical energy: E = (1/2) k A^2 = (1/2) m v_max^2, conserved exactly (closed system)",
+    "k -> 0: omega -> 0, free particle (no restoring force)",
+    "m -> infinity: omega -> 0, infinite-inertia limit",
+    "amplitude A grows unbounded under resonant driving (no damping); damping caps the steady-state amplitude"
+  ],
+  "references": [
+    "Hooke (1678) — De Potentia Restitutiva — original 'ut tensio sic vis'",
+    "Halliday, Resnick & Walker — Fundamentals of Physics, ch.15",
+    "Goldstein, Poole & Safko — Classical Mechanics, ch.6"
+  ]
+}

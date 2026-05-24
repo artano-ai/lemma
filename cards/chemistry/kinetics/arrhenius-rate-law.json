@@ -1,0 +1,38 @@
+{
+  "kind": "principle",
+  "id": "arrhenius-rate-law",
+  "version": "1.0.0",
+  "name": "Arrhenius temperature dependence of rate constants",
+  "domain": "chemistry-kinetics",
+  "principles": [
+    "transition-state theory",
+    "Boltzmann-distributed kinetic energies",
+    "activation energy as kinetic barrier"
+  ],
+  "formulaTeX": "k = A\\, \\exp\\!\\left(-\\frac{E_a}{R\\, T}\\right)",
+  "conventions": [
+    "k is the rate constant (units depend on reaction order)",
+    "A is the pre-exponential factor (same units as k); empirical or calculated from collision theory / TST",
+    "E_a is the activation energy in J/mol (use kJ/mol with care — convert before substituting)",
+    "R is the universal gas constant: R = 8.31446 J/(mol K)",
+    "T in kelvin (absolute temperature, never deg C)",
+    "valid over moderate temperature ranges where E_a is roughly T-independent; modified Arrhenius forms (k = A T^n exp(-E_a / RT)) extend the range"
+  ],
+  "expectedLimits": [
+    "T -> 0:  k -> 0  (no thermal energy to surmount the barrier)",
+    "T -> infinity:  k -> A  (every collision crosses the barrier)",
+    "ln k vs 1/T is linear with slope -E_a / R  (Arrhenius plot — operational E_a definition)",
+    "rule of thumb: rate doubles for every ~10 K increase near room temperature when E_a ~ 50 kJ/mol",
+    "near-zero E_a: weakly temperature-dependent (radical recombination, diffusion-limited reactions)",
+    "very large E_a (>> RT): strongly temperature-dependent, tunnelling effects may dominate at low T"
+  ],
+  "references": [
+    "Arrhenius (1889) — Über die Reaktionsgeschwindigkeit bei der Inversion von Rohrzucker durch Säuren",
+    "Eyring (1935) — transition-state theory derivation",
+    "Atkins — Physical Chemistry, ch.21",
+    "IUPAC Gold Book — entry: Arrhenius equation"
+  ],
+  "validationEnvelopes": {
+    "gasConstant_J_per_molK": [8.31446, 8.31447]
+  }
+}

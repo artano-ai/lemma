@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "faraday-law-induction",
+  "version": "1.0.0",
+  "name": "Faraday's law of electromagnetic induction",
+  "domain": "physics-electromagnetism",
+  "principles": [
+    "time-varying magnetic flux induces electric field",
+    "Lenz's law (induced current opposes flux change)",
+    "Maxwell-Faraday integral / differential equivalence via Stokes' theorem"
+  ],
+  "formulaTeX": "\\oint_{\\partial S} \\mathbf{E} \\cdot d\\boldsymbol{\\ell} \\;=\\; -\\frac{d\\Phi_B}{dt} \\qquad\\Longleftrightarrow\\qquad \\nabla \\times \\mathbf{E} \\;=\\; -\\frac{\\partial \\mathbf{B}}{\\partial t}",
+  "conventions": [
+    "Phi_B = integral of B . dA over the open surface S; orientation of dA tied to direction of dl by right-hand rule",
+    "the line integral on the left is the EMF (electromotive force) induced around the loop, units of volts",
+    "minus sign encodes Lenz's law: induced EMF drives a current whose magnetic field opposes the original flux change",
+    "valid for any closed curve in vacuum or matter; in matter, replace E by macroscopic field and B by macroscopic B",
+    "stationary loop in time-varying B: pure transformer EMF; moving loop in static B: motional EMF — both unified by the same equation",
+    "second of Maxwell's four equations"
+  ],
+  "expectedLimits": [
+    "static fields (dB/dt = 0): induced EMF = 0; circulation of E vanishes; consistent with electrostatics",
+    "uniform B(t), planar loop of area A: EMF = -A dB/dt; standard transformer / inductor formula",
+    "loop moving with velocity v through static B: EMF = integral of (v x B) . dl; recovers motional EMF",
+    "self-inductance: EMF = -L dI/dt where L = Phi_B / I (geometry-dependent constant)",
+    "high-frequency limit: combined with Maxwell's displacement current term (Ampère-Maxwell), yields electromagnetic wave propagation",
+    "quasi-static approximation: valid when wavelength of EM disturbance >> circuit dimensions; otherwise full radiation treatment required"
+  ],
+  "references": [
+    "Faraday (1831) — Experimental Researches in Electricity, series I",
+    "Maxwell (1865) — A Dynamical Theory of the Electromagnetic Field",
+    "Jackson — Classical Electrodynamics, ch.5-6",
+    "Griffiths — Introduction to Electrodynamics, ch.7"
+  ]
+}

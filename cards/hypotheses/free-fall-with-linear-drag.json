@@ -1,0 +1,47 @@
+{
+  "kind": "hypothesis",
+  "id": "free-fall-with-linear-drag",
+  "version": "0.1.0",
+  "name": "Free fall with linear (Stokes) air drag",
+  "proposal": "Extend the free-fall-uniform-gravity card by adding a viscous drag force F_drag = -b v opposing the velocity. The equation of motion becomes m dv/dt = -m g - b v (taking up positive). At long times the velocity asymptotes to a terminal value v_t = -m g / b; in the b -> 0 limit the equation must reduce to standard free fall.",
+  "proposedFormulaTeX": "m \\frac{dv}{dt} = -m\\,g \\;-\\; b\\, v",
+  "derivedFrom": {
+    "cardId": "free-fall-uniform-gravity",
+    "relationship": "extends"
+  },
+  "checks": {
+    "dimensional": {
+      "lhsLabel": "m * dv/dt  [N]",
+      "lhsDims": { "M": 1, "L": 1, "T": -2 },
+      "rhsLabel": "-m g - b v  [N]",
+      "rhsDims": { "M": 1, "L": 1, "T": -2 }
+    },
+    "limits": [
+      {
+        "name": "drag_to_zero",
+        "regime": "b -> 0",
+        "expectedReducesTo": "free-fall-uniform-gravity"
+      },
+      {
+        "name": "terminal_velocity",
+        "regime": "t -> infinity",
+        "expectedReducesTo": "v(t) -> -m g / b   (closed-form asymptote)"
+      }
+    ],
+    "conservationLaws": [
+      {
+        "law": "energy",
+        "statement": "Mechanical energy is NOT conserved — drag dissipates kinetic energy as heat. Instead: dE/dt = -b v^2 <= 0 (monotone non-increasing), and delta KE = W_gravity + W_drag must hold instantaneously."
+      }
+    ],
+    "referenceCorpus": {
+      "mustAgreeWith": ["free-fall-uniform-gravity"]
+    }
+  },
+  "references": [
+    "Stokes (1851) — On the Effect of the Internal Friction of Fluids on the Motion of Pendulums",
+    "Marion & Thornton — Classical Dynamics, ch.2"
+  ],
+  "origin": "human",
+  "rationale": "Linear drag is the textbook small-Reynolds correction to free fall — first-order term in the velocity expansion of any drag law. Hypothesis recorded so the cross-check engine verifies the b -> 0 limit collapses to the canonical free-fall card."
+}

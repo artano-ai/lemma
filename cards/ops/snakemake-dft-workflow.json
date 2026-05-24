@@ -1,0 +1,89 @@
+{
+  "kind": "ops",
+  "id": "snakemake-dft-workflow",
+  "version": "1.0.0",
+  "name": "Snakemake workflow for a typical DFT calculation",
+  "description": "Parameterised Snakemake workflow encoding the canonical DFT calculation pipeline: structure preparation → SCF convergence → property extraction (DOS / band structure / response) → post-processing → archival. The workflow is reproducible (DAG cached, intermediate files versioned) and portable across local machines, SLURM clusters, and Singularity containers. v1 targets Siesta but the rule structure is code-agnostic; CP2K / Quantum ESPRESSO / VASP variants drop in by swapping the rule scripts.",
+  "parameters": [
+    {
+      "key": "structureFile",
+      "label": "Input structure (CIF / POSCAR / FDF)",
+      "defaultValue": "structures/input.cif",
+      "required": true,
+      "note": "Relative path within the workflow root. Snakemake's input directive depends on this; a missing file fails the DAG immediately."
+    },
+    {
+      "key": "dftCode",
+      "label": "DFT engine",
+      "defaultValue": "siesta",
+      "required": true,
+      "note": "One of: siesta, cp2k, quantum-espresso, vasp. Determines which rule scripts the workflow dispatches to."
+    },
+    {
+      "key": "kPointMesh",
+      "label": "k-point mesh (Monkhorst-Pack)",
+      "defaultValue": "8x8x8",
+      "required": true,
+      "note": "Comma-free string parsed into three integers. Workflow generates a k-grid convergence sweep when sweepKpoints is true."
+    },
+    {
+      "key": "energyCutoff_Ry",
+      "label": "Energy cutoff (Ry)",
+      "defaultValue": "300",
+      "required": true,
+      "note": "Plane-wave or real-space mesh cutoff. Validated against pseudopotential recommendations in the rule."
+    },
+    {
+      "key": "smearing",
+      "label": "Smearing scheme",
+      "defaultValue": "methfessel-paxton",
+      "required": true,
+      "note": "fermi-dirac, methfessel-paxton (order N), gaussian, cold-smearing. Choice affects k-point convergence rate."
+    },
+    {
+      "key": "smearingWidth_eV",
+      "label": "Smearing width (eV)",
+      "defaultValue": "0.05",
+      "required": true,
+      "note": "Validated against the system's band gap (insulator: smaller; metal: larger but ≤0.1 eV)."
+    },
+    {
+      "key": "outputDir",
+      "label": "Output directory",
+      "defaultValue": "results",
+      "required": true,
+      "note": "Snakemake materialises rule outputs here; versioned with workflow git hash by default."
+    },
+    {
+      "key": "sweepKpoints",
+      "label": "Run k-point convergence sweep",
+      "defaultValue": "false",
+      "required": false,
+      "note": "If true, the workflow runs the calculation across k-meshes 4×4×4 → 16×16×16 and emits a convergence-vs-k report."
+    },
+    {
+      "key": "container",
+      "label": "Container image (Singularity)",
+      "defaultValue": "",
+      "required": false,
+      "note": "Optional path to a .sif image bundling the DFT code + analysis tooling. When set, every rule runs inside the container."
+    }
+  ],
+  "validation": [
+    "structureFile must exist before workflow start (Snakemake input check)",
+    "dftCode must be one of {siesta, cp2k, quantum-espresso, vasp}",
+    "kPointMesh must parse to three positive integers",
+    "energyCutoff_Ry must be > 0; recommended ≥ 200 Ry for Siesta DZP basis sets",
+    "smearing must be a known scheme; methfessel-paxton requires order ≥ 1",
+    "smearingWidth_eV must be > 0 and < band gap for insulators",
+    "outputDir must not pre-exist or must be empty (avoid clobbering previous runs)",
+    "every Snakemake rule must declare both input and output explicitly so the DAG is reproducible",
+    "container path, if set, must point to a readable .sif file"
+  ],
+  "references": [
+    "Snakemake documentation — https://snakemake.readthedocs.io/",
+    "Köster & Rahmann (2012) — Snakemake: a scalable bioinformatics workflow engine, Bioinformatics 28(19)",
+    "Pizzi et al. (2016) — AiiDA: automated interactive infrastructure and database for computational science, Comp. Mat. Sci. 111 (alternative workflow engine; cross-reference)",
+    "Sustainable Materials Modelling (https://nomad-lab.eu) — open data deposition expected at workflow end"
+  ]
+}

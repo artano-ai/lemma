@@ -1,0 +1,82 @@
+{
+  "kind": "ops",
+  "id": "singularity-scientific-container",
+  "version": "1.0.0",
+  "name": "Singularity / Apptainer recipe for reproducible scientific computing",
+  "description": "Parameterised recipe for building a Singularity (now Apptainer) container that bundles a DFT / MD code + its compile-time scientific stack (MPI, BLAS, LAPACK, FFTW, NetCDF, HDF5, libxc) for reproducible execution on any HPC system that supports the SIF format. Solves the common 'works on the developer's laptop, fails on the cluster' failure mode by pinning every dependency at build time. Compatible with MN5 GPP, LUMI, Leonardo, JUPITER. Image size typically 1–4 GB depending on the bundled code.",
+  "parameters": [
+    {
+      "key": "baseImage",
+      "label": "Base OS image",
+      "defaultValue": "docker://ubuntu:22.04",
+      "required": true,
+      "note": "Singularity bootstraps from a Docker image. Ubuntu 22.04 LTS is a good default; AlmaLinux 9 or Rocky Linux 9 if matching a specific cluster's host OS reduces glibc compatibility issues."
+    },
+    {
+      "key": "scientificCode",
+      "label": "Scientific application",
+      "defaultValue": "siesta",
+      "required": true,
+      "note": "siesta, cp2k, quantum-espresso, openfoam, gromacs, lammps. Each has a curated install recipe; the rule script picks the right script."
+    },
+    {
+      "key": "version",
+      "label": "Application version",
+      "defaultValue": "5.2.0",
+      "required": true,
+      "note": "Pinned semver. Reject 'latest' / 'master' / unfreezed git refs — defeats the reproducibility goal."
+    },
+    {
+      "key": "mpiImpl",
+      "label": "MPI implementation",
+      "defaultValue": "openmpi-5.0.5",
+      "required": true,
+      "note": "openmpi-5.x or mpich-4.x. Must match (or be ABI-compatible with) the host MPI on the target HPC system; verify on MN5 / LUMI / Leonardo before building."
+    },
+    {
+      "key": "blasImpl",
+      "label": "BLAS / LAPACK implementation",
+      "defaultValue": "openblas",
+      "required": true,
+      "note": "openblas (default, broadly portable), mkl (Intel-only optimised, requires licence acceptance flag), aocl (AMD), netlib-reference (last-resort)."
+    },
+    {
+      "key": "fftwBuild",
+      "label": "FFTW configuration",
+      "defaultValue": "fftw-3.3.10-double",
+      "required": false,
+      "note": "Most DFT codes need double-precision FFTW; some MD codes also use single. Build both with --enable-mpi if running multi-node FFTs."
+    },
+    {
+      "key": "outputSif",
+      "label": "Output container path",
+      "defaultValue": "containers/atomira-stack.sif",
+      "required": true,
+      "note": "Final SIF image location. Persist + checksum after build; reproducible reruns must produce bit-identical SIFs (modulo timestamps)."
+    },
+    {
+      "key": "additionalPackages",
+      "label": "Additional Python / system packages",
+      "defaultValue": "",
+      "required": false,
+      "note": "Comma-separated list. Pinned versions only; reject unconstrained pip installs (recipe regenerates lock file before build)."
+    }
+  ],
+  "validation": [
+    "baseImage must be a docker:// or library:// URL with an explicit tag (no 'latest')",
+    "scientificCode must be one of the supported list; otherwise reject (don't auto-attempt unknown codes)",
+    "version must be a pinned semver; reject 'master', 'main', 'latest', unspecified branch refs",
+    "mpiImpl + host MPI must be ABI-compatible (openmpi-4.x ↔ openmpi-5.x is NOT compatible)",
+    "image size SHOULD be < 5 GB; if exceeded, audit dependencies (likely something pulled a graphical desktop environment)",
+    "build must produce a SIF with reproducible checksum; two consecutive builds from the same recipe should yield bit-identical SIFs (use --build-arg SOURCE_DATE_EPOCH for reproducibility)",
+    "container must run as non-root inside the cluster (fakeroot OK at build time, root inside SIF rejected)",
+    "MPI 'hello world' smoke test (mpirun -n 4 inside the SIF) must pass before the SIF is published",
+    "every dependency must have an open-source licence; commercial licences (MKL with non-redistribution) require explicit user opt-in"
+  ],
+  "references": [
+    "Apptainer (formerly Singularity) — https://apptainer.org/docs/",
+    "Kurtzer, Sochat & Bauer (2017) — Singularity: Scientific containers for mobility of compute, PLOS ONE 12(5)",
+    "BSC MareNostrum 5 container support — https://www.bsc.es/supportkc/docs/MareNostrum5/containers/",
+    "NERSC Container documentation — https://docs.nersc.gov/development/containers/ (cross-reference for non-EU systems)"
+  ]
+}

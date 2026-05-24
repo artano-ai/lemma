@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "first-law-of-thermodynamics",
+  "version": "1.0.0",
+  "name": "First law of thermodynamics (energy conservation including heat)",
+  "domain": "physics-thermodynamics",
+  "principles": [
+    "energy conservation extended to thermal processes",
+    "internal energy as a state function",
+    "heat and work as path-dependent energy transfers"
+  ],
+  "formulaTeX": "dU = \\delta Q - \\delta W",
+  "conventions": [
+    "U is the internal energy (state function): depends only on the current macrostate, not the history",
+    "delta Q is the heat absorbed BY the system from the surroundings (positive when system gains heat)",
+    "delta W is the work done BY the system ON the surroundings (positive when system pushes outward)",
+    "delta notation (not d) emphasises Q and W are inexact differentials — path-dependent, not state functions",
+    "alternative sign convention used in chemistry: dU = delta Q + delta W with delta W defined as work done ON the system; check the textbook before computing",
+    "for a quasi-static, reversible expansion of a fluid: delta W = P dV"
+  ],
+  "expectedLimits": [
+    "isolated system (delta Q = 0, delta W = 0): dU = 0; internal energy strictly conserved",
+    "adiabatic process (delta Q = 0): dU = -delta W; internal energy changes only through work",
+    "isobaric process (P const): delta Q = dH where H = U + PV is enthalpy",
+    "isochoric process (V const): delta W = 0 (no PV work), so dU = delta Q",
+    "isothermal ideal-gas expansion: dU = 0 (ideal gas internal energy depends only on T), so delta Q = delta W",
+    "cyclic process: integral of dU around the cycle = 0; net heat absorbed = net work done"
+  ],
+  "references": [
+    "Clausius (1850) — Über die bewegende Kraft der Wärme",
+    "Joule (1845) — mechanical equivalent of heat experiment",
+    "Atkins — Physical Chemistry, ch.2",
+    "Callen — Thermodynamics and an Introduction to Thermostatistics, ch.1-2"
+  ]
+}

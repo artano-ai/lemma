@@ -1,0 +1,43 @@
+{
+  "kind": "principle",
+  "id": "maxwell-boltzmann-speed-distribution",
+  "version": "1.0.0",
+  "name": "Maxwell-Boltzmann speed distribution",
+  "domain": "physics-statistical-mechanics",
+  "principles": [
+    "equilibrium statistical mechanics of a classical ideal gas",
+    "factorisation of the Boltzmann distribution exp(-E / k_B T) over independent translational degrees of freedom",
+    "isotropy of momentum space — distribution depends only on |v|, not direction"
+  ],
+  "formulaTeX": "f(v)\\, dv \\;=\\; 4\\pi\\, n \\left(\\frac{m}{2\\pi k_B T}\\right)^{3/2} v^2 \\exp\\!\\left(-\\,\\frac{m\\, v^2}{2 k_B T}\\right) dv",
+  "conventions": [
+    "f(v) dv is the number density of particles with speeds in [v, v + dv]; n is the total number density",
+    "m is the molecular mass; k_B = 1.380649e-23 J/K is the Boltzmann constant",
+    "T is the absolute temperature (K) — only valid in thermal equilibrium",
+    "the v^2 prefactor comes from the surface area of a sphere of radius v in velocity space (4 pi v^2 dv)",
+    "valid for a classical ideal gas: dilute (de Broglie wavelength much smaller than interparticle spacing) and non-degenerate (k_B T >> Fermi energy / level spacing)",
+    "non-relativistic: requires v << c; for relativistic gases use Maxwell-Jüttner distribution",
+    "normalisation: integral_0^infty f(v) dv = n"
+  ],
+  "expectedLimits": [
+    "most probable speed (mode of f(v)): v_p = sqrt(2 k_B T / m)",
+    "mean speed: <v> = sqrt(8 k_B T / (pi m)) = (2 / sqrt(pi)) v_p",
+    "rms speed: v_rms = sqrt(3 k_B T / m) = sqrt(3/2) v_p — connects directly to mean kinetic energy <(1/2) m v^2> = (3/2) k_B T (equipartition)",
+    "low-T limit T -> 0: distribution collapses toward a delta at v = 0; classical picture must be replaced by Bose-Einstein or Fermi-Dirac statistics once de Broglie wavelength becomes comparable to interparticle spacing",
+    "high-T limit: distribution broadens, fraction of particles above any fixed escape speed grows monotonically — drives Jeans escape from planetary atmospheres",
+    "Knudsen regime (mean free path comparable to system size): the bulk distribution holds but boundary effects dominate transport",
+    "specific cases: N2 at 300 K -> v_p ≈ 422 m/s, <v> ≈ 476 m/s, v_rms ≈ 517 m/s; H2 at 300 K -> v_p ≈ 1573 m/s",
+    "consistency check: <v^2> = 3 k_B T / m must agree with kinetic theory pressure p = (1/3) n m <v^2> = n k_B T (ideal gas law)"
+  ],
+  "references": [
+    "Maxwell (1860) — Illustrations of the Dynamical Theory of Gases, Phil. Mag.",
+    "Boltzmann (1872) — Weitere Studien über das Wärmegleichgewicht unter Gasmolekülen",
+    "Reif — Fundamentals of Statistical and Thermal Physics, ch.7",
+    "Pathria & Beale — Statistical Mechanics, ch.6",
+    "BIPM — SI Brochure (defining value of k_B)"
+  ],
+  "validationEnvelopes": {
+    "boltzmannConstant_J_per_K": [1.380648e-23, 1.380650e-23],
+    "n2_300K_meanSpeed_m_per_s": [470, 482]
+  }
+}

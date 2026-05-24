@@ -1,0 +1,33 @@
+{
+  "kind": "principle",
+  "id": "bloch-theorem",
+  "version": "1.0.0",
+  "name": "Bloch theorem for periodic potentials",
+  "domain": "physics-condensed-matter",
+  "principles": [
+    "translational symmetry of crystalline solids",
+    "single-particle Schrödinger equation in a periodic potential",
+    "reciprocal lattice and Brillouin zone"
+  ],
+  "formulaTeX": "\\psi_{n\\mathbf{k}}(\\mathbf{r}) = e^{i\\mathbf{k}\\cdot\\mathbf{r}}\\, u_{n\\mathbf{k}}(\\mathbf{r}), \\quad u_{n\\mathbf{k}}(\\mathbf{r} + \\mathbf{R}) = u_{n\\mathbf{k}}(\\mathbf{r})",
+  "conventions": [
+    "V(r) periodic with the Bravais lattice: V(r + R) = V(r) for any lattice vector R",
+    "n is the band index, k is the crystal momentum (Bloch wavevector) restricted to the first Brillouin zone",
+    "u_nk(r) has the periodicity of the lattice",
+    "spin index suppressed (non-magnetic / spin-degenerate case)",
+    "valid for non-interacting electrons in a static periodic potential — the foundation of single-particle band theory"
+  ],
+  "expectedLimits": [
+    "k = 0 (Gamma point): psi reduces to u_n0(r), the lattice-periodic ground band edge wavefunction",
+    "k -> k + G (reciprocal lattice vector): same physical state, so band structure is periodic in reciprocal space",
+    "free-electron limit (V -> 0): psi -> e^{i k r}, plane wave; bands fold at zone boundaries with vanishing gaps",
+    "tight-binding limit (deep wells): u_nk localised on atoms, dispersion proportional to hopping integrals",
+    "irreducible Brillouin zone: symmetry reduces the unique k-space volume by the order of the point group"
+  ],
+  "references": [
+    "Bloch (1929) — Über die Quantenmechanik der Elektronen in Kristallgittern",
+    "Ashcroft & Mermin — Solid State Physics, ch.8",
+    "Kittel — Introduction to Solid State Physics, ch.7",
+    "Martin — Electronic Structure: Basic Theory and Practical Methods, ch.4"
+  ]
+}

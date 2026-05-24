@@ -1,0 +1,28 @@
+{
+  "kind": "principle",
+  "id": "density-of-states",
+  "version": "1.3.0",
+  "name": "Electronic density of states",
+  "domain": "physics-condensed-matter",
+  "principles": [
+    "Bloch theorem",
+    "k-point Brillouin-zone sampling",
+    "spectral function"
+  ],
+  "formulaTeX": "g(\\varepsilon) = \\sum_{n,\\mathbf{k}} w_{\\mathbf{k}} \\, \\delta(\\varepsilon - \\varepsilon_{n\\mathbf{k}})",
+  "conventions": [
+    "g(epsilon) >= 0",
+    "spin factor 2 absorbed (non-magnetic)",
+    "normalisation: integral from -infinity to epsilon_F of g(epsilon) d epsilon = N_electrons / V"
+  ],
+  "expectedLimits": [
+    "finite at insulator/semiconductor gap edges, zero inside the gap",
+    "metallic systems: g(epsilon_F) > 0",
+    "smooth under k-mesh refinement (Methfessel-Paxton or Gaussian smearing)"
+  ],
+  "references": [
+    "Ashcroft & Mermin, Solid State Physics, ch.8",
+    "Martin, Electronic Structure: Basic Theory and Practical Methods, ch.3",
+    "Methfessel & Paxton 1989"
+  ]
+}

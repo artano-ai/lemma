@@ -1,0 +1,32 @@
+{
+  "kind": "principle",
+  "id": "free-fall-uniform-gravity",
+  "version": "1.0.0",
+  "name": "Free fall in uniform gravity (no air resistance)",
+  "domain": "physics-classical-mechanics",
+  "principles": [
+    "Newton's second law",
+    "constant gravitational field",
+    "one-dimensional kinematics"
+  ],
+  "formulaTeX": "y(t) = y_0 + v_0\\, t - \\tfrac{1}{2}\\, g\\, t^2",
+  "conventions": [
+    "g > 0 (magnitude of gravitational acceleration)",
+    "y positive upward, measured from chosen origin",
+    "v_0 positive when initial velocity points upward",
+    "air resistance neglected (idealisation)"
+  ],
+  "expectedLimits": [
+    "t = 0: y = y_0, v = v_0",
+    "peak (v = 0): t* = v_0/g, y_max = y_0 + v_0^2/(2g)",
+    "landing (y = 0, y_0 > 0): t_land = (v_0 + sqrt(v_0^2 + 2 g y_0))/g",
+    "energy conservation: (1/2) v^2 + g y = const along trajectory"
+  ],
+  "references": [
+    "Halliday, Resnick & Walker — Fundamentals of Physics, ch.2",
+    "Galileo (1638) — Two New Sciences"
+  ],
+  "validationEnvelopes": {
+    "gEarth_m_per_s2": [9.79, 9.83]
+  }
+}

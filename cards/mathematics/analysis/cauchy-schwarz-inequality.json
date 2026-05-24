@@ -1,0 +1,33 @@
+{
+  "kind": "principle",
+  "id": "cauchy-schwarz-inequality",
+  "version": "1.0.0",
+  "name": "Cauchy-Schwarz inequality",
+  "domain": "mathematics-analysis",
+  "principles": [
+    "inner product spaces",
+    "norm bounds",
+    "linear dependence"
+  ],
+  "formulaTeX": "\\left| \\langle u,\\, v \\rangle \\right|^2 \\;\\le\\; \\langle u,\\, u \\rangle \\,\\langle v,\\, v \\rangle",
+  "conventions": [
+    "<.,.> is an inner product on a real or complex vector space V",
+    "valid in any inner-product space — finite-dimensional R^n, C^n, infinite-dimensional Hilbert spaces (L^2, l^2)",
+    "for the canonical Euclidean inner product on R^n: <u, v> = sum_i u_i v_i",
+    "complex case uses conjugate-symmetric inner product: <u, v> = conj(<v, u>)",
+    "equivalent norm form: |<u, v>| <= ||u|| ||v||"
+  ],
+  "expectedLimits": [
+    "equality holds iff u and v are linearly dependent (one is a scalar multiple of the other)",
+    "u = 0 or v = 0: both sides equal 0 (trivial equality)",
+    "specialisation R^2: (u_1 v_1 + u_2 v_2)^2 <= (u_1^2 + u_2^2)(v_1^2 + v_2^2)",
+    "integral form (L^2): |integral f(x) g(x) dx|^2 <= integral |f|^2 dx * integral |g|^2 dx",
+    "implies the triangle inequality for any inner-product norm"
+  ],
+  "references": [
+    "Cauchy (1821) — Cours d'Analyse, finite-dimensional case",
+    "Bunyakovsky (1859) — integral generalisation (often called Cauchy-Bunyakovsky-Schwarz)",
+    "Schwarz (1888) — modern formulation in inner-product spaces",
+    "Rudin — Real and Complex Analysis, ch.4"
+  ]
+}

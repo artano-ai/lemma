@@ -1,0 +1,27 @@
+{
+  "kind": "principle",
+  "id": "joint-dos",
+  "version": "1.1.0",
+  "name": "Joint density of states (vertical interband transitions)",
+  "domain": "physics-condensed-matter",
+  "principles": [
+    "vertical interband transitions",
+    "optical absorption onset",
+    "k-point sum"
+  ],
+  "formulaTeX": "J(\\omega) = \\sum_{c, v, \\mathbf{k}} w_{\\mathbf{k}} \\, \\delta\\!\\left(\\omega - (\\varepsilon_{c\\mathbf{k}} - \\varepsilon_{v\\mathbf{k}})\\right)",
+  "conventions": [
+    "J(omega) >= 0",
+    "sum over conduction (c) and valence (v) bands",
+    "units: 1/eV per unit volume"
+  ],
+  "expectedLimits": [
+    "onset at fundamental gap for semiconductors (J(omega < E_g) = 0)",
+    "metallic systems: nonzero at omega -> 0",
+    "high-omega: square-root or parabolic depending on band-edge shape"
+  ],
+  "references": [
+    "Yu & Cardona, Fundamentals of Semiconductors, ch.6",
+    "Bassani & Pastori-Parravicini, Electronic States and Optical Transitions in Solids, 1975"
+  ]
+}

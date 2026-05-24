@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "finite-difference-truncation-error",
+  "version": "1.0.0",
+  "name": "Finite-difference truncation error and order of accuracy",
+  "domain": "numerical-methods-pde",
+  "principles": [
+    "Taylor expansion of the discretised function",
+    "leading-order error scaling as a power of grid spacing",
+    "consistency as a prerequisite for convergence"
+  ],
+  "formulaTeX": "f'(x) \\;=\\; \\frac{f(x + h) - f(x - h)}{2 h} \\;+\\; O(h^2)",
+  "conventions": [
+    "h is the (uniform) grid spacing",
+    "f is sufficiently smooth — at least C^3 for the centred 2nd-order error estimate above",
+    "the O(h^2) term means the leading truncation error is proportional to h^2 (centred difference is 2nd-order accurate)",
+    "forward / backward 1st-order: f'(x) ~ (f(x+h) - f(x))/h + O(h); cheaper but less accurate",
+    "higher-order stencils: 4th-order centred uses 5 points: f'(x) ~ (-f(x-2h) + 8 f(x-h) - 8 f(x+h) + f(x+2h))/(12 h) + O(h^4)",
+    "second-derivative centred: f''(x) ~ (f(x+h) - 2 f(x) + f(x-h))/h^2 + O(h^2)"
+  ],
+  "expectedLimits": [
+    "h -> 0: truncation error -> 0 algebraically; method is consistent with the differential operator",
+    "convergence rate: error decays as h^p where p is the formal order of accuracy (verifiable by halving h and observing factor-of-2^p error reduction)",
+    "Lax equivalence theorem: consistency + stability => convergence (for well-posed linear problems)",
+    "non-smooth f (kinks, discontinuities): Taylor expansion fails near the singularity; effective order drops to first or below at the kink",
+    "round-off-limited h: at very small h, subtraction of nearly-equal values amplifies machine precision noise as 1/h; optimal h ~ sqrt(epsilon_machine) for first derivatives",
+    "non-uniform grids: stencil coefficients change; care needed to maintain order of accuracy at interior nodes"
+  ],
+  "references": [
+    "Strikwerda — Finite Difference Schemes and Partial Differential Equations, ch.1-3",
+    "LeVeque — Finite Difference Methods for ODEs and PDEs, ch.1",
+    "Morton & Mayers — Numerical Solution of Partial Differential Equations, ch.2",
+    "Gustafsson, Kreiss & Oliger — Time Dependent Problems and Difference Methods, ch.4"
+  ]
+}

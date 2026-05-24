@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "henderson-hasselbalch-equation",
+  "version": "1.0.0",
+  "name": "Henderson-Hasselbalch equation for buffer pH",
+  "domain": "chemistry-acid-base",
+  "principles": [
+    "weak-acid dissociation equilibrium",
+    "logarithmic relationship between pH and concentration ratio",
+    "buffer-system stability against added acid/base"
+  ],
+  "formulaTeX": "\\mathrm{pH} \\;=\\; \\mathrm{p}K_a \\;+\\; \\log_{10}\\!\\left(\\frac{[\\mathrm{A}^-]}{[\\mathrm{HA}]}\\right)",
+  "conventions": [
+    "HA is the weak acid; A^- is its conjugate base",
+    "pKa = -log10(Ka), where Ka is the acid dissociation constant at the relevant temperature",
+    "concentrations [HA] and [A^-] in any consistent units (the ratio is what matters)",
+    "valid in the buffer regime: roughly when 0.1 <= [A^-]/[HA] <= 10, i.e. pH within ~1 of pKa",
+    "assumes ideal-dilute solution; at high ionic strength replace concentrations by activities",
+    "polyprotic acids: one Henderson-Hasselbalch per dissociation step (use the relevant pKa_i)"
+  ],
+  "expectedLimits": [
+    "[A^-] = [HA]:  pH = pKa  (operational definition / half-neutralisation point of titration curve)",
+    "[A^-] / [HA] -> 0 (mostly protonated):  pH -> -infinity from pKa; equation breaks down — use exact equilibrium Ka = [H+][A-]/[HA]",
+    "[A^-] / [HA] -> infinity (mostly deprotonated):  pH -> +infinity from pKa; same caveat",
+    "buffer capacity beta = 2.303 [A^-][HA]/([A^-]+[HA]) — maximised at [A^-] = [HA] (pH = pKa)",
+    "outside the buffer window (|pH - pKa| > 1):  Henderson-Hasselbalch loses accuracy because the assumption that added H+/OH- doesn't significantly shift [HA] / [A^-] fails",
+    "blood plasma physiological example: H2CO3 / HCO3^- buffer, pKa1 ~ 6.1, [HCO3-]/[H2CO3] ~ 20 -> pH ~ 7.4"
+  ],
+  "references": [
+    "Henderson (1908) — Concerning the Relationship Between the Strength of Acids and Their Capacity to Preserve Neutrality",
+    "Hasselbalch (1916) — Die Berechnung der Wasserstoffzahl des Blutes",
+    "Atkins — Physical Chemistry, ch.6",
+    "Po & Senozan (2001) — The Henderson-Hasselbalch Equation: Its History and Limitations, J. Chem. Educ."
+  ]
+}

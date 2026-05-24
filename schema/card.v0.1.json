@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.atomiralab.eu/card.v0.1.json",
+  "title": "Lemma Card",
+  "description": "Open schema for Lemma cards. A card is one of four discriminated variants on `kind`. The discriminator is structural, not subject-area: PrincipleCard covers physics, chemistry, biology, climate, mathematics, engineering — they all share the same shape because the verification operations are universal. The actual subject area lives in `domain`.",
+  "oneOf": [
+    { "$ref": "#/$defs/PrincipleCard" },
+    { "$ref": "#/$defs/OpsCard" },
+    { "$ref": "#/$defs/HypothesisCard" },
+    { "$ref": "#/$defs/UnidentifiedCard" }
+  ],
+  "$defs": {
+    "PrincipleCard": {
+      "type": "object",
+      "required": [
+        "kind", "id", "version", "name",
+        "principles", "formulaTeX",
+        "conventions", "expectedLimits", "references"
+      ],
+      "properties": {
+        "kind": { "const": "principle" },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Stable, lowercase, hyphen-separated. Becomes part of the URL once the card is published. Never reuse an id."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semver. MAJOR for breaking convention changes (e.g. sign flip), MINOR for added expectedLimits, PATCH for typos / refs."
+        },
+        "name": { "type": "string" },
+        "domain": {
+          "type": "string",
+          "description": "Subject area for grouping. Free-form. Conventional values: physics-condensed-matter, physics-classical-mechanics, chemistry-thermodynamics, chemistry-stoichiometry, biology-population-dynamics, climate-radiative, mathematics-analysis, engineering-fluid-dynamics."
+        },
+        "principles": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "formulaTeX": {
+          "type": "string",
+          "description": "Canonical equation in LaTeX. KaTeX-renderable."
+        },
+        "conventions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "expectedLimits": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "validationEnvelopes": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": { "type": "number" },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              { "type": "object" }
+            ]
+          },
+          "description": "Numerical bounds the engine asserts at runtime. Keys are domain-conventional (plasmonOmegaP, gEarth_m_per_s2, gasConstant_J_per_molK). Values are [min, max] tuples in conventional units."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "OpsCard": {
+      "type": "object",
+      "required": [
+        "kind", "id", "version", "name", "description",
+        "parameters", "validation", "references"
+      ],
+      "properties": {
+        "kind": { "const": "ops" },
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "label", "defaultValue", "required"],
+            "properties": {
+              "key":          { "type": "string" },
+              "label":        { "type": "string" },
+              "defaultValue": { "type": "string" },
+              "required":     { "type": "boolean" },
+              "note":         { "type": "string" }
+            }
+          }
+        },
+        "validation": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "HypothesisCard": {
+      "type": "object",
+      "required": [
+        "kind", "id", "version", "name",
+        "proposal", "proposedFormulaTeX",
+        "checks", "references", "origin"
+      ],
+      "properties": {
+        "kind": { "const": "hypothesis" },
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "name": { "type": "string" },
+        "proposal": { "type": "string" },
+        "proposedFormulaTeX": { "type": "string" },
+        "derivedFrom": {
+          "type": "object",
+          "required": ["cardId", "relationship"],
+          "properties": {
+            "cardId": { "type": "string" },
+            "relationship": { "enum": ["extends", "replaces", "complements"] }
+          },
+          "additionalProperties": false
+        },
+        "checks": { "$ref": "#/$defs/HypothesisChecksSpec" },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "origin": { "enum": ["llm", "human", "symbolic-regression"] },
+        "rationale": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "HypothesisChecksSpec": {
+      "type": "object",
+      "properties": {
+        "dimensional": {
+          "type": "object",
+          "required": ["lhsLabel", "lhsDims", "rhsLabel", "rhsDims"],
+          "properties": {
+            "lhsLabel": { "type": "string" },
+            "lhsDims":  { "$ref": "#/$defs/DimVec" },
+            "rhsLabel": { "type": "string" },
+            "rhsDims":  { "$ref": "#/$defs/DimVec" }
+          },
+          "additionalProperties": false
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "regime", "expectedReducesTo"],
+            "properties": {
+              "name":              { "type": "string" },
+              "regime":            { "type": "string" },
+              "expectedReducesTo": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "conservationLaws": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["law", "statement"],
+            "properties": {
+              "law": { "enum": ["energy", "momentum", "charge", "particle-number", "total-spin", "parity"] },
+              "statement": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "referenceCorpus": {
+          "type": "object",
+          "properties": {
+            "mustAgreeWith": { "type": "array", "items": { "type": "string" } },
+            "mayContradict": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "DimVec": {
+      "type": "object",
+      "description": "Canonical dimension vector. Each axis is an integer exponent. Omitted axes default to 0. L=length, T=time, M=mass, E=energy, Q=charge, Theta=temperature, N=count.",
+      "properties": {
+        "L":     { "type": "integer" },
+        "T":     { "type": "integer" },
+        "M":     { "type": "integer" },
+        "E":     { "type": "integer" },
+        "Q":     { "type": "integer" },
+        "Theta": { "type": "integer" },
+        "N":     { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+
+    "UnidentifiedCard": {
+      "type": "object",
+      "required": ["kind", "id", "version", "name", "reason"],
+      "properties": {
+        "kind":    { "const": "unidentified" },
+        "id":      { "const": "none" },
+        "version": { "const": "0.0.0" },
+        "name":    { "type": "string" },
+        "reason":  { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

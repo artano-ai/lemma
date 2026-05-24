@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "continuity-equation",
+  "version": "1.0.0",
+  "name": "Mass continuity equation (local mass conservation)",
+  "domain": "physics-fluid-dynamics",
+  "principles": [
+    "local conservation of mass",
+    "Eulerian description of a continuum",
+    "divergence theorem applied to a fixed control volume"
+  ],
+  "formulaTeX": "\\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho\\, \\mathbf{v}) \\;=\\; 0",
+  "conventions": [
+    "rho is the local mass density (kg/m^3)",
+    "v is the local fluid velocity field (m/s)",
+    "Eulerian form: time derivative is at fixed spatial point, not following the parcel",
+    "no source / sink term assumed; with sources (e.g. evaporation): partial rho / partial t + div(rho v) = sigma",
+    "integral form over a control volume V: d/dt integral rho dV = -integral_{partial V} rho v . dA (mass leaving through surface = decrease inside)",
+    "valid in any continuum: gases, liquids, plasmas (with charge/momentum continuity as analogues)"
+  ],
+  "expectedLimits": [
+    "incompressible flow (rho = const): div v = 0; velocity field is solenoidal",
+    "steady state (partial rho / partial t = 0): div(rho v) = 0; mass flux through any closed surface vanishes",
+    "compressible flow with shocks: equation holds in weak (integral) form; strong form fails at the shock surface",
+    "1D flow in a duct of variable area A(x): rho v A = const along the duct (steady, single direction)",
+    "diffusive analogue (Fick's law): replace rho v with -D grad rho to get the diffusion equation",
+    "subsumes total mass conservation: integral of rho over all space is invariant in a closed system"
+  ],
+  "references": [
+    "Euler (1757) — Principes généraux du mouvement des fluides",
+    "Batchelor — An Introduction to Fluid Dynamics, ch.2",
+    "Landau & Lifshitz — Fluid Mechanics, ch.1",
+    "Anderson — Computational Fluid Dynamics: The Basics with Applications, ch.2"
+  ]
+}

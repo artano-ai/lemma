@@ -1,0 +1,45 @@
+{
+  "kind": "principle",
+  "id": "coulombs-law-point-charges",
+  "version": "1.0.0",
+  "name": "Coulomb's law — electrostatic force between point charges",
+  "domain": "physics-electromagnetism",
+  "principles": [
+    "inverse-square central force between two point charges in a vacuum",
+    "linear superposition — total force on a charge is the vector sum of pairwise Coulomb forces",
+    "electrostatic potential as the line integral of -E along a path; conservative field"
+  ],
+  "formulaTeX": "\\mathbf{F}_{12} \\;=\\; \\frac{1}{4\\pi\\varepsilon_0}\\, \\frac{q_1\\, q_2}{r^2}\\, \\hat{\\mathbf{r}}_{12}",
+  "conventions": [
+    "F_12 is the force exerted on charge q_1 by charge q_2; r is the distance between the two point charges (m); hat r_12 points from q_2 to q_1",
+    "q_1, q_2 are signed scalar electric charges (C); like-sign charges repel (F along +hat r_12), opposite-sign charges attract",
+    "epsilon_0 = 8.8541878128e-12 F/m — vacuum permittivity; the prefactor 1/(4 pi epsilon_0) ≈ 8.9875517873681e9 N·m^2/C^2 is the Coulomb constant k_e",
+    "Newton's third law: F_21 = -F_12 (the partner force on q_2 from q_1)",
+    "vacuum form; in matter the prefactor becomes 1/(4 pi epsilon) with epsilon = epsilon_r epsilon_0 (linear dielectric, no time-dependence)",
+    "electrostatic limit: charges at rest. Magnetic and radiative effects (retardation, Liénard-Wiechert) are recovered only when full Maxwell theory is invoked",
+    "point-charge idealisation: physical objects with extended charge distributions integrate this kernel via superposition (volume integral with rho(r))"
+  ],
+  "expectedLimits": [
+    "r -> 0: |F| -> infinity — point-charge singularity, regularised in any physical theory by replacing point charges with extended distributions, by quantisation, or by treating r as the cutoff scale",
+    "r -> infinity: |F| -> 0 as 1/r^2; falls below thermal-fluctuation forces beyond a screening length in plasmas / electrolytes (Debye length lambda_D)",
+    "many-body superposition: F_total on q_i = sum_{j != i} (1/(4 pi epsilon_0)) q_i q_j (r_i - r_j) / |r_i - r_j|^3",
+    "Gauss's law equivalence: integrating Coulomb's law over a Gaussian sphere recovers integral form (E · dA) = Q_enc / epsilon_0 — listed in card gauss-law-electricity",
+    "potential energy of a pair: U(r) = (1/(4 pi epsilon_0)) q_1 q_2 / r — vanishes at infinity by convention",
+    "two-electron repulsion at 1 angstrom (typical bond length): U ≈ 14.4 eV — relevant scale for atomic / molecular physics",
+    "Newtonian gravity analogue: same 1/r^2 form with G m_1 m_2 in place of (1/(4 pi epsilon_0)) q_1 q_2 — but mass is single-signed so gravity is always attractive; ratio of electrical / gravitational force between two protons is ~ 10^36",
+    "QED limit: at distances r ≲ Compton wavelength lambda_C = hbar / (m_e c) ≈ 386 fm, vacuum polarisation modifies Coulomb's law (Uehling potential)"
+  ],
+  "references": [
+    "Coulomb (1785) — Premier mémoire sur l'électricité et le magnétisme",
+    "Cavendish (1773, posthumous 1879) — independent experimental verification of inverse-square law",
+    "Jackson — Classical Electrodynamics, ch.1",
+    "Griffiths — Introduction to Electrodynamics, ch.2",
+    "BIPM — SI Brochure (defining values of e, epsilon_0)",
+    "Uehling (1935) — Polarisation effects in the positron theory, Phys. Rev. 48: 55-63"
+  ],
+  "validationEnvelopes": {
+    "coulombConstant_N_m2_per_C2": [8.9875517e9, 8.9875518e9],
+    "vacuumPermittivity_F_per_m": [8.854187812e-12, 8.854187814e-12],
+    "elementaryCharge_C": [1.602176633e-19, 1.602176634e-19]
+  }
+}

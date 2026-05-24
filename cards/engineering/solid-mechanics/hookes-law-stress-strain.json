@@ -1,0 +1,42 @@
+{
+  "kind": "principle",
+  "id": "hookes-law-stress-strain",
+  "version": "1.0.0",
+  "name": "Hooke's law — linear elastic stress-strain relation",
+  "domain": "engineering-solid-mechanics",
+  "principles": [
+    "linear elasticity — stress is proportional to strain in the small-deformation limit",
+    "first-order Taylor expansion of an elastic potential energy around the unstressed reference state",
+    "isotropic continuum mechanics; generalised tensorial form for anisotropic media"
+  ],
+  "formulaTeX": "\\sigma \\;=\\; E\\, \\varepsilon \\qquad\\text{(uniaxial)} \\qquad\\Longleftrightarrow\\qquad \\sigma_{ij} \\;=\\; C_{ijkl}\\, \\varepsilon_{kl} \\qquad\\text{(general anisotropic)}",
+  "conventions": [
+    "uniaxial form: sigma is the engineering stress (N/m^2 = Pa) and epsilon = Delta L / L_0 is the engineering strain (dimensionless)",
+    "E is Young's modulus (Pa) — the slope of the linear region of the stress-strain curve",
+    "general form: sigma_ij is the Cauchy stress tensor; epsilon_kl is the small-strain (infinitesimal) tensor (epsilon_kl = (1/2)(partial_k u_l + partial_l u_k)); C_ijkl is the rank-4 stiffness tensor",
+    "isotropic specialisation: C_ijkl = lambda delta_ij delta_kl + mu (delta_ik delta_jl + delta_il delta_jk) with Lamé parameters lambda, mu; equivalently parameterised by Young's modulus E and Poisson's ratio nu",
+    "linear range only: valid up to the proportional / yield limit; beyond that, plastic deformation, hysteresis, and ultimate failure dominate",
+    "Einstein summation convention applied to repeated indices in the tensorial form"
+  ],
+  "expectedLimits": [
+    "uniform uniaxial loading of an isotropic bar: epsilon_axial = sigma / E; lateral contraction epsilon_lateral = -nu sigma / E",
+    "shear-only loading of an isotropic medium: tau = G gamma with shear modulus G = E / (2(1 + nu))",
+    "hydrostatic pressure: epsilon_volumetric = -p / K with bulk modulus K = E / (3(1 - 2 nu)); incompressible limit nu -> 1/2 sends K -> infinity",
+    "elastic energy density: w = (1/2) sigma_ij epsilon_ij — quadratic-positive-definite in strain, recovers w = (1/2) E epsilon^2 for uniaxial isotropic",
+    "small-strain limit |epsilon| << 1 (typically <~ 0.1-0.5% for metals before yield): linear regime valid; beyond yield the J2 plasticity / Ramberg-Osgood corrections take over",
+    "anisotropic crystals (cubic / hexagonal): C_ijkl reduces to 3 / 5 independent constants by symmetry; isotropic equivalents are weighted averages (Voigt / Reuss / Hill)",
+    "frequency limit: quasi-static; at high frequencies viscoelastic / inertial corrections (sigma = E epsilon + eta dot epsilon) are required"
+  ],
+  "references": [
+    "Hooke (1678) — De Potentia Restitutiva (\"Ut tensio sic vis\")",
+    "Young (1807) — A Course of Lectures on Natural Philosophy and the Mechanical Arts",
+    "Landau & Lifshitz — Theory of Elasticity (Course of Theoretical Physics, vol. 7), ch.1",
+    "Timoshenko & Goodier — Theory of Elasticity, ch.1-2",
+    "ASTM E111 — Standard Test Method for Young's Modulus, Tangent Modulus, and Chord Modulus"
+  ],
+  "validationEnvelopes": {
+    "youngsModulusSteel_GPa": [180, 220],
+    "youngsModulusAluminium_GPa": [65, 75],
+    "poissonsRatioMetals": [0.25, 0.40]
+  }
+}

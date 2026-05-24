@@ -1,0 +1,40 @@
+{
+  "kind": "principle",
+  "id": "reynolds-number-similarity",
+  "version": "1.0.0",
+  "name": "Reynolds number — inertial / viscous similarity parameter",
+  "domain": "engineering-fluid-dynamics",
+  "principles": [
+    "dimensional analysis of the incompressible Navier-Stokes equations",
+    "dynamic similarity between geometrically similar flows",
+    "inertial momentum flux versus viscous momentum diffusion"
+  ],
+  "formulaTeX": "\\mathrm{Re} \\;=\\; \\frac{\\rho\\, U\\, L}{\\mu} \\;=\\; \\frac{U\\, L}{\\nu}",
+  "conventions": [
+    "rho is the fluid density (kg/m^3); U is a characteristic velocity (m/s)",
+    "L is a characteristic length (m) — pipe diameter, chord length, body size; the choice of L must be declared with the result",
+    "mu is the dynamic viscosity (Pa·s) and nu = mu / rho is the kinematic viscosity (m^2/s)",
+    "Re is dimensionless: [kg/m^3 · m/s · m] / [Pa·s] = [kg/(m·s)] / [kg/(m·s)] = 1",
+    "two flows with the same Re and the same boundary geometry are dynamically similar — non-dimensional velocity and pressure fields agree",
+    "Reynolds (1883) experimental boundary in straight smooth pipes: laminar Re < 2300; transitional 2300–4000; fully turbulent Re > 4000 (geometry-specific — flat plate, sphere, airfoil each have their own thresholds)"
+  ],
+  "expectedLimits": [
+    "Re -> 0 (Stokes / creeping flow): inertial term negligible, Navier-Stokes reduces to mu nabla^2 u = nabla p; drag on a sphere becomes F = 6 pi mu U R (Stokes drag)",
+    "Re -> infinity (inviscid limit): Navier-Stokes reduces to Euler equations away from boundary layers; viscous effects survive only in thin layers of thickness delta / L ~ Re^{-1/2}",
+    "pipe flow, Re < ~2300: laminar Hagen-Poiseuille velocity profile, parabolic, friction factor f = 64/Re",
+    "pipe flow, Re > ~4000: turbulent profile, Colebrook / Moody friction factor depends on relative roughness and Re",
+    "sphere drag, Re ~ 1: Stokes' formula valid; Re ~ 10^3-10^5: drag coefficient C_D ~ 0.4 nearly constant (drag crisis at Re ~ 3 x 10^5)",
+    "low-Re scaling for biological microswimmers (bacteria, sperm cells): Re ~ 10^-4-10^-2, fundamentally time-reversible kinematics (scallop theorem)"
+  ],
+  "references": [
+    "Reynolds (1883) — An Experimental Investigation of the Circumstances Which Determine Whether the Motion of Water Shall Be Direct or Sinuous, Phil. Trans. R. Soc.",
+    "Batchelor — An Introduction to Fluid Dynamics, ch.4",
+    "Tritton — Physical Fluid Dynamics, ch.7",
+    "Pope — Turbulent Flows, ch.1",
+    "Purcell (1977) — Life at low Reynolds number, Am. J. Phys. 45 (3): 3-11"
+  ],
+  "validationEnvelopes": {
+    "pipeFlowLaminarUpper": [2000, 2400],
+    "pipeFlowTurbulentLower": [3500, 4500]
+  }
+}

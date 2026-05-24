@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "michaelis-menten-enzyme-kinetics",
+  "version": "1.0.0",
+  "name": "Michaelis-Menten enzyme kinetics",
+  "domain": "biology-enzyme-kinetics",
+  "principles": [
+    "single-substrate enzyme catalysis",
+    "quasi-steady-state approximation (Briggs-Haldane)",
+    "non-cooperative binding"
+  ],
+  "formulaTeX": "v = \\frac{V_{\\max}\\,[S]}{K_M + [S]}",
+  "conventions": [
+    "[S] is the substrate concentration (mol/L or M)",
+    "V_max is the maximum reaction rate, attained as [S] -> infinity",
+    "K_M is the Michaelis constant: substrate concentration at which v = V_max / 2 (units of M)",
+    "applies to a single enzyme + single substrate, irreversible product formation",
+    "assumes quasi-steady-state for the enzyme-substrate complex (d[ES]/dt approx 0)",
+    "does not apply to allosteric enzymes (use Hill equation) or multi-substrate kinetics"
+  ],
+  "expectedLimits": [
+    "[S] -> 0:  v -> (V_max / K_M) [S]  (first-order in substrate)",
+    "[S] = K_M:  v = V_max / 2  (operational definition of K_M)",
+    "[S] -> infinity:  v -> V_max  (zero-order saturation)",
+    "Lineweaver-Burk linearisation: 1/v = (K_M / V_max)(1/[S]) + 1/V_max",
+    "competitive inhibitor: K_M' = K_M (1 + [I]/K_I), V_max unchanged",
+    "non-competitive inhibitor: V_max' = V_max / (1 + [I]/K_I), K_M unchanged"
+  ],
+  "references": [
+    "Michaelis & Menten (1913) — Die Kinetik der Invertinwirkung",
+    "Briggs & Haldane (1925) — quasi-steady-state derivation",
+    "Lehninger — Principles of Biochemistry, ch.6",
+    "IUBMB — Enzyme Nomenclature recommendations"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "mean-value-theorem",
+  "version": "1.0.0",
+  "name": "Mean-value theorem (Lagrange) for derivatives",
+  "domain": "mathematics-analysis",
+  "principles": [
+    "continuity on closed interval + differentiability on open interior",
+    "existence of an intermediate point matching the average rate of change",
+    "Rolle's theorem as a special case (zero secant slope)"
+  ],
+  "formulaTeX": "f \\text{ continuous on } [a, b], \\; \\text{differentiable on } (a, b) \\;\\Longrightarrow\\; \\exists\\, c \\in (a, b): \\; f'(c) = \\frac{f(b) - f(a)}{b - a}",
+  "conventions": [
+    "f is a real-valued function of a single real variable",
+    "[a, b] is a closed bounded interval with a < b",
+    "the conclusion is existence — c is not unique in general (multiple c may satisfy the condition)",
+    "real-analysis result: complex-analysis analogue requires holomorphicity and gives different conclusions",
+    "vector-valued generalisation (Cauchy mean-value theorem) replaces both sides with parametric ratio",
+    "discrete analogue (finite-difference mean value): f(b) - f(a) = (b - a) f'(xi) holds at a discrete grid point only approximately, with error controlled by f''"
+  ],
+  "expectedLimits": [
+    "f constant on [a, b]: f(b) - f(a) = 0, so f'(c) = 0 for any c in (a, b) — trivially satisfied",
+    "Rolle's theorem (special case f(a) = f(b)): exists c with f'(c) = 0",
+    "f(x) = mx + b (linear): f'(c) = m for all c — every point witnesses the theorem",
+    "endpoints excluded: differentiability at the open interior is required; f'(a) or f'(b) need not exist",
+    "fails for non-differentiable kinks: f(x) = |x| on [-1, 1] has slope 0 between endpoints, but f'(c) jumps at 0 — no interior c with f'(c) = 0",
+    "implies: if f' = 0 throughout (a, b), then f is constant; foundation of the fundamental theorem of calculus"
+  ],
+  "references": [
+    "Lagrange (1797) — Théorie des fonctions analytiques",
+    "Cauchy (1823) — Résumé des leçons données à l'École royale polytechnique",
+    "Rudin — Principles of Mathematical Analysis, ch.5",
+    "Apostol — Calculus, vol.1, ch.4"
+  ]
+}

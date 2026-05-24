@@ -1,0 +1,35 @@
+{
+  "kind": "principle",
+  "id": "runge-kutta-4",
+  "version": "1.0.0",
+  "name": "Classical Runge-Kutta 4th-order ODE integrator",
+  "domain": "numerical-methods-ode",
+  "principles": [
+    "Taylor-series matching to fourth order",
+    "explicit single-step time integration",
+    "weighted slope sampling at intermediate points"
+  ],
+  "formulaTeX": "\\begin{aligned} k_1 &= f(t_n, y_n) \\\\ k_2 &= f(t_n + h/2,\\, y_n + h\\, k_1/2) \\\\ k_3 &= f(t_n + h/2,\\, y_n + h\\, k_2/2) \\\\ k_4 &= f(t_n + h,\\, y_n + h\\, k_3) \\\\ y_{n+1} &= y_n + \\tfrac{h}{6}(k_1 + 2 k_2 + 2 k_3 + k_4) \\end{aligned}",
+  "conventions": [
+    "applied to the initial-value problem y'(t) = f(t, y), y(t_0) = y_0",
+    "h is the (uniform) time step; non-uniform stepping requires adaptive variants (RK45, Dormand-Prince)",
+    "explicit method: y_{n+1} computed from y_n without solving an implicit equation",
+    "vector-valued y is supported elementwise; cost is 4 function evaluations per step",
+    "the (1, 2, 2, 1)/6 weights are the canonical 'classical RK4'; other 4th-order RK methods exist with different node patterns",
+    "no built-in error estimate; pair with a 5th-order companion (RK45) for adaptive step-size control"
+  ],
+  "expectedLimits": [
+    "local truncation error per step: O(h^5)",
+    "global truncation error after T/h steps: O(h^4) — fourth-order convergence",
+    "smooth f satisfying a Lipschitz condition: convergence is guaranteed for sufficiently small h",
+    "stability region: bounded subset of the complex h * lambda plane (for the linear test problem y' = lambda y); explicit methods cannot be A-stable",
+    "stiff systems (widely separated eigenvalues): RK4's stability constraint forces impractically small h — use implicit methods (BDF, RadauIIA) instead",
+    "round-off-limited regime: at very small h, accumulated round-off error overtakes truncation error; optimal h depends on machine epsilon and the problem (~ epsilon_machine^(1/5) for RK4)"
+  ],
+  "references": [
+    "Runge (1895) — Über die numerische Auflösung von Differentialgleichungen, Math. Ann.",
+    "Kutta (1901) — Beitrag zur näherungsweisen Integration totaler Differentialgleichungen, Z. Math. Phys.",
+    "Hairer, Norsett & Wanner — Solving Ordinary Differential Equations I: Nonstiff Problems, ch.II",
+    "Press, Teukolsky, Vetterling & Flannery — Numerical Recipes, ch.17"
+  ]
+}

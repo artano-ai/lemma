@@ -39,6 +39,13 @@ from .cards import (
     load_cards,
     load_cards_with_failures,
 )
+from .dimensional import (
+    AXES,
+    dims_equal,
+    is_dimensionless,
+    stringify_dims,
+)
+from .engine import run_hypothesis_checks
 from .types import (
     Card,
     CheckSeverity,
@@ -115,4 +122,11 @@ __all__ = [
     "parse_card",
     "CardValidationError",
     "ValidationIssue",
+    # dimensional algebra
+    "AXES",
+    "dims_equal",
+    "stringify_dims",
+    "is_dimensionless",
+    # engine
+    "run_hypothesis_checks",
 ]

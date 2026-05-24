@@ -68,7 +68,7 @@ KIND_STYLE = {
 
 @app.command("list")
 def list_cmd() -> None:
-    """List every card with its kind and domain."""
+    """List every card with its kind, name, and domain."""
     cards = load_cards()
 
     table = Table(
@@ -80,11 +80,18 @@ def list_cmd() -> None:
     )
     table.add_column("id", style="cyan", no_wrap=True)
     table.add_column("kind", no_wrap=True)
+    table.add_column("name", style="white")
     table.add_column("domain", style="dim")
 
     for card in cards:
         kind_style = KIND_STYLE.get(card.kind, "white")
-        table.add_row(card.id, Text(card.kind, style=kind_style), card.domain)
+        domain = getattr(card, "domain", None) or "—"
+        table.add_row(
+            card.id,
+            Text(card.kind, style=kind_style),
+            card.name,
+            domain,
+        )
 
     console.print(table)
 
@@ -97,15 +104,16 @@ def show_cmd(
     for card in load_cards():
         if card.id == card_id:
             kind_style = KIND_STYLE.get(card.kind, "white")
+            domain = getattr(card, "domain", None) or card.kind
             subtitle = Text.assemble(
                 (card.kind, kind_style),
                 "  ·  ",
-                (card.domain, "dim"),
+                (domain, "dim"),
             )
             console.print(
                 Panel(
-                    RichJSON(json.dumps(card.raw)),
-                    title=f"[bold cyan]{card.id}[/bold cyan]",
+                    RichJSON(card.model_dump_json(exclude_none=True)),
+                    title=f"[bold cyan]{card.id}[/bold cyan] [dim]· {card.name}[/dim]",
                     subtitle=subtitle,
                     border_style="cyan",
                     box=ROUNDED,

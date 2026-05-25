@@ -101,5 +101,5 @@ LEMMA_CARDS_DIR=/path/to/your/cards npx @artano-ai/mcp-server
 * [`getting-started.md`](./getting-started.md) for the bigger
   picture.
 * The server's own README in
-  [`../mcp-server/README.md`](../mcp-server/README.md) for
+  [`../mcp-server/README.md`](https://github.com/artano-ai/lemma/blob/main/mcp-server/README.md) for
   contributor-level detail.

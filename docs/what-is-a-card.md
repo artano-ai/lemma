@@ -6,7 +6,7 @@ corpus in `cards/` is a curated collection of cards organised by
 domain.
 
 Every card validates against the JSON Schema at
-[`../schema/card.v0.1.json`](../schema/card.v0.1.json).
+[`../schema/card.v0.1.json`](https://github.com/artano-ai/lemma/blob/main/schema/card.v0.1.json).
 
 ## Four kinds
 
@@ -104,7 +104,7 @@ and benefit every domain.
 
 ## See also
 
-* [`schema/card.v0.1.json`](../schema/card.v0.1.json) — the
+* [`schema/card.v0.1.json`](https://github.com/artano-ai/lemma/blob/main/schema/card.v0.1.json) — the
   authoritative wire format.
 * [`contributing-cards.md`](./contributing-cards.md) — how to author
   a new card, with the bronze / silver / gold review tiers.

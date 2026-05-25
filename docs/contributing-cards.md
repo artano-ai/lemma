@@ -94,7 +94,7 @@ discussion + (for `gold`) automated reproduction in CI.
 ## See also
 
 * [`what-is-a-card.md`](./what-is-a-card.md) for the data model.
-* [`schema/card.v0.1.json`](../schema/card.v0.1.json) for the
+* [`schema/card.v0.1.json`](https://github.com/artano-ai/lemma/blob/main/schema/card.v0.1.json) for the
   authoritative wire format.
-* [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the general
+* [`CONTRIBUTING.md`](https://github.com/artano-ai/lemma/blob/main/CONTRIBUTING.md) for the general
   contribution flow.

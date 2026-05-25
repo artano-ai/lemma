@@ -80,6 +80,6 @@ verification today, prefer the Node MCP server.
 
 ## See also
 
-* The SDK's own README in [`../sdk-py/README.md`](../sdk-py/README.md).
+* The SDK's own README in [`../sdk-py/README.md`](https://github.com/artano-ai/lemma/blob/main/sdk-py/README.md).
 * [`what-is-a-card.md`](./what-is-a-card.md) for the data model.
 * [`mcp-server.md`](./mcp-server.md) for the Node alternative.

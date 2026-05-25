@@ -29,3 +29,6 @@ venv/
 
 # Logs
 *.log
+
+# Docs build output (mkdocs build → site/)
+/site/

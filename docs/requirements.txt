@@ -1,0 +1,17 @@
+# Documentation build deps for docs.openlemma.dev.
+#
+# Install with:
+#   pip install -r docs/requirements.txt
+#   pip install -e ./sdk-py   # so mkdocstrings can autodoc artano-lemma
+#
+# Then locally:
+#   mkdocs serve              # live-reload on http://127.0.0.1:8000
+#   mkdocs build --strict     # one-shot build into ./site
+
+mkdocs-material>=9.5
+mkdocs-material[imaging]>=9.5
+mkdocstrings[python]>=0.27
+pymdown-extensions>=10.0
+mkdocs-section-index>=0.3
+mkdocs-glightbox>=0.4
+mkdocs-minify-plugin>=0.8

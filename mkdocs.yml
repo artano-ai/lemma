@@ -1,0 +1,171 @@
+# MkDocs Material configuration for docs.openlemma.dev.
+#
+# Source of truth: docs/*.md (hand-written) + autodoc pages that
+# read docstrings from sdk-py/artano_lemma/ at build time.
+#
+# Build:    pip install -r docs/requirements.txt && mkdocs build
+# Serve:    mkdocs serve
+
+site_name: Lemma
+site_description: Open verification substrate for AI-generated scientific code.
+site_url: https://docs.openlemma.dev/
+site_author: Atomira Technologies, S.L.
+
+repo_name: artano-ai/lemma
+repo_url: https://github.com/artano-ai/lemma
+edit_uri: edit/main/docs/
+
+copyright: >
+  Copyright &copy; 2026 Atomira Technologies, S.L. ·
+  schema MIT · cards CC-BY 4.0 · engine + SDKs Apache-2.0
+
+docs_dir: docs
+site_dir: site
+
+# README.md is kept for GitHub-folder-browsing landing; the hosted
+# site uses index.md as the home page instead.
+exclude_docs: |
+  README.md
+  requirements.txt
+
+theme:
+  name: material
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - navigation.expand
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  palette:
+    - scheme: slate
+      primary: black
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - scheme: default
+      primary: white
+      accent: deep purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/artano-ai/lemma
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/artano-lemma/
+    - icon: fontawesome/brands/npm
+      link: https://www.npmjs.com/package/@artano-ai/mcp-server
+  generator: false
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+plugins:
+  - search:
+      separator: '[\s​\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - section-index
+  - glightbox
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            docstring_style: google
+            docstring_section_style: spacy
+            merge_init_into_class: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            line_length: 80
+            filters:
+              - "!^_"
+          paths:
+            - sdk-py
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Concepts:
+      - What is a card: what-is-a-card.md
+      - Architecture: architecture.md
+  - Distribution surfaces:
+      - MCP server (Node): mcp-server.md
+      - Python SDK: sdk-py.md
+  - Reference:
+      - Python API: api/python.md
+      - Cards schema: api/schema.md
+  - Contributing:
+      - Contributing cards: contributing-cards.md

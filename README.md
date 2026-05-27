@@ -22,14 +22,17 @@ lemma/
 │   ├── ops/
 │   └── hypotheses/
 ├── mcp-server/          Node MCP server — @artano-ai/mcp-server (Apache-2.0)
-└── sdk-py/              Python SDK — artano-lemma (Apache-2.0)
+├── sdk-py/              Python SDK — artano-lemma (Apache-2.0)
+└── eval/                Reference clients that consume the engine (Apache-2.0)
+    └── humaneval-sci/   HumanEval-Sci benchmark harness
 ```
 
 The schema and the cards corpus are shared across every distribution
 surface. Two clients are bundled: a Node MCP server for agent runtimes
 that speak the Model Context Protocol, and a Python SDK for
 notebook-first scientific workflows that prefer to call Lemma
-in-process.
+in-process. Reference clients that exercise the engine live under
+`eval/` — currently the HumanEval-Sci benchmark harness.
 
 ## Card variants
 
@@ -62,6 +65,7 @@ npx ajv-cli validate \
 | `cards/` | CC-BY 4.0 |
 | `mcp-server/` | Apache-2.0 |
 | `sdk-py/` | Apache-2.0 |
+| `eval/` | Apache-2.0 |
 
 ## Stewardship
 

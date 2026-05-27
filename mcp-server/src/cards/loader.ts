@@ -13,8 +13,8 @@ import path from 'node:path';
 import type { HypothesisCard, OpsCard, PhysicsCard } from './types.js';
 
 function findCardsDir(): string {
-  if (process.env.ATOMIRA_CARDS_DIR) {
-    return path.resolve(process.env.ATOMIRA_CARDS_DIR);
+  if (process.env.LEMMA_CARDS_DIR) {
+    return path.resolve(process.env.LEMMA_CARDS_DIR);
   }
   const candidates = [
     path.resolve(process.cwd(), '..', 'cards'),
@@ -26,7 +26,7 @@ function findCardsDir(): string {
   }
   throw new Error(
     `Cannot locate cards directory. Tried: ${candidates.join(', ')}. ` +
-      `Set ATOMIRA_CARDS_DIR explicitly to override.`,
+      `Set LEMMA_CARDS_DIR explicitly to override.`,
   );
 }
 

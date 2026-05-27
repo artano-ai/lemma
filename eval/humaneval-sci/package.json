@@ -1,0 +1,33 @@
+{
+  "name": "@artano-ai/humaneval-sci-runner-node",
+  "version": "0.1.0",
+  "description": "HumanEval-Sci Node/TypeScript runner — scores language-model-generated scientific code against functional correctness and Lemma's cross-check engine verdict.",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/runner/runner.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "smoke": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/smoke.ts",
+    "smoke-ab": "LEMMA_CARDS_DIR=../../cards node --env-file-if-exists=.env.local --import=tsx scripts/smoke-ab.ts",
+    "best-of-n-rerank": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/best-of-n-rerank.ts",
+    "test-differential": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-differential.ts",
+    "test-crosscheck-tool": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-crosscheck-tool.ts",
+    "test-stats": "node --import=tsx scripts/test-stats.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^1.50.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

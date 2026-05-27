@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local run output — promote notable runs to the benchmark's landmark set by hand
+results/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+.DS_Store
+*.log

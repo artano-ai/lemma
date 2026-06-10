@@ -10,7 +10,7 @@
  * Usage (once wired):
  *   pnpm tsx runner.ts \
  *     --prompts ../prompts \
- *     --model anthropic:claude-sonnet-4 \
+ *     --model anthropic:claude-sonnet-4-6 \
  *     --output ../results/run-2026-05-04.json
  */
 import fs from 'node:fs';

@@ -2,7 +2,7 @@
  * Runtime path resolution for the eval harness.
  *
  * The harness consumes two external inputs and writes one output:
- *   - the cards corpus (the engine reads it; point ATOMIRA_CARDS_DIR at it)
+ *   - the cards corpus (the engine reads it; point LEMMA_CARDS_DIR at it)
  *   - the benchmark prompts (a separate distribution; supplied at runtime
  *     via HUMANEVAL_SCI_PROMPTS_DIR so it is not pinned to a fixed layout)
  *   - run output, written under this package's own results/ directory;

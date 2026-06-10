@@ -1,43 +1,58 @@
-# HumanEval-Sci — Node / TypeScript runner
+# HumanEval-Sci — evaluation harness
 
-Node / TypeScript implementation of the HumanEval-Sci evaluation
-harness. Parallel to [`../python/`](../python/), and intentionally
-shares:
+A reference client for the HumanEval-Sci benchmark, in TypeScript. It
+drives each prompt through a model adapter, scores the output for
+functional correctness, and cross-checks it against the Lemma engine,
+then writes a run record. It imports the cross-check engine from the
+MCP server in this repo — it *measures* the engine, it does not contain
+a copy of it.
 
-- `../../prompts/` — the 73 prompt JSONs
-- `../../results/` — leaderboard / per-run output JSONs
-- `../../README.md` — the canonical benchmark description
+It is a consumer of two external inputs and is not pinned to a fixed
+layout:
 
-A run produced by either runner lands in the same `results/` folder.
+- **Cards corpus** — the engine reads it. `LEMMA_CARDS_DIR` points at a
+  card tree; the package scripts default it to `../../cards` (this
+  repo's corpus).
+- **Benchmark prompts** — distributed separately. Set
+  `HUMANEVAL_SCI_PROMPTS_DIR` to the prompt set; the scripts fail with a
+  hint if it is unset.
+
+Run output is written to a local `results/` directory; promote notable
+runs to the benchmark's landmark set by hand.
 
 ## Install
 
 ```bash
-cd runners/node
 pnpm install
 ```
 
 ## Commands
 
 ```bash
-pnpm typecheck             # tsc --noEmit
-pnpm smoke                 # reference adapter over every prompt (no API calls)
-pnpm smoke-ab              # A/B run two adapters (needs ../../.env.local)
-pnpm test-differential     # differential scorer sanity check
-pnpm test-stats            # statistical helper checks
+pnpm build                  # tsc
+pnpm typecheck              # tsc --noEmit
+pnpm smoke                  # reference adapter over every prompt (no API calls)
+pnpm smoke-ab               # A/B run two adapters (reads .env.local for API keys)
+pnpm best-of-n-rerank       # best-of-N sampling-time rerank
+pnpm test-differential      # differential scorer sanity check
+pnpm test-crosscheck-tool   # cross-check tool sanity check
+pnpm test-stats             # statistical helper checks
 ```
 
-The `tsx` runner expects the cwd to be `runners/node/`; scripts
-themselves resolve `prompts/` and `results/` relative to their own
-location (three levels up to `humaneval-sci/`).
+The scripts set `LEMMA_CARDS_DIR=../../cards`; supply the prompts
+directory yourself, e.g.
+
+```bash
+HUMANEVAL_SCI_PROMPTS_DIR=/path/to/prompts pnpm smoke
+```
 
 ## Layout
 
 ```
-runners/node/
-├── package.json           @artano-ai/humaneval-sci-runner-node
+.
+├── package.json
 ├── tsconfig.json
-├── runner/                Evaluation loop + model adapters
-├── scorer/                Functional + cross-check verification scorers
-└── scripts/               smoke / A-B / differential / N-sweep / etc.
+├── runner/    evaluation loop, model adapters, path resolution
+├── scorer/    functional + cross-check verification scorers
+└── scripts/   smoke / A-B / best-of-N / differential / stats
 ```

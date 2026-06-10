@@ -19,12 +19,12 @@ Tools provided:
 * :func:`ops_get` — fetch one OpsCard rendered as Markdown.
 * :func:`hypothesis_crosscheck` — run the cross-check engine on a HypothesisCard.
 
-The four are deliberate omissions compared to the Node side: the
-DFT-wedge-specific tools (rag_lookup, parse_siesta_fdf,
-parse_eig_file, generate_slurm) live in the Node mcp-server today
-and are not part of the core Lemma substrate surface. They can be
-ported later as a separate ``artano-lemma-dft`` extension when
-there's pull for them.
+Compared to the Node side, ``rag_lookup`` is omitted here because it
+needs a Postgres + pgvector backend (it lives in the Node
+mcp-server). The DFT-specific tools (parse_siesta_fdf,
+parse_eig_file, generate_slurm) are execution-layer — not part of the
+Lemma verification substrate — and live in the Artano clients and the
+planned execution substrate.
 """
 
 from __future__ import annotations

@@ -43,6 +43,11 @@ dev = [
 lemma = "artano_lemma.cli:main"
 lemma-mcp = "artano_lemma.server:main"
 
+[project.urls]
+Homepage = "https://openlemma.dev"
+Documentation = "https://docs.openlemma.dev"
+Repository = "https://github.com/artano-ai/lemma"
+
 [tool.hatch.build.targets.wheel]
 packages = ["artano_lemma"]
 

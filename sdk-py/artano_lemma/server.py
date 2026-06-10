@@ -25,10 +25,9 @@ Agent runtime config (Claude Code, Cursor, Codex, …)::
     }
 
 Tools exposed: ``cards_list``, ``cards_get``, ``ops_get``,
-``hypothesis_crosscheck``. The four DFT-wedge-specific tools that
-the Node server provides (rag_lookup, parse_siesta_fdf,
-parse_eig_file, generate_slurm) are deliberately omitted here —
-they're not part of the core substrate surface.
+``hypothesis_crosscheck``. ``rag_lookup`` (also provided by the Node
+mcp-server) needs a Postgres + pgvector backend, so it is omitted
+from this lightweight in-process server.
 """
 
 from __future__ import annotations

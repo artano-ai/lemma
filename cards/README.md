@@ -72,16 +72,16 @@ A card is one of four discriminated variants on `kind`:
 Validate any card against the schema with `ajv`:
 
 ```sh
-npx ajv-cli validate \
+npx ajv-cli@5 validate --spec=draft2020 \
   -s ../schema/card.v0.1.json \
   -d "**/*.json"
 ```
 
-Each PR adding or modifying a card runs schema validation, KaTeX render
-check on `formulaTeX` / `proposedFormulaTeX`, reference resolution
-(DOIs / URLs return HTTP 200), and id-uniqueness check. Hypothesis cards
-additionally run through the cross-check engine against the current
-corpus.
+Each PR adding or modifying a card runs schema validation against
+`card.v0.1.json` in CI (the `cards` workflow). Richer checks — KaTeX
+render of `formulaTeX` / `proposedFormulaTeX`, reference resolution
+(DOIs / URLs returning HTTP 200), id-uniqueness, and the hypothesis
+cross-check engine — are planned additions to that workflow.
 
 ## Versioning
 

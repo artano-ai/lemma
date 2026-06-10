@@ -1,0 +1,27 @@
+name: cards
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate cards against the schema
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate every card against schema/card.v0.1.json
+        run: npx ajv-cli@5 validate --spec=draft2020 -s schema/card.v0.1.json -d "cards/**/*.json"

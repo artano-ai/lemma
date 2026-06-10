@@ -25,13 +25,13 @@ Most contributions land here. Cards are JSON files under
 
 1. Pick a domain folder, copy an existing card as a template.
 2. Edit the fields. The schema lives at `schema/card.v0.1.json`.
-3. Validate locally: `npx ajv-cli validate -s schema/card.v0.1.json -d "cards/**/*.json"`.
+3. Validate locally: `npx ajv-cli@5 validate --spec=draft2020 -s schema/card.v0.1.json -d "cards/**/*.json"`.
 4. Open a pull request. The CI runs the same validator.
 
-See [`docs/what-is-a-card.md`](./docs/what-is-a-card.md) and
-[`docs/contributing-cards.md`](./docs/contributing-cards.md) for the
-full card-author guide, including the bronze / silver / gold review
-tiers.
+See the [card concepts](https://docs.openlemma.dev/concepts/cards/) and the
+[card-authoring guide](https://docs.openlemma.dev/guides/authoring-a-card/) at
+docs.openlemma.dev for the full walkthrough, including the bronze / silver /
+gold review tiers.
 
 ### 2. Working on the MCP server
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.atomiralab.eu/card.v0.1.json",
+  "$id": "https://openlemma.dev/schema/card.v0.1.json",
   "title": "Lemma Card",
   "description": "Open schema for Lemma cards. A card is one of four discriminated variants on `kind`. The discriminator is structural, not subject-area: PrincipleCard covers physics, chemistry, biology, climate, mathematics, engineering — they all share the same shape because the verification operations are universal. The actual subject area lives in `domain`.",
   "oneOf": [

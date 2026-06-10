@@ -52,9 +52,9 @@ A card is one of four discriminated variants on `kind`:
 ## Validate any card
 
 ```sh
-npx ajv-cli validate \
-  -s lemma/schema/card.v0.1.json \
-  -d "lemma/cards/**/*.json"
+npx ajv-cli@5 validate --spec=draft2020 \
+  -s schema/card.v0.1.json \
+  -d "cards/**/*.json"
 ```
 
 ## Licensing

@@ -1,8 +1,8 @@
 /**
  * Cards loader — reads the canonical card corpus from
- * `repo/lemma/cards/**\/*.json` at module-init time. Mirrors the
- * artano-researcher's loader but lives in the MCP server's own tree so the
- * server is shippable without a workspace package dependency.
+ * `repo/lemma/cards/**\/*.json` at module-init time. Self-contained in the
+ * MCP server's own tree so the server ships without an external
+ * package dependency.
  *
  * On-disk and in-memory both use `kind: "principle"` as the structural
  * discriminator (per lemma/schema/card.v0.1.json).
@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { HypothesisCard, OpsCard, PhysicsCard } from './types.js';
+import type { HypothesisCard, OpsCard, PrincipleCard } from './types.js';
 
 function findCardsDir(): string {
   if (process.env.LEMMA_CARDS_DIR) {
@@ -75,17 +75,17 @@ function isOpsRecord(card: unknown): boolean {
 }
 
 function loadAll(): {
-  principles: PhysicsCard[];
+  principles: PrincipleCard[];
   hypotheses: HypothesisCard[];
   ops: OpsCard[];
 } {
-  const principles: PhysicsCard[] = [];
+  const principles: PrincipleCard[] = [];
   const hypotheses: HypothesisCard[] = [];
   const ops: OpsCard[] = [];
   for (const filePath of ALL_CARD_FILES) {
     const json = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     if (isPrincipleRecord(json)) {
-      principles.push(json as PhysicsCard);
+      principles.push(json as PrincipleCard);
     } else if (isHypothesisRecord(json)) {
       hypotheses.push(json as HypothesisCard);
     } else if (isOpsRecord(json)) {
@@ -97,12 +97,11 @@ function loadAll(): {
 
 const { principles, hypotheses, ops } = loadAll();
 
-export const PHYSICS_CARDS: PhysicsCard[] = principles;
-export const ALL_CARDS: PhysicsCard[] = principles;
+export const ALL_CARDS: PrincipleCard[] = principles;
 export const HYPOTHESIS_CARDS: HypothesisCard[] = hypotheses;
 export const OPS_CARDS: OpsCard[] = ops;
 
-export function findPhysicsCard(id: string): PhysicsCard | undefined {
+export function findPrincipleCard(id: string): PrincipleCard | undefined {
   return ALL_CARDS.find((c) => c.id === id);
 }
 

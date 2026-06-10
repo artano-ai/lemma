@@ -1,24 +1,33 @@
 {
   "name": "@artano-ai/mcp-server",
   "version": "0.1.0",
-  "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and scientific computing helpers (Siesta parsers, SLURM script generation, RAG retrieval) to any MCP-compatible client.",
+  "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and RAG retrieval to any MCP-compatible client.",
   "license": "Apache-2.0",
-  "private": true,
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artano-ai/lemma.git",
+    "directory": "mcp-server"
+  },
+  "homepage": "https://openlemma.dev",
   "bin": {
     "lemma-mcp-server": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc",
     "dev": "node --env-file-if-exists=.env.local --import=tsx src/index.ts",
     "start": "node --env-file-if-exists=.env.local dist/index.js",
-    "typecheck": "tsc --noEmit",
-    "smoke": "node --env-file-if-exists=.env.local --import=tsx scripts/smoke-test.ts"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",

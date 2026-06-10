@@ -4,7 +4,7 @@ let pool: Pool | undefined;
 let currentDsn = '';
 
 function getDsn(): string {
-  return (process.env.ATOMIRA_RAG_DSN ?? '').trim();
+  return (process.env.LEMMA_RAG_DSN ?? '').trim();
 }
 
 export function getPool(): Pool | null {
@@ -42,8 +42,8 @@ export async function disposePool(): Promise<void> {
 }
 
 export function getRagSchema(): string {
-  const raw = (process.env.ATOMIRA_RAG_SCHEMA ?? 'atomira_lab').trim();
+  const raw = (process.env.LEMMA_RAG_SCHEMA ?? 'atomira_lab').trim();
   const cleaned = raw.replace(/[^a-zA-Z0-9_]/g, '');
-  if (!cleaned) throw new Error(`Invalid ATOMIRA_RAG_SCHEMA: ${raw}`);
+  if (!cleaned) throw new Error(`Invalid LEMMA_RAG_SCHEMA: ${raw}`);
   return cleaned;
 }

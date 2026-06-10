@@ -20,24 +20,24 @@ function envStr(name: string, fallback: string): string {
 }
 
 export function configFromEnv(): EmbedderConfig {
-  const provider = envStr('ATOMIRA_EMBEDDING_PROVIDER', 'transformers') as EmbedderProvider;
-  const dim = envInt('ATOMIRA_EMBEDDING_DIM', 768);
+  const provider = envStr('LEMMA_EMBEDDING_PROVIDER', 'transformers') as EmbedderProvider;
+  const dim = envInt('LEMMA_EMBEDDING_DIM', 768);
 
   if (provider === 'transformers') {
     return {
       provider: 'transformers',
-      model: envStr('ATOMIRA_TRANSFORMERS_MODEL', 'onnx-community/Qwen3-Embedding-0.6B-ONNX'),
-      dtype: envStr('ATOMIRA_TRANSFORMERS_DTYPE', 'q8') as Dtype,
-      pooling: envStr('ATOMIRA_TRANSFORMERS_POOLING', 'last_token') as Pooling,
-      instruction: envStr('ATOMIRA_TRANSFORMERS_INSTRUCTION', '') || undefined,
+      model: envStr('LEMMA_TRANSFORMERS_MODEL', 'onnx-community/Qwen3-Embedding-0.6B-ONNX'),
+      dtype: envStr('LEMMA_TRANSFORMERS_DTYPE', 'q8') as Dtype,
+      pooling: envStr('LEMMA_TRANSFORMERS_POOLING', 'last_token') as Pooling,
+      instruction: envStr('LEMMA_TRANSFORMERS_INSTRUCTION', '') || undefined,
       dim,
     };
   }
 
   return {
     provider: 'gemini',
-    apiKey: envStr('ATOMIRA_GEMINI_API_KEY', ''),
-    model: envStr('ATOMIRA_GEMINI_EMBEDDING_MODEL', 'gemini-embedding-001'),
+    apiKey: envStr('LEMMA_GEMINI_API_KEY', ''),
+    model: envStr('LEMMA_GEMINI_EMBEDDING_MODEL', 'gemini-embedding-001'),
     dim,
   };
 }

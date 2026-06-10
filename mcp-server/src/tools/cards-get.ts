@@ -3,7 +3,7 @@ import {
   OPS_CARDS,
   findHypothesisCard,
   findOpsCard,
-  findPhysicsCard,
+  findPrincipleCard,
 } from '../cards/seed.js';
 import type { McpTool } from './types.js';
 
@@ -28,7 +28,7 @@ export const cardsGetTool: McpTool = {
       throw new Error('Empty id.');
     }
 
-    const principle = findPhysicsCard(id);
+    const principle = findPrincipleCard(id);
     if (principle) {
       return JSON.stringify(principle, null, 2);
     }

@@ -1,11 +1,10 @@
 /**
- * Minimal card schema types for the MCP server. Mirrors the fragment of
- * artano-researcher/lib/types.ts required by the cards.* and hypothesis.*
- * tools. The canonical schema lives in lemma/schema/card.v0.1.json; this
- * file is a hand-typed projection of it.
+ * Minimal card schema types for the MCP server, covering the fragment
+ * the cards.* and hypothesis.* tools need. The canonical schema lives in
+ * `schema/card.v0.1.json`; this file is a hand-typed projection of it.
  */
 
-export interface PhysicsCard {
+export interface PrincipleCard {
   /** Card-shape discriminator. 'principle' is the structural type, NOT the
    *  scientific subject — use `domain` for that. */
   kind: 'principle';

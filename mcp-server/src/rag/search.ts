@@ -12,7 +12,7 @@ export async function searchRag(query: string, k: number): Promise<RagHit[]> {
   const pool = getPool();
   if (!pool) {
     throw new Error(
-      'RAG store not configured. Set ATOMIRA_RAG_DSN to your Postgres connection string.',
+      'RAG store not configured. Set LEMMA_RAG_DSN to your Postgres connection string.',
     );
   }
 

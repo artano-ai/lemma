@@ -1,6 +1,6 @@
 /**
- * Hypothesis cross-check engine — port of artano-researcher/lib/hypothesis/checks.ts.
- * Takes a HypothesisCard + the live PhysicsCard registry, runs the four
+ * Hypothesis cross-check engine.
+ * Takes a HypothesisCard + the live PrincipleCard registry, runs the four
  * declared check classes, returns an EvaluateResult.
  *
  * v0:
@@ -18,14 +18,14 @@ import type {
   EvaluateResult,
   HypothesisCard,
   LimitCheckSpec,
-  PhysicsCard,
+  PrincipleCard,
   ReferenceCorpusCheckSpec,
   UsceCheck,
 } from './types.js';
 import { dimsEqual, stringifyDims } from './dimensional.js';
 
 export interface RunHypothesisChecksOptions {
-  corpus: PhysicsCard[];
+  corpus: PrincipleCard[];
 }
 
 export function runHypothesisChecks(
@@ -96,7 +96,7 @@ function checkDimensional(spec: DimensionalCheckSpec): UsceCheck {
 
 function checkReferenceCorpus(
   spec: ReferenceCorpusCheckSpec,
-  corpus: PhysicsCard[],
+  corpus: PrincipleCard[],
 ): UsceCheck {
   const known = new Set(corpus.map((c) => c.id));
   const must = spec.mustAgreeWith ?? [];
@@ -119,7 +119,7 @@ function checkReferenceCorpus(
   };
 }
 
-function checkLimit(spec: LimitCheckSpec, corpus: PhysicsCard[]): UsceCheck {
+function checkLimit(spec: LimitCheckSpec, corpus: PrincipleCard[]): UsceCheck {
   const knownIds = new Set(corpus.map((c) => c.id));
   const reducesToCard = knownIds.has(spec.expectedReducesTo);
   return {
@@ -141,7 +141,7 @@ function checkConservationLaw(spec: ConservationLawSpec): UsceCheck {
 
 function checkDerivedFrom(
   spec: NonNullable<HypothesisCard['derivedFrom']>,
-  corpus: PhysicsCard[],
+  corpus: PrincipleCard[],
 ): UsceCheck {
   const known = new Set(corpus.map((c) => c.id));
   if (!known.has(spec.cardId)) {

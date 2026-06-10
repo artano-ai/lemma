@@ -27,7 +27,7 @@ export const ragLookupTool: McpTool = {
 
     const hits = await searchRag(query, k);
     if (hits.length === 0) {
-      return 'No matches in the local RAG corpus. The index may be empty — run the bootstrap and indexing scripts in artano-code/rag/ first.';
+      return 'No matches in the local RAG corpus. The index may be empty — build and populate the pgvector `chunks` table first.';
     }
 
     const blocks = hits.map((h, i) => {

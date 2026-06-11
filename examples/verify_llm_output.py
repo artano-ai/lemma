@@ -52,7 +52,11 @@ SYSTEM = (
     'literal string "llm"), references (array of strings), and checks. Inside '
     'checks include a "dimensional" object with lhsLabel, lhsDims, rhsLabel, '
     "rhsDims, where each *Dims is an object of integer exponents over the axes "
-    "L, T, M, E, Q, Theta, N (omit axes that are zero)."
+    "L, T, M, E, Q, Theta, N (omit axes that are zero). Also include in the "
+    'dimensional object an "expr" field (a plain-ASCII expression for the '
+    'right-hand side, e.g. "(1/2)*m*v**2") and a "symbols" map from each symbol '
+    "in expr to its dimension object, so the engine can derive the dimensions "
+    "from the formula."
 )
 
 USER = (
@@ -94,8 +98,8 @@ def extract_json(text: str) -> dict:
 
 def verify(raw: str) -> None:
     """Run the model's output through Lemma and print the verdict."""
-    print("\n--- model output (truncated) ---")
-    print(raw[:600].rstrip())
+    print("\n--- model output (verbatim) ---")
+    print(raw)
 
     try:
         payload = extract_json(raw)

@@ -22,7 +22,7 @@ import type {
   ReferenceCorpusCheckSpec,
   UsceCheck,
 } from './types.js';
-import { dimsEqual, stringifyDims } from './dimensional.js';
+import { deriveDims, DimDerivationError, dimsEqual, stringifyDims } from './dimensional.js';
 
 export interface RunHypothesisChecksOptions {
   corpus: PrincipleCard[];
@@ -80,17 +80,48 @@ export function runHypothesisChecks(
 }
 
 function checkDimensional(spec: DimensionalCheckSpec): UsceCheck {
+  // With a formula (`expr`) + per-symbol dims (`symbols`), derive the RHS
+  // dimensions and check them against lhsDims — verifying the equation, not
+  // just the declared rhsDims. Non-derivable expressions fall back so we
+  // never emit a fabricated verdict.
+  if (spec.expr && spec.symbols) {
+    try {
+      const derived = deriveDims(spec.expr, spec.symbols);
+      if (dimsEqual(spec.lhsDims, derived)) {
+        return {
+          name: 'Hypothesis.dimensional_analysis',
+          severity: 'pass',
+          detail: `Derived from formula: ${spec.rhsLabel} = ${stringifyDims(derived)} matches LHS [${spec.lhsLabel}] = ${stringifyDims(spec.lhsDims)}`,
+        };
+      }
+      return {
+        name: 'Hypothesis.dimensional_analysis',
+        severity: 'fail',
+        detail: `Dimensional mismatch — the formula ${spec.rhsLabel} derives to ${stringifyDims(derived)}, but LHS [${spec.lhsLabel}] is ${stringifyDims(spec.lhsDims)}. The proposed equation does not hold dimensionally.`,
+      };
+    } catch (err) {
+      if (!(err instanceof DimDerivationError)) throw err;
+      return declaredDimensional(
+        spec,
+        ` (formula not derivable — ${err.message}; compared declared vectors)`,
+      );
+    }
+  }
+  return declaredDimensional(spec);
+}
+
+function declaredDimensional(spec: DimensionalCheckSpec, note = ''): UsceCheck {
   if (dimsEqual(spec.lhsDims, spec.rhsDims)) {
     return {
       name: 'Hypothesis.dimensional_analysis',
       severity: 'pass',
-      detail: `LHS [${spec.lhsLabel}] = ${stringifyDims(spec.lhsDims)} matches RHS [${spec.rhsLabel}] = ${stringifyDims(spec.rhsDims)}`,
+      detail: `LHS [${spec.lhsLabel}] = ${stringifyDims(spec.lhsDims)} matches RHS [${spec.rhsLabel}] = ${stringifyDims(spec.rhsDims)}${note}`,
     };
   }
   return {
     name: 'Hypothesis.dimensional_analysis',
     severity: 'fail',
-    detail: `Dimensional mismatch — LHS ${stringifyDims(spec.lhsDims)} vs RHS ${stringifyDims(spec.rhsDims)}. The proposed equation is not even a candidate without a missing factor.`,
+    detail: `Dimensional mismatch — LHS ${stringifyDims(spec.lhsDims)} vs RHS ${stringifyDims(spec.rhsDims)}. The proposed equation is not even a candidate without a missing factor.${note}`,
   };
 }
 

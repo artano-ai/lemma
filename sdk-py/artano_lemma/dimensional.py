@@ -95,9 +95,90 @@ def is_dimensionless(v: DimVecLike) -> bool:
     return all(_get(v, axis) == 0 for axis in AXES)
 
 
+class DerivationError(ValueError):
+    """Raised when an expression cannot be reduced to dimensions
+    deterministically. The caller falls back to the declared vectors
+    rather than guess."""
+
+
+def _zero() -> dict[str, int]:
+    return {axis: 0 for axis in AXES}
+
+
+def _canon(v: DimVecLike) -> dict[str, int]:
+    return {axis: _get(v, axis) for axis in AXES}
+
+
+def _combine(a: dict[str, int], b: dict[str, int], sign: int) -> dict[str, int]:
+    return {axis: a[axis] + sign * b[axis] for axis in AXES}
+
+
+def _scale(a: dict[str, int], n: int) -> dict[str, int]:
+    return {axis: a[axis] * n for axis in AXES}
+
+
+def derive_dims(expr: str, symbols: Mapping[str, DimVecLike]) -> dict[str, int]:
+    """Derive the dimensions of an ASCII expression from per-symbol dims.
+
+    Supports ``+ - * /``, integer ``**``, parentheses, unary signs, and
+    numeric literals (dimensionless). Raises :class:`DerivationError` on
+    anything that cannot be resolved deterministically — a function call, a
+    fractional or symbolic power, an undeclared symbol — so the caller can
+    fall back to the declared vectors rather than emit a guess.
+    """
+    import ast
+
+    table = {name: _canon(dims) for name, dims in symbols.items()}
+
+    def exponent(node: ast.AST) -> int:
+        if isinstance(node, ast.Constant) and isinstance(node.value, int) and not isinstance(node.value, bool):
+            return node.value
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.USub):
+            return -exponent(node.operand)
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.UAdd):
+            return exponent(node.operand)
+        raise DerivationError("exponent is not an integer literal")
+
+    def walk(node: ast.AST) -> dict[str, int]:
+        if isinstance(node, ast.Constant):
+            if isinstance(node.value, bool) or not isinstance(node.value, (int, float)):
+                raise DerivationError(f"non-numeric constant {node.value!r}")
+            return _zero()
+        if isinstance(node, ast.Name):
+            if node.id not in table:
+                raise DerivationError(f"undeclared symbol {node.id!r}")
+            return dict(table[node.id])
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+            return walk(node.operand)
+        if isinstance(node, ast.BinOp):
+            if isinstance(node.op, ast.Mult):
+                return _combine(walk(node.left), walk(node.right), 1)
+            if isinstance(node.op, ast.Div):
+                return _combine(walk(node.left), walk(node.right), -1)
+            if isinstance(node.op, ast.Pow):
+                return _scale(walk(node.left), exponent(node.right))
+            if isinstance(node.op, (ast.Add, ast.Sub)):
+                left, right = walk(node.left), walk(node.right)
+                if left != right:
+                    raise DerivationError(
+                        "added terms differ dimensionally: "
+                        f"{stringify_dims(left)} vs {stringify_dims(right)}"
+                    )
+                return left
+        raise DerivationError(f"unsupported expression: {type(node).__name__}")
+
+    try:
+        tree = ast.parse(expr, mode="eval")
+    except SyntaxError as exc:
+        raise DerivationError(f"could not parse {expr!r}: {exc}") from exc
+    return walk(tree.body)
+
+
 __all__ = [
     "AXES",
     "DimVecLike",
+    "DerivationError",
+    "derive_dims",
     "dims_equal",
     "stringify_dims",
     "is_dimensionless",

@@ -61,6 +61,12 @@ export interface DimensionalCheckSpec {
   lhsDims: DimVec;
   rhsLabel: string;
   rhsDims: DimVec;
+  /** Optional plain-ASCII RHS expression, e.g. "(1/2)*m*v**2". With
+   *  `symbols`, the engine derives the RHS dimensions from the formula and
+   *  checks them against lhsDims instead of trusting the declared rhsDims. */
+  expr?: string;
+  /** Optional map of symbol name to its dimension vector. */
+  symbols?: Record<string, DimVec>;
 }
 
 export interface LimitCheckSpec {

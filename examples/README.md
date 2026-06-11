@@ -12,6 +12,7 @@ python verify_hypothesis.py   # then run any example below
 | Example | Layer it shows | What it does |
 |---|---|---|
 | [`verify_hypothesis.py`](verify_hypothesis.py) | cross-check **engine** | Runs a well-formed and a dimensionally-broken hypothesis → `NONE` vs `HIGH` |
+| [`derive_dimensions.py`](derive_dimensions.py) | **formula-derived** dims | Engine derives dims from the formula (`expr` + `symbols`); catches "declares energy but the formula is m·v" |
 | [`browse_cards.py`](browse_cards.py) | **corpus** access | Load, count, filter, and read cards from the corpus |
 | [`validate_card.py`](validate_card.py) | **schema** validation | Parse a good card; reject a malformed one with structured errors |
 | [`use_mcp_tools.py`](use_mcp_tools.py) | the **MCP tool** surface | Call `cards_list` / `cards_get` / `ops_get` / `hypothesis_crosscheck` as plain functions |
@@ -29,6 +30,17 @@ Broken hypothesis (E = m v) …  verdict: HIGH  (0/1 checks pass)  [fail] dimens
 
 `E = m v` is caught purely on dimensions — energy is `M·L²·T⁻²`, `m v` is
 `M·L·T⁻¹` — so a physically-wrong proposal never reaches a human reviewer.
+
+## `derive_dimensions.py`
+
+The dimensional check can **derive** a proposal's dimensions from the formula
+(`expr` + `symbols`) rather than only comparing the declared vectors — so it
+catches a card that declares energy on both sides but whose formula is `m·v`:
+
+```
+E = ½mv²  →  pass   (Derived from formula: … = M·L²·T⁻² matches LHS [E])
+E = m v   →  fail   (the formula m v derives to M·L·T⁻¹, but LHS [E] is M·L²·T⁻²)
+```
 
 ## `browse_cards.py`
 

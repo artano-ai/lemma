@@ -33,7 +33,7 @@ from __future__ import annotations
 
 from typing import Iterable, Sequence
 
-from .dimensional import dims_equal, stringify_dims
+from .dimensional import DerivationError, derive_dims, dims_equal, stringify_dims
 from .types import (
     Card,
     ConservationLawSpec,
@@ -132,13 +132,50 @@ def run_hypothesis_checks(
 
 
 def _check_dimensional(spec: DimensionalCheckSpec) -> UsceCheck:
+    # When the card supplies the formula (`expr`) and per-symbol dimensions
+    # (`symbols`), derive the RHS dimensions from the formula itself and check
+    # them against `lhsDims` — verifying the equation, not just the author's
+    # declared `rhsDims`. Anything non-derivable falls back to the declared
+    # comparison so we never emit a fabricated verdict.
+    if spec.expr and spec.symbols:
+        try:
+            derived = derive_dims(spec.expr, spec.symbols)
+        except DerivationError as exc:
+            return _declared_dimensional(
+                spec,
+                note=f" (formula not derivable — {exc}; compared declared vectors)",
+            )
+        if dims_equal(spec.lhsDims, derived):
+            return UsceCheck(
+                name="Hypothesis.dimensional_analysis",
+                severity="pass",
+                detail=(
+                    f"Derived from formula: {spec.rhsLabel} = "
+                    f"{stringify_dims(derived)} matches LHS [{spec.lhsLabel}] = "
+                    f"{stringify_dims(spec.lhsDims)}"
+                ),
+            )
+        return UsceCheck(
+            name="Hypothesis.dimensional_analysis",
+            severity="fail",
+            detail=(
+                f"Dimensional mismatch — the formula {spec.rhsLabel} derives to "
+                f"{stringify_dims(derived)}, but LHS [{spec.lhsLabel}] is "
+                f"{stringify_dims(spec.lhsDims)}. The proposed equation does not "
+                f"hold dimensionally."
+            ),
+        )
+    return _declared_dimensional(spec)
+
+
+def _declared_dimensional(spec: DimensionalCheckSpec, note: str = "") -> UsceCheck:
     if dims_equal(spec.lhsDims, spec.rhsDims):
         return UsceCheck(
             name="Hypothesis.dimensional_analysis",
             severity="pass",
             detail=(
                 f"LHS [{spec.lhsLabel}] = {stringify_dims(spec.lhsDims)} "
-                f"matches RHS [{spec.rhsLabel}] = {stringify_dims(spec.rhsDims)}"
+                f"matches RHS [{spec.rhsLabel}] = {stringify_dims(spec.rhsDims)}{note}"
             ),
         )
     return UsceCheck(
@@ -147,7 +184,7 @@ def _check_dimensional(spec: DimensionalCheckSpec) -> UsceCheck:
         detail=(
             f"Dimensional mismatch — LHS {stringify_dims(spec.lhsDims)} vs "
             f"RHS {stringify_dims(spec.rhsDims)}. The proposed equation is "
-            f"not even a candidate without a missing factor."
+            f"not even a candidate without a missing factor.{note}"
         ),
     )
 

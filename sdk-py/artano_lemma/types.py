@@ -142,6 +142,8 @@ class DimensionalCheckSpec(BaseModel):
     lhsDims: DimVec
     rhsLabel: str
     rhsDims: DimVec
+    expr: str | None = None
+    symbols: dict[str, DimVec] | None = None
 
 
 class LimitCheckSpec(BaseModel):

@@ -47,6 +47,8 @@ from .client import (
 )
 from .dimensional import (
     AXES,
+    DerivationError,
+    derive_dims,
     dims_equal,
     is_dimensionless,
     stringify_dims,
@@ -136,6 +138,8 @@ __all__ = [
     "ValidationIssue",
     # dimensional algebra
     "AXES",
+    "DerivationError",
+    "derive_dims",
     "dims_equal",
     "stringify_dims",
     "is_dimensionless",

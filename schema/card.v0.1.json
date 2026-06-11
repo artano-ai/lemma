@@ -155,7 +155,16 @@
             "lhsLabel": { "type": "string" },
             "lhsDims":  { "$ref": "#/$defs/DimVec" },
             "rhsLabel": { "type": "string" },
-            "rhsDims":  { "$ref": "#/$defs/DimVec" }
+            "rhsDims":  { "$ref": "#/$defs/DimVec" },
+            "expr": {
+              "type": "string",
+              "description": "Optional plain-ASCII expression for the right-hand side (e.g. \"(1/2)*m*v**2\"). When given with `symbols`, the engine derives the RHS dimensions from the formula and checks them against lhsDims, instead of trusting the declared rhsDims."
+            },
+            "symbols": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/$defs/DimVec" },
+              "description": "Optional map of symbol name to its dimension vector, used to derive `expr`'s dimensions (e.g. { \"m\": {\"M\":1}, \"v\": {\"L\":1,\"T\":-1} })."
+            }
           },
           "additionalProperties": false
         },

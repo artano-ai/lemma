@@ -51,8 +51,12 @@ SYSTEM = (
     "name, proposal (one sentence), proposedFormulaTeX (LaTeX), origin (the "
     'literal string "llm"), references (array of strings), and checks. Inside '
     'checks include a "dimensional" object with lhsLabel, lhsDims, rhsLabel, '
-    "rhsDims, where each *Dims is an object of integer exponents over the axes "
-    "L, T, M, E, Q, Theta, N (omit axes that are zero). Also include in the "
+    "rhsDims, where each *Dims is an object whose KEYS are SINGLE axis letters "
+    "from L, T, M, E, Q, Theta, N and whose VALUES are integer exponents. Do "
+    'NOT write keys like "L^2" or "T^-2" — the power goes in the VALUE, so '
+    '"L squared" is {"L": 2} and "per second squared" is {"T": -2}. A velocity '
+    'is {"L": 1, "T": -1}; an energy is {"M": 1, "L": 2, "T": -2}; omit zero '
+    "axes. Also include in the "
     'dimensional object an "expr" field (a plain-ASCII expression for the '
     'right-hand side, e.g. "(1/2)*m*v**2") and a "symbols" map from each symbol '
     "in expr to its dimension object, so the engine can derive the dimensions "

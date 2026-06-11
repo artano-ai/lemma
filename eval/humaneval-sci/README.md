@@ -46,6 +46,31 @@ directory yourself, e.g.
 HUMANEVAL_SCI_PROMPTS_DIR=/path/to/prompts pnpm smoke
 ```
 
+## Test a model through verification
+
+`smoke-ab` runs an A/B for any model — **control** (model alone) vs **treatment**
+(model + Lemma tools) — and scores each candidate on functional pass-rate *and*
+the Lemma cross-check verdict.
+
+```bash
+# local open-weights via Ollama (run `ollama serve`, pull the model first)
+HUMANEVAL_SCI_PROMPTS_DIR=/path/to/prompts \
+  pnpm smoke-ab --ollama --model llama3.1:8b --max-prompts 5
+
+# Gemini (needs GEMINI_API_KEY in .env.local)
+HUMANEVAL_SCI_PROMPTS_DIR=/path/to/prompts pnpm smoke-ab --model gemini-2.5-flash
+
+# any OpenAI-compatible endpoint (hosted Llama, vLLM, …)
+OPENAI_COMPAT_API_KEY=… HUMANEVAL_SCI_PROMPTS_DIR=/path/to/prompts \
+  pnpm smoke-ab --ollama --base-url https://host/v1 \
+    --model meta-llama/Meta-Llama-3.1-70B-Instruct
+```
+
+Adapters live in `runner/adapters/` (Ollama, Gemini, Anthropic); a new model is a
+small adapter implementing `generate(prompt) -> { candidate, usage, trace }`. For
+a quick LLM-in-the-loop check **without** the benchmark prompts, see
+`../../examples/verify_llm_output.py`.
+
 ## Layout
 
 ```

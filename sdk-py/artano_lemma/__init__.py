@@ -56,7 +56,7 @@ from .dimensional import (
     is_dimensionless,
     stringify_dims,
 )
-from .engine import run_hypothesis_checks
+from .engine import run_hypothesis_checks, run_usce_checks
 from .tools import (
     cards_get,
     cards_list,
@@ -148,6 +148,7 @@ __all__ = [
     "is_dimensionless",
     # engine
     "run_hypothesis_checks",
+    "run_usce_checks",
     # tools (pure-Python implementations of the MCP tool surface)
     "cards_list",
     "cards_get",

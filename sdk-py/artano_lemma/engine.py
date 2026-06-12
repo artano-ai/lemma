@@ -34,7 +34,7 @@ implementations gets zero noise.
 
 from __future__ import annotations
 
-from typing import Iterable, Sequence
+from typing import Iterable, Mapping, Sequence
 
 from .dimensional import DerivationError, derive_dims, dims_equal, stringify_dims
 from .types import (
@@ -281,6 +281,95 @@ def _check_derived_from(spec: DerivedFrom, corpus: Sequence[Card]) -> UsceCheck:
     )
 
 
+# ---------------------------------------------------------------------------
+# USCE — verifying a finished output against a card's validation envelopes
+# ---------------------------------------------------------------------------
+
+
+def _envelope_bounds(env: object) -> tuple[float, float] | None:
+    """Read a ``[min, max]`` range from a validationEnvelope value, or
+    ``None`` when the envelope is not a simple numeric range (richer forms
+    are skipped in v1)."""
+    if isinstance(env, (list, tuple)) and len(env) == 2 and all(
+        isinstance(x, (int, float)) and not isinstance(x, bool) for x in env
+    ):
+        return float(env[0]), float(env[1])
+    if isinstance(env, dict):
+        lo, hi = env.get("min"), env.get("max")
+        if isinstance(lo, (int, float)) and isinstance(hi, (int, float)):
+            return float(lo), float(hi)
+    return None
+
+
+def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
+    """Run the Universal Sanity Check Engine on a finished output.
+
+    Range-checks the numeric values in ``output`` against the
+    ``validationEnvelopes`` declared by ``card``. For each envelope key
+    present in ``output``, the value must fall within the declared
+    ``[min, max]`` range: inside is ``pass``, outside is ``fail`` (the
+    output violates the card's stated bounds). Envelope keys absent from
+    ``output``, and non-range envelopes, are skipped. The overall severity
+    is ``HIGH`` if any check fails, else ``NONE`` — the same worst-wins
+    roll-up the cross-check engine uses.
+
+    v1 scope is the envelope (peak-vs-range) check. Causality and
+    asymptotic-decay checks over time-series outputs are future work.
+    """
+    envelopes = getattr(card, "validationEnvelopes", None) or {}
+    checks: list[UsceCheck] = []
+    for key, env in envelopes.items():
+        bounds = _envelope_bounds(env)
+        if bounds is None or key not in output:
+            continue
+        lo, hi = bounds
+        value = output[key]
+        if lo <= value <= hi:
+            checks.append(
+                UsceCheck(
+                    name=f"USCE.envelope.{key}",
+                    severity="pass",
+                    detail=f"{key} = {value} is within [{lo}, {hi}].",
+                )
+            )
+        else:
+            checks.append(
+                UsceCheck(
+                    name=f"USCE.envelope.{key}",
+                    severity="fail",
+                    detail=(
+                        f"{key} = {value} is outside [{lo}, {hi}] — the output "
+                        f"violates the card's validation envelope."
+                    ),
+                )
+            )
+
+    passing = sum(1 for c in checks if c.severity == "pass")
+    total = len(checks)
+    any_fail = any(c.severity == "fail" for c in checks)
+    severity: OverallSeverity = "HIGH" if any_fail else "NONE"
+
+    if total == 0:
+        diagnosis = (
+            "No validation envelopes overlapped the provided output keys — "
+            "nothing to check. Report the keys the card declares to verify them."
+        )
+    elif any_fail:
+        diagnosis = (
+            "The output violates one or more of the card's validation "
+            "envelopes — a finished result outside the card's stated bounds."
+        )
+    else:
+        diagnosis = "All checked values fall within the card's validation envelopes."
+
+    return EvaluateResult(
+        checks=checks,
+        diagnosis=diagnosis,
+        overall=EvaluateOverall(passing=passing, total=total, severity=severity),
+    )
+
+
 __all__ = [
     "run_hypothesis_checks",
+    "run_usce_checks",
 ]

@@ -13,6 +13,7 @@ import { cardsListTool } from './tools/cards-list.js';
 import { hypothesisCrosscheckTool } from './tools/hypothesis-crosscheck.js';
 import { opsGetTool } from './tools/ops-get.js';
 import { ragLookupTool } from './tools/rag-lookup.js';
+import { usceCheckTool } from './tools/usce-check.js';
 import { disposePool } from './rag/pool.js';
 import type { McpTool } from './tools/types.js';
 
@@ -21,6 +22,7 @@ const TOOLS: McpTool[] = [
   cardsGetTool,
   opsGetTool,
   hypothesisCrosscheckTool,
+  usceCheckTool,
   ragLookupTool,
 ];
 

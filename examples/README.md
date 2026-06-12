@@ -13,6 +13,7 @@ python verify_hypothesis.py   # then run any example below
 |---|---|---|
 | [`verify_hypothesis.py`](verify_hypothesis.py) | cross-check **engine** | Runs a well-formed and a dimensionally-broken hypothesis → `NONE` vs `HIGH` |
 | [`derive_dimensions.py`](derive_dimensions.py) | **formula-derived** dims | Engine derives dims from the formula (`expr` + `symbols`); catches "declares energy but the formula is m·v" |
+| [`usce_check.py`](usce_check.py) | **finished-output** check (USCE) | Range-check a finished result's numbers against a card's validation envelopes |
 | [`browse_cards.py`](browse_cards.py) | **corpus** access | Load, count, filter, and read cards from the corpus |
 | [`validate_card.py`](validate_card.py) | **schema** validation | Parse a good card; reject a malformed one with structured errors |
 | [`use_mcp_tools.py`](use_mcp_tools.py) | the **MCP tool** surface | Call `cards_list` / `cards_get` / `ops_get` / `hypothesis_crosscheck` as plain functions |

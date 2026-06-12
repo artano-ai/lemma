@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "artano-lemma"
-version = "0.1.0a0"
+version = "0.1.0"
 description = "Lemma — open verification substrate for AI-generated scientific code. Python SDK and cross-check engine."
 readme = "README.md"
 license = { text = "Apache-2.0" }

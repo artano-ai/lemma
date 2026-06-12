@@ -1,5 +1,9 @@
 # Lemma
 
+[![CI](https://github.com/artano-ai/lemma/actions/workflows/ci.yml/badge.svg)](https://github.com/artano-ai/lemma/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0%20%C2%B7%20MIT%20%C2%B7%20CC--BY--4.0-blue)](LICENSE)
+[![Schema](https://img.shields.io/badge/schema-JSON%20Schema%202020--12-informational)](schema/card.v0.1.json)
+
 Open verification infrastructure for AI-driven scientific computing.
 
 Lemma is the substrate: an open card corpus, a JSON Schema, generic
@@ -55,6 +59,21 @@ A card is one of four discriminated variants on `kind`:
 npx ajv-cli@5 validate --spec=draft2020 \
   -s schema/card.v0.1.json \
   -d "cards/**/*.json"
+```
+
+## Tests
+
+Every push and pull request runs [CI](.github/workflows/ci.yml): card
+validation, the Python SDK tests, and the MCP server typecheck + tests. To run
+them locally:
+
+```sh
+# Python SDK
+pip install -e "./sdk-py[dev]"
+python -m pytest sdk-py/tests
+
+# MCP server (TypeScript)
+cd mcp-server && pnpm install && pnpm typecheck && pnpm test
 ```
 
 ## Licensing

@@ -70,4 +70,6 @@ Speaks MCP over stdio. Connect any MCP client to it (or use the bundled smoke te
 
 ## License
 
-Apache-2.0.
+Apache-2.0. The cards corpus bundled into the published package
+(`dist/_corpus/`) is CC-BY 4.0 — its `LICENSE` travels with it; attribution to
+Atomira Technologies, S.L. and the Lemma card authors.

@@ -33,8 +33,11 @@ from .types import Card
 
 
 PACKAGE_DIR = Path(__file__).resolve().parent
-LEMMA_ROOT = PACKAGE_DIR.parent.parent
-DEFAULT_SCHEMA_PATH = LEMMA_ROOT / "schema" / "card.v0.1.json"
+LEMMA_ROOT = PACKAGE_DIR.parent.parent  # editable / source install
+_BUNDLED_SCHEMA = PACKAGE_DIR / "_schema" / "card.v0.1.json"
+_REPO_SCHEMA = LEMMA_ROOT / "schema" / "card.v0.1.json"
+# Prefer the schema bundled in the installed wheel; fall back to the repo.
+DEFAULT_SCHEMA_PATH = _BUNDLED_SCHEMA if _BUNDLED_SCHEMA.exists() else _REPO_SCHEMA
 
 
 # ---------------------------------------------------------------------------

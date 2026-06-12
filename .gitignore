@@ -16,6 +16,10 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
+# Corpus + schema bundled into packages at build time (copies of cards/ + schema/)
+sdk-py/artano_lemma/_corpus/
+sdk-py/artano_lemma/_schema/
+
 # Env / secrets
 .env
 .env.*

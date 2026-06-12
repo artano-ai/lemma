@@ -42,3 +42,9 @@ sdk-py/
 └── tests/
     └── test_cards.py
 ```
+
+## License
+
+Apache-2.0. The cards corpus bundled into the installed package
+(`artano_lemma/_corpus/`) is CC-BY 4.0 — its `LICENSE` travels with it;
+attribution to Atomira Technologies, S.L. and the Lemma card authors.

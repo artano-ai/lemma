@@ -12,6 +12,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import type { HypothesisCard, OpsCard, PrincipleCard } from './types.js';
 
@@ -20,6 +21,9 @@ function findCardsDir(): string {
     return path.resolve(process.env.LEMMA_CARDS_DIR);
   }
   const candidates = [
+    // Corpus bundled next to the compiled module (the published npm package).
+    fileURLToPath(new URL('../_corpus', import.meta.url)),
+    // Running from inside the lemma repo (dev / tests).
     path.resolve(process.cwd(), '..', 'cards'),
     path.resolve(process.cwd(), 'cards'),
     path.resolve(process.cwd(), '..', '..', 'lemma', 'cards'),

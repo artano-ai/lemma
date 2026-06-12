@@ -17,6 +17,7 @@ crashing with a bare ``KeyError``.
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Iterator
@@ -29,10 +30,28 @@ from .validator import (
 
 
 PACKAGE_DIR = Path(__file__).resolve().parent
-# sdk-py/artano_lemma/ → sdk-py/ → lemma/
+# Editable / source install: sdk-py/artano_lemma/ → sdk-py/ → lemma/
 LEMMA_ROOT = PACKAGE_DIR.parent.parent
-CARDS_DIR = LEMMA_ROOT / "cards"
-SCHEMA_PATH = LEMMA_ROOT / "schema" / "card.v0.1.json"
+
+
+def _resolve(bundled: Path, repo: Path) -> Path:
+    """Prefer the corpus / schema bundled inside the installed wheel; fall
+    back to the repo layout for editable / source checkouts."""
+    return bundled if bundled.exists() else repo
+
+
+# `LEMMA_CARDS_DIR` overrides everything (point at a private corpus); otherwise
+# use the copy bundled in the wheel if present, else the repo's cards/.
+_ENV_CARDS = os.environ.get("LEMMA_CARDS_DIR")
+CARDS_DIR = (
+    Path(_ENV_CARDS).resolve()
+    if _ENV_CARDS
+    else _resolve(PACKAGE_DIR / "_corpus", LEMMA_ROOT / "cards")
+)
+SCHEMA_PATH = _resolve(
+    PACKAGE_DIR / "_schema" / "card.v0.1.json",
+    LEMMA_ROOT / "schema" / "card.v0.1.json",
+)
 
 
 def cards_root() -> Path:

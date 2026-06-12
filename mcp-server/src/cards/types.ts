@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Minimal card schema types for the MCP server, covering the fragment
  * the cards.* and hypothesis.* tools need. The canonical schema lives in

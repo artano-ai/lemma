@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """
 Sandbox harness for executing a candidate Python function against a
 HumanEval-Sci test case. Invoked by the TypeScript scoreFunctional

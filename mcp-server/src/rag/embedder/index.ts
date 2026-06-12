@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 import type { TransformersConfig } from './transformers.js';
 import type { GeminiConfig } from './gemini.js';
 

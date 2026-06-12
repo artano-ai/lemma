@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Aggregation stats for the A/B runner.
  *

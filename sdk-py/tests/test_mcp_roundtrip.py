@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """End-to-end MCP roundtrip: spawn the Python server, connect via the
 client, exercise every tool over the stdio wire.
 

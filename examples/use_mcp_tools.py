@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """
 The MCP tools, called as plain Python functions.
 

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Anthropic adapter for the HumanEval-Sci runner — runs a prompt through
  * Anthropic's Messages API in either control (no tools) or treatment

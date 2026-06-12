@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Loader for the Lemma cards corpus.
 
 Resolves the cards directory bundled at ``lemma/cards/`` relative to

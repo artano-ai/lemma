@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 import { ALL_CARDS, OPS_CARDS } from '../cards/seed.js';
 import type { McpTool } from './types.js';
 

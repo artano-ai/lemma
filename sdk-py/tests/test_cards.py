@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Sanity tests for the cards loader + the typed parser + the validator."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Unit tests for the pure-Python tool implementations.
 
 These exercise the same functions the MCP server registers, but

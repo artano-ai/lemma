@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Sanity check for lemma_hypothesis_crosscheck. Exercises three paths:
  *   1. By-id lookup of an existing HypothesisCard in the corpus.

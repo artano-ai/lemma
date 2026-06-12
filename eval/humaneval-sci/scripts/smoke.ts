@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Smoke test: run the reference adapter against every prompt in
  * prompts/, score with the real cross-check engine, print a verdict

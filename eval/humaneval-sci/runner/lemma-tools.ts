@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Lemma tool bridge — adapts the open verification engine to a generic
  * "function declaration" shape that any tool-use-capable LLM (Gemini,

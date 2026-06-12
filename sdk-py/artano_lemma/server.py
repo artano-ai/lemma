@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Python MCP server for Lemma.
 
 Thin adapter that exposes :mod:`artano_lemma.tools` as MCP tools

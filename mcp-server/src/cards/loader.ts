@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Cards loader — reads the canonical card corpus from
  * `repo/lemma/cards/**\/*.json` at module-init time. Self-contained in the

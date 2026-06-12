@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Differential scorer — probes the candidate function across a sweep
  * of inputs derived from the prompt's test cases, runs the reference

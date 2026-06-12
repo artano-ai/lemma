@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Tests for formula-derived dimensional analysis."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Hypothesis cross-check engine.
  * Takes a HypothesisCard + the live PrincipleCard registry, runs the four

@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * HumanEval-Sci runner — orchestrates: load prompts → call model →
  * score → write results.

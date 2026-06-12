@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 import { GoogleGenAI } from '@google/genai';
 import type { Embedder, EmbedderProvider } from './index.js';
 

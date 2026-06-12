@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Python MCP client for Lemma.
 
 Thin async wrapper around the official ``mcp`` Python SDK that

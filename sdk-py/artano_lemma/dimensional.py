@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Tiny dimensional algebra.
 
 Port of ``../mcp-server/src/cards/dimensional.ts`` to Python. Cards

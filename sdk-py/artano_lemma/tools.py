@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Tool implementations — the same surface the Node MCP server exposes.
 
 Pure-Python functions, no MCP runtime dependency. The MCP server in

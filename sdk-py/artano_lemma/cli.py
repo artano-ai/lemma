@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Command-line entry point for ``lemma``.
 
 A small inspection surface over the bundled cards corpus, rendered

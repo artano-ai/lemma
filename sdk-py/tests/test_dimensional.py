@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Tests for the dimensional algebra primitives."""
 
 from __future__ import annotations

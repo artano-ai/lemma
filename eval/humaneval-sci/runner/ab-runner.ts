@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * A/B runner — drives a paired control-vs-treatment experiment over
  * a prompt set.

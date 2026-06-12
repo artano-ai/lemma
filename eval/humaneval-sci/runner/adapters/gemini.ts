@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Gemini adapter — runs a prompt through Google's Gemini API in either
  * control (no tools) or treatment (Lemma tools available) condition.

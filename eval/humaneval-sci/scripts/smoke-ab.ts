@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * A/B smoke test — runs every prompt through Gemini in both control
  * (LLM only) and treatment (LLM + Lemma tools) conditions, scores

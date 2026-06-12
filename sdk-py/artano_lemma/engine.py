@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Hypothesis cross-check engine.
 
 Port of ``../mcp-server/src/cards/checks.ts`` to Python. Consumes a

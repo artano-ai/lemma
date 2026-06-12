@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Tiny dimensional algebra. Cards declare both sides of their proposed
  * equation as DimVec (integer exponents on the seven primitive axes), and

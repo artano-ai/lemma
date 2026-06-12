@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Atomira Technologies, S.L.
+
 /**
  * Re-export façade. The corpus is read from
  * `repo/lemma/cards/**\/*.json` via `loader.ts`.

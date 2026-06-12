@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """Lemma — open verification substrate for AI-generated scientific code.
 
 Python SDK. Parallel to the Node distribution at

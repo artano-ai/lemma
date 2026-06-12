@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2026 Atomira Technologies, S.L.
+
 """JSON Schema validation against ``../schema/card.v0.1.json``.
 
 The Pydantic models in :mod:`artano_lemma.types` are a hand-written

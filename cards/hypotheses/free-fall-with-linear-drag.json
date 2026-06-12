@@ -14,7 +14,14 @@
       "lhsLabel": "m * dv/dt  [N]",
       "lhsDims": { "M": 1, "L": 1, "T": -2 },
       "rhsLabel": "-m g - b v  [N]",
-      "rhsDims": { "M": 1, "L": 1, "T": -2 }
+      "rhsDims": { "M": 1, "L": 1, "T": -2 },
+      "expr": "-m*g - b*v",
+      "symbols": {
+        "m": { "M": 1 },
+        "g": { "L": 1, "T": -2 },
+        "b": { "M": 1, "T": -1 },
+        "v": { "L": 1, "T": -1 }
+      }
     },
     "limits": [
       {

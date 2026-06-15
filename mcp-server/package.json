@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and RAG retrieval to any MCP-compatible client.",
   "license": "Apache-2.0",
+  "author": "Arsalan Akhtar (Atomira Technologies, S.L.)",
   "type": "module",
   "publishConfig": {
     "access": "public"

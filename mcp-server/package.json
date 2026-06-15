@@ -1,6 +1,6 @@
 {
   "name": "@artano-ai/mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and RAG retrieval to any MCP-compatible client.",
   "license": "Apache-2.0",
   "author": "Arsalan Akhtar (Atomira Technologies, S.L.)",
@@ -18,6 +18,16 @@
     "lemma-mcp-server": "./dist/index.js"
   },
   "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine.d.ts",
+      "default": "./dist/engine.js"
+    }
+  },
   "files": [
     "dist",
     "README.md",

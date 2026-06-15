@@ -22,8 +22,7 @@
  *     engine as `severity: 'warn'` (claim-recorded). Real symbolic
  *     verification via SymPy / PySR is on the engine roadmap.
  */
-import { runHypothesisChecks } from '../../../mcp-server/src/cards/checks.js';
-import { ALL_CARDS } from '../../../mcp-server/src/cards/loader.js';
+import { runHypothesisChecks, ALL_CARDS } from '@artano-ai/mcp-server/engine';
 import {
   scoreDifferential,
   type DifferentialOptions,
@@ -39,7 +38,7 @@ import type {
   ConservationLawSpec,
   HypothesisCard,
   LimitCheckSpec,
-} from '../../../mcp-server/src/cards/types.js';
+} from '@artano-ai/mcp-server/engine';
 
 const SEVERITY_ORDER: Severity[] = ['NONE', 'LOW', 'MEDIUM', 'HIGH'];
 

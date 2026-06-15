@@ -21,13 +21,13 @@
  * RAG retrieval is intentionally deferred — the seed corpus is small
  * enough that lemma_cards_list returns everything in one call.
  */
-import { runHypothesisChecks } from '../../../mcp-server/src/cards/checks.js';
 import {
+  runHypothesisChecks,
   ALL_CARDS,
   HYPOTHESIS_CARDS,
   findHypothesisCard,
-} from '../../../mcp-server/src/cards/loader.js';
-import type { HypothesisCard } from '../../../mcp-server/src/cards/types.js';
+} from '@artano-ai/mcp-server/engine';
+import type { HypothesisCard } from '@artano-ai/mcp-server/engine';
 
 /** Generic tool declaration — the schema is JSON-Schema-shaped, so it
  *  maps 1:1 onto Gemini's `FunctionDeclaration`, Anthropic's `Tool`,

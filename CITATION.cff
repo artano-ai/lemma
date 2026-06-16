@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use Lemma, please cite it using these metadata."
+title: "Lemma: an open verification substrate for AI-driven scientific computing"
+abstract: >-
+  Lemma is an open substrate that verifies AI-generated scientific code and
+  results against structured scientific knowledge: a corpus of schema-validated
+  cards, generic check engines for finished outputs and AI-proposed new
+  knowledge, a Model Context Protocol distribution surface, and a provenance
+  layer.
+type: software
+authors:
+  - given-names: Arsalan
+    family-names: Akhtar
+    orcid: "https://orcid.org/0000-0002-4982-5906"
+    affiliation: "Atomira Technologies, S.L."
+repository-code: "https://github.com/artano-ai/lemma"
+url: "https://openlemma.dev"
+license:
+  - Apache-2.0
+  - MIT
+  - CC-BY-4.0
+version: "0.1.0"
+keywords:
+  - scientific computing
+  - verification
+  - reproducibility
+  - large language models
+  - Model Context Protocol

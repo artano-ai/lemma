@@ -15,10 +15,7 @@ authors:
     affiliation: "Atomira Technologies, S.L."
 repository-code: "https://github.com/artano-ai/lemma"
 url: "https://openlemma.dev"
-license:
-  - Apache-2.0
-  - MIT
-  - CC-BY-4.0
+license: Apache-2.0
 version: "0.1.0"
 keywords:
   - scientific computing

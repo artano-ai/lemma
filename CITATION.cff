@@ -17,6 +17,11 @@ repository-code: "https://github.com/artano-ai/lemma"
 url: "https://openlemma.dev"
 license: Apache-2.0
 version: "0.1.0"
+doi: 10.5281/zenodo.20721149
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20721149
+    description: Archived v0.1.0 release on Zenodo
 keywords:
   - scientific computing
   - verification

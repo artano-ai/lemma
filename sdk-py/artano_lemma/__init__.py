@@ -64,6 +64,8 @@ from .tools import (
     ops_get,
 )
 from .types import (
+    Author,
+    CardMetadata,
     Card,
     CheckSeverity,
     ConservationLaw,
@@ -99,6 +101,8 @@ __all__ = [
     # version
     "__version__",
     # card models
+    "Author",
+    "CardMetadata",
     "Card",
     "PrincipleCard",
     "OpsCard",

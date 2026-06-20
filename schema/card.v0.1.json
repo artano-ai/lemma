@@ -241,8 +241,8 @@
       "properties": {
         "authors": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Author" } },
         "tier":    { "enum": ["bronze", "silver", "gold"] },
-        "created": { "type": "string", "format": "date" },
-        "updated": { "type": "string", "format": "date" }
+        "created": { "type": "string" },
+        "updated": { "type": "string" }
       },
       "additionalProperties": false
     },

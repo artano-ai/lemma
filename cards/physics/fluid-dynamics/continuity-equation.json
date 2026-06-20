@@ -31,5 +31,14 @@
     "Batchelor — An Introduction to Fluid Dynamics, ch.2",
     "Landau & Lifshitz — Fluid Mechanics, ch.1",
     "Anderson — Computational Fluid Dynamics: The Basics with Applications, ch.2"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

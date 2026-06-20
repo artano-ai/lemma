@@ -31,5 +31,14 @@
     "Maxwell (1865) — A Dynamical Theory of the Electromagnetic Field",
     "Jackson — Classical Electrodynamics, ch.5-6",
     "Griffiths — Introduction to Electrodynamics, ch.7"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

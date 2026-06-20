@@ -31,5 +31,14 @@
     "Kutta (1901) — Beitrag zur näherungsweisen Integration totaler Differentialgleichungen, Z. Math. Phys.",
     "Hairer, Norsett & Wanner — Solving Ordinary Differential Equations I: Nonstiff Problems, ch.II",
     "Press, Teukolsky, Vetterling & Flannery — Numerical Recipes, ch.17"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

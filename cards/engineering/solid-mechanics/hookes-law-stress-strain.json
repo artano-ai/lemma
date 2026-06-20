@@ -35,8 +35,26 @@
     "ASTM E111 — Standard Test Method for Young's Modulus, Tangent Modulus, and Chord Modulus"
   ],
   "validationEnvelopes": {
-    "youngsModulusSteel_GPa": [180, 220],
-    "youngsModulusAluminium_GPa": [65, 75],
-    "poissonsRatioMetals": [0.25, 0.40]
+    "youngsModulusSteel_GPa": [
+      180,
+      220
+    ],
+    "youngsModulusAluminium_GPa": [
+      65,
+      75
+    ],
+    "poissonsRatioMetals": [
+      0.25,
+      0.4
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

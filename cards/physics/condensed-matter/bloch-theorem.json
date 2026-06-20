@@ -29,5 +29,14 @@
     "Ashcroft & Mermin — Solid State Physics, ch.8",
     "Kittel — Introduction to Solid State Physics, ch.7",
     "Martin — Electronic Structure: Basic Theory and Practical Methods, ch.4"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

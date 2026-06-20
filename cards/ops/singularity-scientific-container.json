@@ -78,5 +78,14 @@
     "Kurtzer, Sochat & Bauer (2017) — Singularity: Scientific containers for mobility of compute, PLOS ONE 12(5)",
     "BSC MareNostrum 5 container support — https://www.bsc.es/supportkc/docs/MareNostrum5/containers/",
     "NERSC Container documentation — https://docs.nersc.gov/development/containers/ (cross-reference for non-EU systems)"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "bronze"
+  }
 }

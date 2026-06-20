@@ -31,5 +31,14 @@
     "Ceperley & Alder (1980) — Ground State of the Electron Gas by a Stochastic Method",
     "Perdew & Zunger (1981) — Self-interaction correction to density-functional approximations",
     "Martin — Electronic Structure: Basic Theory and Practical Methods, ch.7-9"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

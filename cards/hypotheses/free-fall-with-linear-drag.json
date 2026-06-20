@@ -12,15 +12,34 @@
   "checks": {
     "dimensional": {
       "lhsLabel": "m * dv/dt  [N]",
-      "lhsDims": { "M": 1, "L": 1, "T": -2 },
+      "lhsDims": {
+        "M": 1,
+        "L": 1,
+        "T": -2
+      },
       "rhsLabel": "-m g - b v  [N]",
-      "rhsDims": { "M": 1, "L": 1, "T": -2 },
+      "rhsDims": {
+        "M": 1,
+        "L": 1,
+        "T": -2
+      },
       "expr": "-m*g - b*v",
       "symbols": {
-        "m": { "M": 1 },
-        "g": { "L": 1, "T": -2 },
-        "b": { "M": 1, "T": -1 },
-        "v": { "L": 1, "T": -1 }
+        "m": {
+          "M": 1
+        },
+        "g": {
+          "L": 1,
+          "T": -2
+        },
+        "b": {
+          "M": 1,
+          "T": -1
+        },
+        "v": {
+          "L": 1,
+          "T": -1
+        }
       }
     },
     "limits": [
@@ -42,7 +61,9 @@
       }
     ],
     "referenceCorpus": {
-      "mustAgreeWith": ["free-fall-uniform-gravity"]
+      "mustAgreeWith": [
+        "free-fall-uniform-gravity"
+      ]
     }
   },
   "references": [
@@ -50,5 +71,14 @@
     "Marion & Thornton — Classical Dynamics, ch.2"
   ],
   "origin": "human",
-  "rationale": "Linear drag is the textbook small-Reynolds correction to free fall — first-order term in the velocity expansion of any drag law. Hypothesis recorded so the cross-check engine verifies the b -> 0 limit collapses to the canonical free-fall card."
+  "rationale": "Linear drag is the textbook small-Reynolds correction to free fall — first-order term in the velocity expansion of any drag law. Hypothesis recorded so the cross-check engine verifies the b -> 0 limit collapses to the canonical free-fall card.",
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "bronze"
+  }
 }

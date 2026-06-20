@@ -37,7 +37,22 @@
     "BIPM — SI Brochure (defining value of k_B)"
   ],
   "validationEnvelopes": {
-    "boltzmannConstant_J_per_K": [1.380648e-23, 1.380650e-23],
-    "n2_300K_meanSpeed_m_per_s": [470, 482]
+    "boltzmannConstant_J_per_K": [
+      1.380648e-23,
+      1.38065e-23
+    ],
+    "n2_300K_meanSpeed_m_per_s": [
+      470,
+      482
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

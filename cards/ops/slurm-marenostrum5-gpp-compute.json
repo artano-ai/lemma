@@ -84,5 +84,14 @@
     "BSC MareNostrum 5 user guide — https://www.bsc.es/supportkc/docs/MareNostrum5/",
     "SLURM Workload Manager documentation — https://slurm.schedmd.com/sbatch.html",
     "Hager & Wellein — Introduction to High Performance Computing for Scientists and Engineers, ch.6 (OpenMP placement)"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "bronze"
+  }
 }

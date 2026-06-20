@@ -23,5 +23,14 @@
   "references": [
     "Yu & Cardona, Fundamentals of Semiconductors, ch.6",
     "Bassani & Pastori-Parravicini, Electronic States and Optical Transitions in Solids, 1975"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

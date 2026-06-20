@@ -31,5 +31,14 @@
     "IPCC AR6 WG1 — Chapter 7, Table 7.SM.1 (radiative forcing parameterisations)",
     "Hartmann — Global Physical Climatology, ch.3",
     "Pierrehumbert — Principles of Planetary Climate, ch.4"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

@@ -31,5 +31,14 @@
     "Hasselbalch (1916) — Die Berechnung der Wasserstoffzahl des Blutes",
     "Atkins — Physical Chemistry, ch.6",
     "Po & Senozan (2001) — The Henderson-Hasselbalch Equation: Its History and Limitations, J. Chem. Educ."
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

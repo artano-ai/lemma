@@ -30,6 +30,18 @@
     "IPCC AR6 WG1 — Chapter 7 (Radiative Forcing and Climate Sensitivity)"
   ],
   "validationEnvelopes": {
-    "stefanBoltzmannSigma_W_per_m2K4": [5.670374e-8, 5.670375e-8]
+    "stefanBoltzmannSigma_W_per_m2K4": [
+      5.670374e-8,
+      5.670375e-8
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "gold"
   }
 }

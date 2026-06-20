@@ -34,6 +34,18 @@
     "BIPM — SI Brochure (defining value of epsilon_0)"
   ],
   "validationEnvelopes": {
-    "vacuumPermittivity_F_per_m": [8.854187812e-12, 8.854187814e-12]
+    "vacuumPermittivity_F_per_m": [
+      8.854187812e-12,
+      8.854187814e-12
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "gold"
   }
 }

@@ -32,5 +32,14 @@
     "Volterra (1926) — Variazioni e fluttuazioni del numero d'individui in specie animali conviventi, Memorie della Reale Accademia dei Lincei",
     "Murray — Mathematical Biology I: An Introduction, ch.3",
     "Edelstein-Keshet — Mathematical Models in Biology, ch.6"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

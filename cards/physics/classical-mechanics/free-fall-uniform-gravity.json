@@ -27,6 +27,18 @@
     "Galileo (1638) — Two New Sciences"
   ],
   "validationEnvelopes": {
-    "gEarth_m_per_s2": [9.79, 9.83]
+    "gEarth_m_per_s2": [
+      9.79,
+      9.83
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "gold"
   }
 }

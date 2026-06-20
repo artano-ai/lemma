@@ -31,5 +31,14 @@
     "Joule (1845) — mechanical equivalent of heat experiment",
     "Atkins — Physical Chemistry, ch.2",
     "Callen — Thermodynamics and an Introduction to Thermostatistics, ch.1-2"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "gold"
+  }
 }

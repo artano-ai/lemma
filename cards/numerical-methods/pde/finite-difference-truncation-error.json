@@ -31,5 +31,14 @@
     "LeVeque — Finite Difference Methods for ODEs and PDEs, ch.1",
     "Morton & Mayers — Numerical Solution of Partial Differential Equations, ch.2",
     "Gustafsson, Kreiss & Oliger — Time Dependent Problems and Difference Methods, ch.4"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

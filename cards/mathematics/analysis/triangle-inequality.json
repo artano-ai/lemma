@@ -30,5 +30,14 @@
     "Minkowski (1896) — Geometrie der Zahlen (general L^p form)",
     "Rudin — Principles of Mathematical Analysis, ch.4",
     "Conway — A Course in Functional Analysis, ch.1"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

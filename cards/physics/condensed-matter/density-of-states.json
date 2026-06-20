@@ -24,5 +24,14 @@
     "Ashcroft & Mermin, Solid State Physics, ch.8",
     "Martin, Electronic Structure: Basic Theory and Practical Methods, ch.3",
     "Methfessel & Paxton 1989"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

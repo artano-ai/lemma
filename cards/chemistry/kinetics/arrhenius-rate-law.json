@@ -33,6 +33,18 @@
     "IUPAC Gold Book — entry: Arrhenius equation"
   ],
   "validationEnvelopes": {
-    "gasConstant_J_per_molK": [8.31446, 8.31447]
+    "gasConstant_J_per_molK": [
+      8.31446,
+      8.31447
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

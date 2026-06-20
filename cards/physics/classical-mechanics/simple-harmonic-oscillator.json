@@ -30,5 +30,14 @@
     "Hooke (1678) — De Potentia Restitutiva — original 'ut tensio sic vis'",
     "Halliday, Resnick & Walker — Fundamentals of Physics, ch.15",
     "Goldstein, Poole & Safko — Classical Mechanics, ch.6"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

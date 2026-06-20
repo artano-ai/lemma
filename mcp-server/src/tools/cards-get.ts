@@ -33,17 +33,20 @@ export const cardsGetTool: McpTool = {
 
     const principle = findPrincipleCard(id);
     if (principle) {
-      return JSON.stringify(principle, null, 2);
+      const { metadata: _p, ...rest } = principle;
+      return JSON.stringify(rest, null, 2);
     }
 
     const ops = findOpsCard(id);
     if (ops) {
-      return JSON.stringify(ops, null, 2);
+      const { metadata: _o, ...rest } = ops;
+      return JSON.stringify(rest, null, 2);
     }
 
     const hypothesis = findHypothesisCard(id);
     if (hypothesis) {
-      return JSON.stringify(hypothesis, null, 2);
+      const { metadata: _h, ...rest } = hypothesis;
+      return JSON.stringify(rest, null, 2);
     }
 
     const knownPrinciples = ALL_CARDS.map((c) => c.id).join(', ');

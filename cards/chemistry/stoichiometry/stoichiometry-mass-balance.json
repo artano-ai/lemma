@@ -26,5 +26,14 @@
     "Lavoisier (1789) — Traité Élémentaire de Chimie",
     "Dalton (1808) — A New System of Chemical Philosophy",
     "IUPAC — Quantities, Units and Symbols in Physical Chemistry"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

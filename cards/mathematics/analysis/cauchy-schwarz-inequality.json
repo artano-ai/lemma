@@ -29,5 +29,14 @@
     "Bunyakovsky (1859) — integral generalisation (often called Cauchy-Bunyakovsky-Schwarz)",
     "Schwarz (1888) — modern formulation in inner-product spaces",
     "Rudin — Real and Complex Analysis, ch.4"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

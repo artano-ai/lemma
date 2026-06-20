@@ -38,8 +38,26 @@
     "Uehling (1935) — Polarisation effects in the positron theory, Phys. Rev. 48: 55-63"
   ],
   "validationEnvelopes": {
-    "coulombConstant_N_m2_per_C2": [8.9875517e9, 8.9875518e9],
-    "vacuumPermittivity_F_per_m": [8.854187812e-12, 8.854187814e-12],
-    "elementaryCharge_C": [1.602176633e-19, 1.602176634e-19]
+    "coulombConstant_N_m2_per_C2": [
+      8987551700,
+      8987551800
+    ],
+    "vacuumPermittivity_F_per_m": [
+      8.854187812e-12,
+      8.854187814e-12
+    ],
+    "elementaryCharge_C": [
+      1.602176633e-19,
+      1.602176634e-19
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

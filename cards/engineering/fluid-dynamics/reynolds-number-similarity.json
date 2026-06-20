@@ -34,7 +34,22 @@
     "Purcell (1977) — Life at low Reynolds number, Am. J. Phys. 45 (3): 3-11"
   ],
   "validationEnvelopes": {
-    "pipeFlowLaminarUpper": [2000, 2400],
-    "pipeFlowTurbulentLower": [3500, 4500]
+    "pipeFlowLaminarUpper": [
+      2000,
+      2400
+    ],
+    "pipeFlowTurbulentLower": [
+      3500,
+      4500
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

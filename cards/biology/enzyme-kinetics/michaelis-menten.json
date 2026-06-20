@@ -31,5 +31,14 @@
     "Briggs & Haldane (1925) — quasi-steady-state derivation",
     "Lehninger — Principles of Biochemistry, ch.6",
     "IUBMB — Enzyme Nomenclature recommendations"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

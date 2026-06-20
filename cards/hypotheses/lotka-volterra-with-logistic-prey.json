@@ -12,9 +12,15 @@
   "checks": {
     "dimensional": {
       "lhsLabel": "dot x  [N / T]",
-      "lhsDims": { "N": 1, "T": -1 },
+      "lhsDims": {
+        "N": 1,
+        "T": -1
+      },
       "rhsLabel": "alpha x (1 - x/K) - beta x y  [N / T]",
-      "rhsDims": { "N": 1, "T": -1 }
+      "rhsDims": {
+        "N": 1,
+        "T": -1
+      }
     },
     "limits": [
       {
@@ -40,7 +46,9 @@
       }
     ],
     "referenceCorpus": {
-      "mustAgreeWith": ["lotka-volterra-predator-prey"]
+      "mustAgreeWith": [
+        "lotka-volterra-predator-prey"
+      ]
     }
   },
   "references": [
@@ -49,5 +57,14 @@
     "Edelstein-Keshet — Mathematical Models in Biology, ch.6"
   ],
   "origin": "human",
-  "rationale": "The classical Lotka-Volterra closed orbits are structurally unstable — any small biological correction that recognises finite resources destroys them. The logistic prey term is the textbook canonical extension and produces the globally attracting equilibrium that ecologists observe in long-running experiments (Gause, Huffaker). Recording the hypothesis ensures the cross-check engine confirms the K -> infinity limit collapses to the canonical card and that the Lyapunov derivation lines up with the conservation-law claim."
+  "rationale": "The classical Lotka-Volterra closed orbits are structurally unstable — any small biological correction that recognises finite resources destroys them. The logistic prey term is the textbook canonical extension and produces the globally attracting equilibrium that ecologists observe in long-running experiments (Gause, Huffaker). Recording the hypothesis ensures the cross-check engine confirms the K -> infinity limit collapses to the canonical card and that the Lyapunov derivation lines up with the conservation-law claim.",
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "bronze"
+  }
 }

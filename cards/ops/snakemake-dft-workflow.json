@@ -85,5 +85,14 @@
     "Köster & Rahmann (2012) — Snakemake: a scalable bioinformatics workflow engine, Bioinformatics 28(19)",
     "Pizzi et al. (2016) — AiiDA: automated interactive infrastructure and database for computational science, Comp. Mat. Sci. 111 (alternative workflow engine; cross-reference)",
     "Sustainable Materials Modelling (https://nomad-lab.eu) — open data deposition expected at workflow end"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "bronze"
+  }
 }

@@ -7,6 +7,20 @@
  * `schema/card.v0.1.json`; this file is a hand-typed projection of it.
  */
 
+export interface Author {
+  name: string;
+  orcid?: string;
+  github?: string;
+  role?: 'author' | 'curator' | 'reviewer' | 'translator' | 'maintainer';
+}
+
+export interface CardMetadata {
+  authors: Author[];
+  tier?: 'bronze' | 'silver' | 'gold';
+  created?: string;
+  updated?: string;
+}
+
 export interface PrincipleCard {
   /** Card-shape discriminator. 'principle' is the structural type, NOT the
    *  scientific subject — use `domain` for that. */
@@ -30,6 +44,7 @@ export interface PrincipleCard {
     gasConstant_J_per_molK?: [number, number];
     [other: string]: [number, number] | undefined;
   };
+  metadata?: CardMetadata;
 }
 
 export interface OpsCard {
@@ -47,6 +62,7 @@ export interface OpsCard {
   }>;
   validation: string[];
   references: string[];
+  metadata?: CardMetadata;
 }
 
 export interface DimVec {
@@ -116,6 +132,7 @@ export interface HypothesisCard {
   references: string[];
   origin: 'llm' | 'human' | 'symbolic-regression';
   rationale?: string;
+  metadata?: CardMetadata;
 }
 
 export type CheckSeverity = 'pass' | 'warn' | 'fail';

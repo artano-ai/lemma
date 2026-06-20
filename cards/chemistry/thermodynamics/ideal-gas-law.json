@@ -30,6 +30,18 @@
     "NIST — CODATA value of R"
   ],
   "validationEnvelopes": {
-    "gasConstant_J_per_molK": [8.314, 8.315]
+    "gasConstant_J_per_molK": [
+      8.314,
+      8.315
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "gold"
   }
 }

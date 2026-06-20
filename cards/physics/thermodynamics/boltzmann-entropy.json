@@ -32,5 +32,14 @@
     "Callen — Thermodynamics and an Introduction to Thermostatistics, ch.4",
     "Reif — Fundamentals of Statistical and Thermal Physics, ch.3-4",
     "BIPM — SI Brochure 9th ed. (defining value of k_B)"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

@@ -34,7 +34,22 @@
     "IUPAC Gold Book — entry: Nernst equation"
   ],
   "validationEnvelopes": {
-    "gasConstant_J_per_molK": [8.31446, 8.31447],
-    "faradayConstant_C_per_mol": [96485.33, 96485.34]
+    "gasConstant_J_per_molK": [
+      8.31446,
+      8.31447
+    ],
+    "faradayConstant_C_per_mol": [
+      96485.33,
+      96485.34
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
   }
 }

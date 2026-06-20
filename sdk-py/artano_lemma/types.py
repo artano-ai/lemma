@@ -68,6 +68,33 @@ class DimVec(BaseModel):
 
 
 # ---------------------------------------------------------------------------
+# Metadata — optional authorship and quality-tier block
+# ---------------------------------------------------------------------------
+
+
+class Author(BaseModel):
+    """An author, curator, or reviewer of a card."""
+
+    model_config = _StrictConfig
+
+    name: str
+    orcid: str | None = None
+    github: str | None = None
+    role: Literal["author", "curator", "reviewer", "translator", "maintainer"] | None = None
+
+
+class CardMetadata(BaseModel):
+    """Optional metadata block present on backfilled corpus cards."""
+
+    model_config = _StrictConfig
+
+    authors: list[Author]
+    tier: Literal["bronze", "silver", "gold"] | None = None
+    created: str | None = None
+    updated: str | None = None
+
+
+# ---------------------------------------------------------------------------
 # PrincipleCard
 # ---------------------------------------------------------------------------
 
@@ -96,6 +123,7 @@ class PrincipleCard(BaseModel):
     expectedLimits: list[str]
     references: list[str]
     validationEnvelopes: dict[str, ValidationEnvelopeValue] | None = None
+    metadata: CardMetadata | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +159,7 @@ class OpsCard(BaseModel):
     parameters: list[OpsParameter]
     validation: list[str]
     references: list[str]
+    metadata: CardMetadata | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -223,6 +252,7 @@ class HypothesisCard(BaseModel):
     references: list[str]
     origin: HypothesisOrigin
     rationale: str | None = None
+    metadata: CardMetadata | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -299,6 +329,8 @@ class EvaluateResult(BaseModel):
 
 
 __all__ = [
+    "Author",
+    "CardMetadata",
     "Card",
     "PrincipleCard",
     "OpsCard",

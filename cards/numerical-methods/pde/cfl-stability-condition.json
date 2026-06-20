@@ -31,5 +31,14 @@
     "Lax & Wendroff (1960) — Systems of conservation laws",
     "LeVeque — Finite Difference Methods for Ordinary and Partial Differential Equations, ch.10",
     "Strikwerda — Finite Difference Schemes and Partial Differential Equations, ch.1"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

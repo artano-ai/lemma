@@ -31,5 +31,14 @@
     "Weinberg (1908) — Über den Nachweis der Vererbung beim Menschen",
     "Hartl & Clark — Principles of Population Genetics, ch.2-3",
     "Crow & Kimura — An Introduction to Population Genetics Theory, ch.1"
-  ]
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
 }

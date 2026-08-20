@@ -1,6 +1,18 @@
+# pnpm 11 refuses to run a dependency's install scripts unless it is approved
+# here, and `pnpm install` exits non-zero when any are skipped — which fails CI
+# at the install step, before a single test runs.
+#
+# The key is `allowBuilds`, not the `onlyBuiltDependencies` of pnpm 10, and the
+# `pnpm` field in package.json is no longer read at all. Running
+# `pnpm approve-builds` in a non-interactive shell writes this file with
+# "set this to true or false" placeholders, which is itself invalid — so it
+# must be filled in deliberately.
+#
+# All five ship native binaries or generated code and genuinely need a build
+# step; nothing else is granted one.
 allowBuilds:
-  '@google/genai': set this to true or false
-  esbuild: set this to true or false
-  onnxruntime-node: set this to true or false
-  protobufjs: set this to true or false
-  sharp: set this to true or false
+  '@google/genai': true
+  esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

@@ -1,0 +1,10 @@
+# Same reason as mcp-server/pnpm-workspace.yaml: pnpm 11 exits non-zero when a
+# dependency's install scripts are skipped, and the CLI pulls these in
+# transitively through @artano-ai/mcp-server. Without this the install fails
+# before typecheck or tests run.
+allowBuilds:
+  '@google/genai': true
+  esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

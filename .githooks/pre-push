@@ -28,6 +28,13 @@ echo "pre-push checks"
 
 run "corpus integrity" node scripts/check-corpus.mjs
 
+# The install step is what actually broke CI on 20 Aug: a warm node_modules
+# hides a clean-install failure completely, so these run against a pristine
+# install rather than whatever happens to be on disk.
+run "mcp-server clean install" sh -c 'cd mcp-server && rm -rf node_modules && pnpm install --frozen-lockfile'
+run "cli clean install"        sh -c 'cd cli && rm -rf node_modules && pnpm install --no-frozen-lockfile'
+run "cli typecheck"            sh -c 'cd cli && rm -rf node_modules/@artano-ai/mcp-server && mkdir -p node_modules/@artano-ai && ln -s ../../../mcp-server node_modules/@artano-ai/mcp-server && npx tsc --noEmit'
+
 if [ -d mcp-server/node_modules ]; then
   # Invoked directly rather than through `pnpm <script>`: pnpm runs a
   # dependency-status check first, which triggers an install and fails on

@@ -117,9 +117,29 @@ class LemmaClient:
     async def _call(self, tool: str, arguments: dict[str, Any]) -> str:
         """Call a tool, return its first text-content block."""
         result = await self._session.call_tool(tool, arguments=arguments)
-        if getattr(result, "isError", False):
+        if _is_error(result):
             raise LemmaToolError(tool, _extract_text(result) or "(no detail)")
         return _extract_text(result) or ""
+
+
+def _is_error(result: Any) -> bool:
+    """Did the server report this call as failed?
+
+    ``mcp`` 2.x renamed ``CallToolResult.isError`` to ``is_error`` — the same
+    rename that moved ``mcp.server.fastmcp.FastMCP`` to ``mcp.server.MCPServer``
+    and is shimmed in ``server.py``. Checking only the 1.x spelling meant that
+    against 2.x this returned False for *every* call, so a failed tool call was
+    handed back as ordinary text: ``cards_get`` on an unknown id returned the
+    string "Error executing tool cards_get: No card with id ..." where the
+    caller expected a card, and nothing raised.
+
+    Both spellings are accepted so the client works on either major, matching
+    the open ``mcp>=1.0`` range the package declares.
+    """
+    for attr in ("is_error", "isError"):
+        if getattr(result, attr, None) is True:
+            return True
+    return False
 
 
 class LemmaToolError(RuntimeError):

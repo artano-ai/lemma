@@ -37,6 +37,8 @@ run "corpus integrity" node scripts/check-corpus.mjs
 # a different major is not reproducing CI — that mistake is what shipped a
 # broken workspace file and then a "fix" verified against the wrong version.
 PNPM="npx --yes pnpm@9"
+# 3.10+ interpreter with `pip install -e ./sdk-py[dev]` already done.
+SDK_PYTHON="${SDK_PYTHON:-/tmp/py311/bin/python}"
 run "mcp-server clean install (pnpm 9)" sh -c "cd mcp-server && rm -rf node_modules && $PNPM install --frozen-lockfile"
 run "mcp-server build (pnpm 9)"         sh -c "cd mcp-server && $PNPM build"
 run "cli clean install (pnpm 9)"        sh -c "cd cli && rm -rf node_modules && $PNPM install --no-frozen-lockfile"
@@ -52,6 +54,17 @@ if [ -d mcp-server/node_modules ]; then
   run "mcp-server tests"     sh -c 'cd mcp-server && node --import=tsx --test test/*.test.ts'
 else
   echo "  mcp-server                         skipped (no node_modules)"
+fi
+
+# The Python suite must run with the console scripts on PATH. Without them
+# tests/test_mcp_roundtrip.py skips itself, which is exactly how two real
+# failures stayed invisible locally while failing every CI run: 242 passed
+# with 7 skipped here, 249 collected there.
+if [ -x "$SDK_PYTHON" ]; then
+  run "sdk-py suite (all tests, none skipped)" \
+    sh -c "PATH=$(dirname "$SDK_PYTHON"):\$PATH $SDK_PYTHON -m pytest sdk-py/tests -q"
+else
+  echo "  sdk-py                             skipped (set SDK_PYTHON to a 3.10+ interpreter with the package installed)"
 fi
 
 if [ -d eval/humaneval-sci/node_modules ]; then

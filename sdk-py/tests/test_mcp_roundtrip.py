@@ -61,11 +61,18 @@ def test_initialize_and_list_tools() -> None:
         async with connect_lemma_stdio() as client:
             listing = await client.session.list_tools()
             tool_names = {t.name for t in listing.tools}
+            # The full registered surface, over the wire. `rag_lookup` is the
+            # one deliberate omission: it needs Postgres and an embedding model
+            # this in-process server does not assume.
             assert tool_names == {
                 "cards_list",
                 "cards_get",
                 "ops_get",
                 "hypothesis_crosscheck",
+                "usce_check",
+                "series_check",
+                "convergence_check",
+                "agreement_check",
             }
 
     _run(main())

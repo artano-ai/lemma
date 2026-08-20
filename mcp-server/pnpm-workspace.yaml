@@ -1,15 +1,11 @@
-# pnpm 11 refuses to run a dependency's install scripts unless it is approved
-# here, and `pnpm install` exits non-zero when any are skipped — which fails CI
-# at the install step, before a single test runs.
-#
-# The key is `allowBuilds`, not the `onlyBuiltDependencies` of pnpm 10, and the
-# `pnpm` field in package.json is no longer read at all. Running
-# `pnpm approve-builds` in a non-interactive shell writes this file with
-# "set this to true or false" placeholders, which is itself invalid — so it
-# must be filled in deliberately.
-#
-# All five ship native binaries or generated code and genuinely need a build
-# step; nothing else is granted one.
+# `packages` is required by pnpm 9 — the version CI pins — which errors with
+# "packages field missing or empty" if this file exists without it.
+# `allowBuilds` is read only by pnpm 10+, which otherwise exits non-zero when a
+# dependency's install scripts are skipped. Both keys are present so the same
+# checkout installs cleanly under either version; dropping either one breaks a
+# real environment.
+packages:
+  - '.'
 allowBuilds:
   '@google/genai': true
   esbuild: true

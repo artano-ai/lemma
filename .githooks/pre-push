@@ -28,12 +28,20 @@ echo "pre-push checks"
 
 run "corpus integrity" node scripts/check-corpus.mjs
 
-# The install step is what actually broke CI on 20 Aug: a warm node_modules
-# hides a clean-install failure completely, so these run against a pristine
-# install rather than whatever happens to be on disk.
-run "mcp-server clean install" sh -c 'cd mcp-server && rm -rf node_modules && pnpm install --frozen-lockfile'
-run "cli clean install"        sh -c 'cd cli && rm -rf node_modules && pnpm install --no-frozen-lockfile'
-run "cli typecheck"            sh -c 'cd cli && rm -rf node_modules/@artano-ai/mcp-server && mkdir -p node_modules/@artano-ai && ln -s ../../../mcp-server node_modules/@artano-ai/mcp-server && npx tsc --noEmit'
+# The install step is what broke CI on 20 Aug, twice. A warm node_modules
+# hides a clean-install failure completely, so these wipe it first.
+#
+# PNPM VERSION MATTERS MORE THAN THE COMMANDS. CI pins pnpm 9; a local pnpm 11
+# accepts config that pnpm 9 rejects outright ("packages field missing or
+# empty") and rejects config pnpm 9 is happy with. Running CI's commands under
+# a different major is not reproducing CI — that mistake is what shipped a
+# broken workspace file and then a "fix" verified against the wrong version.
+PNPM="npx --yes pnpm@9"
+run "mcp-server clean install (pnpm 9)" sh -c "cd mcp-server && rm -rf node_modules && $PNPM install --frozen-lockfile"
+run "mcp-server build (pnpm 9)"         sh -c "cd mcp-server && $PNPM build"
+run "cli clean install (pnpm 9)"        sh -c "cd cli && rm -rf node_modules && $PNPM install --no-frozen-lockfile"
+run "cli typecheck (pnpm 9)"            sh -c "cd cli && rm -rf node_modules/@artano-ai/mcp-server && mkdir -p node_modules/@artano-ai && ln -s ../../../mcp-server node_modules/@artano-ai/mcp-server && $PNPM typecheck"
+run "cli tests (pnpm 9)"                sh -c "cd cli && $PNPM test"
 
 if [ -d mcp-server/node_modules ]; then
   # Invoked directly rather than through `pnpm <script>`: pnpm runs a

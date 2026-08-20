@@ -1,0 +1,61 @@
+{
+  "kind": "principle",
+  "id": "wien-displacement-law",
+  "version": "1.0.0",
+  "name": "Wien displacement law",
+  "domain": "physics/thermodynamics",
+  "principles": [
+    "the wavelength of peak spectral radiance is inversely proportional to absolute temperature",
+    "follows from maximising the Planck distribution with respect to wavelength"
+  ],
+  "formulaTeX": "\\lambda_{\\max} T = b",
+  "formula": {
+    "expr": "b / T",
+    "symbols": {
+      "b": {
+        "L": 1,
+        "Theta": 1
+      },
+      "T": {
+        "Theta": 1
+      }
+    },
+    "relation": "peak-radiance wavelength as a function of absolute temperature"
+  },
+  "conventions": [
+    "b = 2.897771955e-3 m K is the Wien displacement constant",
+    "lambda_max is the peak of spectral radiance per unit WAVELENGTH; the per-unit-frequency peak is a different wavelength",
+    "T is absolute temperature in kelvin, not celsius"
+  ],
+  "expectedLimits": [
+    "T -> 0: lambda_max -> infinity",
+    "T -> infinity: lambda_max -> 0",
+    "valid for an ideal blackbody; a real surface has wavelength-dependent emissivity"
+  ],
+  "validationEnvelopes": {
+    "lambda_max_um_at_5772K": [
+      0.501,
+      0.503
+    ]
+  },
+  "seriesConditions": [
+    {
+      "of": "lambda_max",
+      "op": ">",
+      "value": 0,
+      "basis": "a wavelength is positive for any finite positive temperature"
+    }
+  ],
+  "references": [
+    "Wien, W. (1893). Eine neue Beziehung der Strahlung schwarzer Koerper zum zweiten Hauptsatz der Waermetheorie",
+    "CODATA 2022 recommended value of the Wien wavelength displacement law constant"
+  ],
+  "metadata": {
+    "authors": [
+      {
+        "name": "A.Akhtar",
+        "github": "arsalan-akhtar"
+      }
+    ]
+  }
+}

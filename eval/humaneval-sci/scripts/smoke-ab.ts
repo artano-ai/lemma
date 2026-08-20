@@ -106,6 +106,14 @@ const offline = process.argv.includes('--offline');
 // Default model gemma3:4b — small enough to fit a 16 GB Mac. Override
 // with --model. Set --base-url to point at a non-localhost endpoint.
 const useOllama = process.argv.includes('--ollama');
+const neutralFraming = process.argv.includes('--neutral-framing');
+// --cards-as-context: deliver the treatment arm's cards in the system message
+// and offer no tools. Same card content, no retrieve-then-answer procedure.
+const treatmentDelivery = process.argv.includes('--applicability-gate')
+  ? ('gated' as const)
+  : process.argv.includes('--cards-as-context')
+    ? ('context' as const)
+    : ('tools' as const);
 
 const baseUrlArgIdx = process.argv.indexOf('--base-url');
 const baseUrlOverride =
@@ -168,6 +176,8 @@ const treatment = offline
         model: modelOverride,
         baseUrl: baseUrlOverride,
         apiKey: process.env.OPENAI_COMPAT_API_KEY,
+        treatmentDelivery,
+        neutralFraming,
         forceFirstToolCall,
         systemPromptPrefix,
         useNativeApi,

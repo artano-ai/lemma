@@ -24,7 +24,8 @@
     "smooth f satisfying a Lipschitz condition: convergence is guaranteed for sufficiently small h",
     "stability region: bounded subset of the complex h * lambda plane (for the linear test problem y' = lambda y); explicit methods cannot be A-stable",
     "stiff systems (widely separated eigenvalues): RK4's stability constraint forces impractically small h — use implicit methods (BDF, RadauIIA) instead",
-    "round-off-limited regime: at very small h, accumulated round-off error overtakes truncation error; optimal h depends on machine epsilon and the problem (~ epsilon_machine^(1/5) for RK4)"
+    "round-off-limited regime: at very small h, accumulated round-off error overtakes truncation error; optimal h depends on machine epsilon and the problem (~ epsilon_machine^(1/5) for RK4)",
+    "envelope basis: the order is exactly 4 by construction (global error O(h^4)); only the acceptance width is conventional, and +/-0.2 is what a clean step-halving study on a smooth Lipschitz problem reproduces. An observed order near 1 or 2 usually means the right-hand side is not as smooth as assumed or the step is already in the round-off-limited regime this card describes, where order degrades for reasons unrelated to the method"
   ],
   "references": [
     "Runge (1895) — Über die numerische Auflösung von Differentialgleichungen, Math. Ann.",
@@ -32,6 +33,12 @@
     "Hairer, Norsett & Wanner — Solving Ordinary Differential Equations I: Nonstiff Problems, ch.II",
     "Press, Teukolsky, Vetterling & Flannery — Numerical Recipes, ch.17"
   ],
+  "validationEnvelopes": {
+    "observedConvergenceOrder": [
+      3.8,
+      4.2
+    ]
+  },
   "metadata": {
     "authors": [
       {
@@ -40,5 +47,9 @@
       }
     ],
     "tier": "silver"
+  },
+  "convergence": {
+    "maxPerLevelSpread": 0.4,
+    "basis": "matches the +/-0.2 acceptance width on this card's observedConvergenceOrder envelope, for the same reason as the finite-difference card: a spread wider than the window means the refinement study is not resolving a single power law, typically because the round-off-limited regime was entered at small h"
   }
 }

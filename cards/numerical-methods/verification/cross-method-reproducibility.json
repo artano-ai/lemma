@@ -1,0 +1,62 @@
+{
+  "kind": "principle",
+  "id": "cross-method-reproducibility",
+  "version": "1.0.0",
+  "name": "Cross-method reproducibility of electronic-structure observables (Delta-gauge)",
+  "domain": "numerical-methods-verification",
+  "principles": [
+    "method independence",
+    "representation is not physics",
+    "reproducibility as a measurable quantity"
+  ],
+  "formulaTeX": "\\Delta_{ab} = \\sqrt{\\frac{1}{V_2 - V_1}\\int_{V_1}^{V_2}\\left[E_a(V) - E_b(V)\\right]^2 dV}",
+  "conventions": [
+    "each method's energy is referenced to its own minimum before differencing — absolute total energies are basis-dependent and not comparable",
+    "spreads are max-min across all methods compared, not pairwise",
+    "the compared runs must share atoms, XC functional and pseudopotential; otherwise the spread measures differing inputs, not differing methods",
+    "Delta is reported per atom so cells of different size can be compared"
+  ],
+  "expectedLimits": [
+    "Delta -> 0 as both methods approach basis-set completeness",
+    "agreement is evidence of consistency, never of correctness — two methods sharing an approximation can agree and both be wrong",
+    "the bulk modulus is far more basis-sensitive than the lattice constant, so it is compared and reported but does not gate the verdict",
+    "a comparison of fewer than two methods is not a reproducibility result and must not report agreement"
+  ],
+  "references": [
+    "Lejaeghere et al. 2016, Science 351, aad3000",
+    "Lejaeghere et al. 2014, Crit. Rev. Solid State Mater. Sci. 39, 1",
+    "Bosoni et al. 2024, Nat. Rev. Phys. 6, 45"
+  ],
+  "validationEnvelopes": {
+    "deltaGauge_meV_per_atom": [
+      0.0,
+      2.0
+    ]
+  },
+  "crossMethodTolerances": {
+    "latticeConstant_A": {
+      "relative": 0.01,
+      "gating": true,
+      "basis": "the scale at which independent all-electron and pseudopotential codes are held to agree in the Delta-gauge reproducibility studies"
+    },
+    "indirectGap_eV": {
+      "absolute": 0.05,
+      "gating": true,
+      "basis": "loose band-structure tolerance; gaps are sensitive to k-sampling and basis completeness before any method difference enters"
+    },
+    "bulkModulus_GPa": {
+      "absolute": 25.0,
+      "gating": false,
+      "basis": "reported for information only — B_0 depends on curvature and is dominated by basis quality, so a divergence here diagnoses a method rather than invalidating the comparison"
+    }
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
+}

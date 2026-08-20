@@ -1,0 +1,59 @@
+{
+  "kind": "principle",
+  "id": "birch-murnaghan-equation-of-state",
+  "version": "1.0.0",
+  "name": "Birch-Murnaghan equation of state (third order)",
+  "domain": "physics-condensed-matter",
+  "principles": [
+    "Eulerian finite strain",
+    "isothermal equation of state",
+    "energy-volume curvature defines the bulk modulus"
+  ],
+  "formulaTeX": "E(V) = E_0 + \\frac{9 V_0 B_0}{16}\\left[(x-1)^3 B_0' + (x-1)^2 (6 - 4x)\\right], \\quad x = \\left(\\frac{V_0}{V}\\right)^{2/3}",
+  "conventions": [
+    "V_0 is the equilibrium volume: dE/dV = 0 there",
+    "B_0 = V (d^2 E / dV^2) evaluated at V_0; positive for a mechanically stable crystal",
+    "B_0' = dB/dP at P = 0, dimensionless; B_0' = 4 recovers the second-order form",
+    "E(V) is exactly a cubic polynomial in V^(-2/3), so the fit is linear least squares — no optimiser, no initial guess",
+    "total energies are basis- and method-dependent and are NOT comparable across codes; V_0, B_0 and the band gap are"
+  ],
+  "expectedLimits": [
+    "E(V) attains its minimum at V_0",
+    "B_0 > 0; B_0' typically 3-5 for tetrahedral semiconductors",
+    "a fit whose V_0 falls outside the sampled volume range is an extrapolation, not a result",
+    "envelopes below are set by system and method (silicon, GGA-PBE, norm-conserving pseudopotentials) — they bound a plausible calculation, not the experimental truth",
+    "experimental silicon for contrast: a_0 = 5.431 A, B_0 = 97.9 GPa, indirect gap 1.17 eV; semilocal DFT is expected to miss these",
+    "the a_0 envelope is +/-0.5% about 5.4716 A, the all-electron PBE value from an independent FP-LAPW reference run; it is a plausibility band for a converged PBE calculation, and well-converged codes in the Delta-gauge studies agree far tighter than this",
+    "the a_0 envelope is deliberately asymmetric with respect to the experimental value and symmetric with respect to the PBE one: PBE overestimates a_0 for silicon, so an agreeing pair near 5.47 A is expected and a result near the experimental 5.431 A would indicate the wrong functional, not a better calculation",
+    "an earlier a_0 lower bound of 5.4 A admitted the LDA answer (5.4043 A) and so would have passed a run that silently used the wrong exchange-correlation functional; the bound is raised to close that",
+    "the a_0 envelope width (0.055 A) is essentially the cross-method tolerance (1% relative), so any a_0 spread large enough to trip that tolerance also puts at least one engine outside this envelope — the same coupling already noted for B_0"
+  ],
+  "references": [
+    "Birch 1947, Phys. Rev. 71, 809",
+    "Murnaghan 1944, PNAS 30, 244",
+    "Lejaeghere et al. 2016, Science 351, aad3000"
+  ],
+  "validationEnvelopes": {
+    "latticeConstant_A": [
+      5.4442,
+      5.499
+    ],
+    "bulkModulus_GPa": [
+      80.0,
+      105.0
+    ],
+    "indirectGap_eV": [
+      0.5,
+      0.75
+    ]
+  },
+  "metadata": {
+    "authors": [
+      {
+        "name": "Arsalan Akhtar",
+        "role": "curator"
+      }
+    ],
+    "tier": "silver"
+  }
+}

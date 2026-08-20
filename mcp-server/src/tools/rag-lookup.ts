@@ -8,8 +8,13 @@ const PASSAGE_PREVIEW_CHARS = 1200;
 
 export const ragLookupTool: McpTool = {
   name: 'rag_lookup',
+  // Names no specific sources. The previous wording promised passages from "the
+  // Siesta manual, ASE, pymatgen, numerical methods, HPC docs" — none of which
+  // ship with this package, and none of which are ours to redistribute. A tool
+  // that advertises content it cannot supply sends a user to debug an empty
+  // result set that is behaving exactly as built.
   description:
-    'Search the local scientific knowledge base (Siesta manual, ASE, pymatgen, numerical methods, HPC docs) and return the most relevant passages.',
+    'Semantic search over a self-hosted corpus of scientific documentation, returning the most relevant passages. Requires a Postgres + pgvector index that you populate yourself with `lemma-rag ingest` (set LEMMA_RAG_DSN); nothing is bundled. Returns an explicit notice rather than an empty result when no index is configured or it holds no matches.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -30,7 +35,11 @@ export const ragLookupTool: McpTool = {
 
     const hits = await searchRag(query, k);
     if (hits.length === 0) {
-      return 'No matches in the local RAG corpus. The index may be empty — build and populate the pgvector `chunks` table first.';
+      return (
+        'No matches in the configured RAG corpus. If you have not indexed anything yet, ' +
+        'the index is empty rather than the query being unanswerable — populate it with ' +
+        '`lemma-rag ingest <path>` and check what is loaded with `lemma-rag status`.'
+      );
     }
 
     const blocks = hits.map((h, i) => {

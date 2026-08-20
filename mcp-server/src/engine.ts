@@ -12,6 +12,17 @@
 export { runHypothesisChecks } from './cards/checks.js';
 export { runUsceChecks } from './cards/usce.js';
 export {
+  runConvergenceCheck,
+  estimateOrder,
+  DEFAULT_CONVERGENCE_KEY,
+  type ConvergencePoint,
+} from './cards/convergence.js';
+export {
+  runSeriesChecks,
+  type SeriesCondition,
+  type ComparisonOperator,
+} from './cards/series.js';
+export {
   deriveDims,
   dimsEqual,
   stringifyDims,
@@ -19,6 +30,7 @@ export {
 } from './cards/dimensional.js';
 export {
   ALL_CARDS,
+  CARDS_DIR,
   OPS_CARDS,
   HYPOTHESIS_CARDS,
   findPrincipleCard,

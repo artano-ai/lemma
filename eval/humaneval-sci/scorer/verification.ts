@@ -27,6 +27,13 @@ import {
   scoreDifferential,
   type DifferentialOptions,
 } from './differential.js';
+import {
+  aggregateOutcomes,
+  countDeclines,
+  isDecline,
+  PENALTY,
+  type Outcome,
+} from './outcome.js';
 import type {
   CombinedScore,
   FunctionalScore,
@@ -40,22 +47,16 @@ import type {
   LimitCheckSpec,
 } from '@artano-ai/mcp-server/engine';
 
-const SEVERITY_ORDER: Severity[] = ['NONE', 'LOW', 'MEDIUM', 'HIGH'];
-
-function maxSeverity(a: Severity, b: Severity): Severity {
-  return SEVERITY_ORDER.indexOf(a) >= SEVERITY_ORDER.indexOf(b) ? a : b;
-}
-
-const SEVERITY_PENALTY: Record<Severity, number> = {
-  NONE: 0.0,
-  LOW: 0.25,
-  MEDIUM: 0.5,
-  HIGH: 1.0,
-};
-
-const ENGINE_TO_SEVERITY: Record<string, Severity> = {
+/**
+ * The engine's per-check scale is pass / warn / fail. `warn` is emitted by
+ * exactly two sites — `checkLimit` and `checkConservationLaw` — and both are
+ * unconditional "claim recorded ... verification pending". Neither inspects
+ * the claim, so `warn` here is never a finding: it is the engine declining.
+ * That is why it maps to UNCHECKED and not to LOW.
+ */
+const ENGINE_TO_OUTCOME: Record<string, Outcome> = {
   pass: 'NONE',
-  warn: 'LOW',
+  warn: 'UNCHECKED',
   fail: 'HIGH',
 };
 
@@ -160,13 +161,13 @@ export async function scoreVerification(
   const hypothesis = buildHypothesisFromPrompt(prompt);
   const verdict = runHypothesisChecks(hypothesis, { corpus: ALL_CARDS });
 
-  const details = verdict.checks.map((c) => ({
-    name: c.name,
-    severity: (ENGINE_TO_SEVERITY[c.severity] ?? 'LOW') as Severity,
-    detail: c.detail,
-  }));
+  const details: Array<{ name: string; severity: Outcome; detail: string }> =
+    verdict.checks.map((c) => ({
+      name: c.name,
+      severity: ENGINE_TO_OUTCOME[c.severity] ?? 'UNCHECKED',
+      detail: c.detail,
+    }));
 
-  let severity = mapEngineSeverity(verdict.overall.severity);
   let passing = verdict.overall.passing;
   let total = verdict.overall.total;
 
@@ -177,14 +178,27 @@ export async function scoreVerification(
       options.differential ?? {},
     );
     for (const d of diff.details) {
-      details.push({ name: d.name, severity: d.severity, detail: d.detail });
+      details.push({
+        name: d.name,
+        severity: isDecline(d.name) ? 'UNCHECKED' : d.severity,
+        detail: d.detail,
+      });
     }
-    severity = maxSeverity(severity, diff.severity);
     passing += diff.passing;
     total += diff.total;
   }
 
-  return { severity, passing, total, details };
+  // Overall is recomputed from the per-check outcomes rather than taken from
+  // `verdict.overall.severity`, because the engine folds its declines into
+  // LOW there — which is the ceiling this metric version exists to remove.
+  const outcomes = details.map((d) => d.severity);
+  return {
+    severity: aggregateOutcomes(outcomes),
+    unchecked: countDeclines(outcomes),
+    passing,
+    total,
+    details,
+  };
 }
 
 export function combine(
@@ -192,7 +206,7 @@ export function combine(
   functional: FunctionalScore,
   verification: VerificationScore,
 ): CombinedScore {
-  const penalty = SEVERITY_PENALTY[verification.severity];
+  const penalty = PENALTY[verification.severity];
   const overall = functional.pass_rate * (1 - penalty);
   return {
     prompt_id: prompt.id,
@@ -201,10 +215,4 @@ export function combine(
     verification,
     overall_score: overall,
   };
-}
-
-function mapEngineSeverity(
-  engineSeverity: 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH',
-): Severity {
-  return engineSeverity;
 }

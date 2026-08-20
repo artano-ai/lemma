@@ -81,3 +81,36 @@ a quick LLM-in-the-loop check **without** the benchmark prompts, see
 ├── scorer/    functional + cross-check verification scorers
 └── scripts/   smoke / A-B / best-of-N / differential / stats
 ```
+
+## Python environment (required)
+
+Both scorers execute candidate code with `python -I`. Isolated mode is
+deliberate — it runs model-generated code with the script directory, the
+environment and the **user** site-packages all off `sys.path` — but it also
+means a `pip install --user numpy` is invisible to the harness. Candidates
+that `import numpy`, the correct choice for scientific Python, are then scored
+as hard failures rather than as code the harness could not run.
+
+Create a virtualenv here and the harness finds it by itself — a venv's
+site-packages is not user site, so it survives `-I`:
+
+```sh
+python3 -m venv .venv
+./.venv/bin/python -m pip install numpy scipy
+```
+
+That is the whole setup. `.venv/bin/python` is auto-detected; set
+`HUMANEVAL_SCI_PYTHON` only to override it. Requiring anyone to remember an
+export is how this broke in the first place.
+
+Three layers guard it, because the failure mode is silence rather than a
+crash — the harness kept producing complete, plausible, wrong results:
+
+1. **Preflight refuses to score** against an interpreter that cannot import
+   the reference solutions' modules, instead of recording every
+   numpy-importing candidate as a hard failure. `pnpm test-preflight`.
+2. **A pre-push hook** runs that check before code leaves the machine
+   (`git config core.hooksPath .githooks`).
+3. **`pnpm test-python-env`** asserts the import **under `-I`** — a check
+   without that flag passes against the very interpreter that fails here,
+   which is precisely why the defect survived three months.

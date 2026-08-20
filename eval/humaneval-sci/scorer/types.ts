@@ -19,6 +19,90 @@ export interface PromptDefinition {
   reference_solution: string;
   test_cases: TestCase[];
   verification_targets: VerificationTargets;
+  /** Which scorer path this prompt takes. Absent means `'standard'`, so
+   *  every existing prompt keeps its current behaviour untouched. */
+  kind?: 'standard' | 'adversarial';
+  /** Required when `kind === 'adversarial'`. An adversarial prompt has no
+   *  correct answer, so `reference_solution` / `test_cases` carry no meaning
+   *  for it and are ignored by the refusal path. */
+  adversarial?: AdversarialTargets;
+  /** How likely this task's answer was memorised from training data.
+   *
+   *  Contamination inflates the CONTROL arm — a model that has seen the exact
+   *  exercise scores well without reasoning — which *under*-estimates the
+   *  substrate's effect. The mitigation is a sensitivity analysis over a
+   *  held-out low-contamination subset, and that needs the risk recorded
+   *  per prompt.
+   *
+   *  It carries a `basis` for the same reason envelopes and tolerances do:
+   *  contamination cannot be measured without access to the training data, so
+   *  every value here is an **estimate**, and an estimate with no stated
+   *  reasoning cannot be reviewed or disagreed with. */
+  contamination_risk?: ContaminationRisk;
+}
+
+export interface ContaminationRisk {
+  level: 'low' | 'medium' | 'high';
+  /** Why this level — the reasoning a reviewer would check. */
+  basis: string;
+  /** `rubric` = derived mechanically from the prompt's own shape.
+   *  `manual` = a human judged this one specifically, overriding the rubric. */
+  assessed_by: 'rubric' | 'manual';
+}
+
+/**
+ * What a correct responder must do with an impossible or out-of-scope prompt,
+ * and how to check that it did.
+ *
+ * The design constraint is that a refusal must be **checkable**, not a vibe:
+ * `11-evaluation-framework.md` and `46-tier23-prompt-gap.md` both warn that
+ * "is this refusal correct?" becomes subjective without a declared reason. So
+ * the prompt author names the reason up front and the terms that evidence it.
+ */
+export interface AdversarialTargets {
+  /** Why a correct responder must decline or caveat. Closed set so the tier
+   *  can be reported by failure mode, not just by an aggregate rate. */
+  reason:
+    | 'out-of-corpus'
+    | 'violates-declared-limit'
+    | 'unbalanced-equation'
+    | 'not-analytically-solvable'
+    | 'unphysical-parameter'
+    | 'wrong-method-for-regime';
+  /** Terms whose presence shows the model named the *actual* problem rather
+   *  than hedging. Matching is case-insensitive substring. This is the
+   *  rigorous half of the score — see `scorer/refusal.ts`. */
+  must_mention: string[];
+  /** `'refuse'` — producing a working implementation is wrong at any level of
+   *  caveat (e.g. superluminal velocity). `'warn'` — computing is correct
+   *  provided the caveat is stated (e.g. Stefan–Boltzmann with emissivity
+   *  ≠ 1). Decides whether a warning earns full credit. */
+  minimum_response: 'refuse' | 'warn';
+  /** Optional human note: what a model typically gets wrong here. Not scored. */
+  rationale?: string;
+}
+
+/** What the candidate actually did. `'unclear'` is kept distinct from
+ *  `'refused'` on purpose — an empty or evasive answer has failed, not
+ *  declined, and must not collect refusal credit. */
+export type RefusalResponse = 'refused' | 'warned' | 'complied' | 'unclear';
+
+/** One observable fact the classification rests on, published so a score can
+ *  be audited rather than trusted. */
+export interface RefusalSignal {
+  name: 'emitted_code' | 'declined' | 'caveated' | 'reason_identified';
+  fired: boolean;
+  detail: string;
+}
+
+export interface RefusalScore {
+  response: RefusalResponse;
+  /** Did the candidate name at least one declared `must_mention` term? */
+  reason_identified: boolean;
+  matched_terms: string[];
+  /** 0–1. Full credit needs both the right action and the right reason. */
+  score: number;
+  signals: RefusalSignal[];
 }
 
 export interface TestCase {
@@ -44,6 +128,11 @@ export interface VerificationTargets {
 
 export type Severity = 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH';
 
+/** Re-exported so consumers get the outcome scale (findings + UNCHECKED)
+ *  from one place. See `scorer/outcome.ts` for why the two differ. */
+export type { Outcome, Finding } from './outcome.js';
+import type { Outcome } from './outcome.js';
+
 export interface FunctionalScore {
   passed: number;
   total: number;
@@ -52,10 +141,15 @@ export interface FunctionalScore {
 }
 
 export interface VerificationScore {
+  /** Worst *finding*. Declined checks do not contribute — see `unchecked`. */
   severity: Severity;
+  /** How many checks were declined (recorded, not discharged). Reported
+   *  separately so coverage stays visible instead of being folded into the
+   *  score as if it were a defect. */
+  unchecked: number;
   passing: number;
   total: number;
-  details: Array<{ name: string; severity: Severity; detail: string }>;
+  details: Array<{ name: string; severity: Outcome; detail: string }>;
 }
 
 export interface CombinedScore {
@@ -67,6 +161,9 @@ export interface CombinedScore {
   /** Raw model output that was scored. Persisted so a null delta can
    *  be debugged by inspecting what the model actually produced. */
   candidate?: string;
+  /** Present only for adversarial prompts, where `overall_score` is the
+   *  refusal score and `functional` is reported as 0/0 rather than faked. */
+  refusal?: RefusalScore;
   /** Token usage for this generation. Undefined for adapters that do
    *  not make an API call (e.g. the reference adapter). */
   usage?: TokenUsage;

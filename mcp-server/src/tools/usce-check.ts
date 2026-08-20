@@ -3,6 +3,7 @@
 
 import { ALL_CARDS, findPrincipleCard } from '../cards/seed.js';
 import { runUsceChecks } from '../cards/usce.js';
+import { renderVerdict } from './render.js';
 import type { McpTool } from './types.js';
 
 export const usceCheckTool: McpTool = {
@@ -39,19 +40,9 @@ export const usceCheckTool: McpTool = {
       );
     }
     const output = (input.output ?? {}) as Record<string, number>;
-    const result = runUsceChecks(output, card);
-
-    const lines: string[] = [
-      `# USCE verdict -- ${card.name}`,
-      `Card: \`${card.id}\` v${card.version}`,
-      ``,
-      `**Overall:** ${result.overall.passing} / ${result.overall.total} pass - severity ${result.overall.severity}`,
-      ``,
-    ];
-    for (const c of result.checks) {
-      lines.push(`- [${c.severity === 'pass' ? 'OK' : 'X'}] **${c.name}** -- ${c.detail}`);
-    }
-    lines.push(``, result.diagnosis);
-    return lines.join('\n');
+    // Shared renderer: four tools now format a verdict, and four copies of the
+    // same layout is four places for the wording to drift invisibly, since each
+    // tool is tested against its own output.
+    return renderVerdict('USCE verdict', card, runUsceChecks(output, card));
   },
 };

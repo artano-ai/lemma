@@ -21,12 +21,33 @@ there if you are touching that area.
 ### 1. Adding or refining a card
 
 Most contributions land here. Cards are JSON files under
-`cards/<domain>/`. Workflow:
+`cards/<domain>/<sub-domain>/`, and the `domain` field is that path joined with
+a hyphen — `cards/physics/condensed-matter/` means
+`"domain": "physics-condensed-matter"`. (`cards/ops/` and `cards/hypotheses/`
+are flat and carry no `domain`.) Workflow:
 
 1. Pick a domain folder, copy an existing card as a template.
 2. Edit the fields. The schema lives at `schema/card.v0.1.json`.
-3. Validate locally: `npx ajv-cli@5 validate --spec=draft2020 -s schema/card.v0.1.json -d "cards/**/*.json"`.
-4. Open a pull request. The CI runs the same validator.
+3. Validate locally, **both checks**:
+
+   ```sh
+   npx ajv-cli@5 validate --spec=draft2020 -s schema/card.v0.1.json -d "cards/**/*.json"
+   node scripts/check-corpus.mjs
+   ```
+
+4. Open a pull request. CI runs both.
+
+**Why two commands.** The first asks *"is this card well-formed?"* and answers it
+one file at a time — which is all JSON Schema can do. The second asks the
+questions that span files, and they are the ones that bite: a duplicate `id`, a
+`domain` that disagrees with its folder, or a reference (`mustAgreeWith`,
+`derivedFrom`, `limits[].target.cardId`) pointing at a card that does not exist.
+A dangling reference is the nastiest of the three, because the engine resolves it
+at runtime and reports it as a *failed check* — so a broken link arrives looking
+like a verdict about the science.
+
+If you are testing against a corpus other than this repo's, set
+`LEMMA_CARDS_DIR` and confirm with `lemma paths` which one actually resolved.
 
 See the [card concepts](https://docs.openlemma.dev/concepts/cards/) and the
 [card-authoring guide](https://docs.openlemma.dev/guides/authoring-a-card/) at

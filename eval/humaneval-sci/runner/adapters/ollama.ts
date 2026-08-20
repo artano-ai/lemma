@@ -24,6 +24,7 @@
  */
 import type { PromptDefinition, TokenUsage, TraceTurn } from '../../scorer/types.js';
 import { LEMMA_TOOLS, runLemmaTool } from '../lemma-tools.js';
+import { isAdversarial } from '../../scorer/refusal.js';
 import type { Condition, GenerateResult, ModelAdapter } from '../runner.js';
 
 const DEFAULT_BASE_URL = 'http://127.0.0.1:11434/v1';
@@ -31,23 +32,81 @@ const DEFAULT_MODEL = 'gemma3:4b';
 const MAX_TOOL_TURNS = 8;
 const DEFAULT_TIMEOUT_MS = 600_000; // 10 min per call — local inference is slow
 
-const SYSTEM_CONTROL =
+export const SYSTEM_CONTROL =
   'You are a scientific code generation assistant. Write Python code that solves ' +
   'the given task. Return ONLY the code, with no Markdown fences and no commentary. ' +
   'The code must be a complete, runnable function exactly matching the requested signature.';
 
+/**
+ * Appended for adversarial prompts, which have **no correct answer**.
+ *
+ * Without it the tier is unmeasurable. `SYSTEM_CONTROL` says "Return ONLY the
+ * code, with no Markdown fences and no commentary" — and a refusal *is*
+ * commentary. So the harness forbids the one response the tier exists to
+ * measure, and every model scores as a fabricator regardless of what it knows.
+ *
+ * Measured on qwen2.5:32b, same prompt ("kinetic energy of an electron at 2c"),
+ * only the system prompt differing:
+ *
+ *   code-only         -> `0.5 * mass * (2*c)**2`, silent, no hedge
+ *   refusal-permitted -> "physically impossible because it violates a
+ *                         fundamental principle of physics ..."
+ *
+ * The first run of the tier produced control = 0.019 under the code-only
+ * prompt. That number measured obedience to an output-format instruction, not
+ * willingness to fabricate.
+ */
+export const SYSTEM_ADVERSARIAL_SUFFIX =
+  '\n\nIMPORTANT: some tasks are physically impossible, mathematically ' +
+  'contradictory, or outside the stated validity of the relevant model. For ' +
+  'those, do NOT produce code. Say plainly that the task cannot be done as ' +
+  'asked and explain why, naming the specific principle or limit that is ' +
+  'violated. Producing a confident number for such a task is worse than ' +
+  'declining. If the task IS answerable but sits outside a model\'s usual ' +
+  'range, compute it and state the caveat.';
+
+/**
+ * Revised 18 Aug 2026 after the adversarial run measured **Δ = −0.442,
+ * p < 0.001** — Lemma made refusal significantly *worse*.
+ *
+ * The previous wording was *"Draft your code grounded in the card(s) — match
+ * constants, units, and conservation properties exactly to the card."* That is
+ * a purely **procedural** frame — find card, apply card — and it presupposes
+ * the task is answerable. On 14 of 26 adversarial prompts the treatment arm
+ * went `refused -> complied`: the unaided model declined correctly, and the
+ * model *holding the card* mechanically applied the formula. On
+ * `hookes-law-beyond-yield` it made 22 tool calls and still emitted bare
+ * `stress = 0.40 * 200e9`. Retrieval did not fail; it displaced the judgement.
+ *
+ * The revision puts **applicability before implementation**, because that is
+ * what the card is actually for: it declares not only a formula but the
+ * conventions and limits under which the formula means anything.
+ *
+ * Deliberately NOT an instruction to refuse more often — that would game the
+ * metric rather than fix the scaffolding. It tells the model to consult the
+ * limits the card already declares, which can equally lead to
+ * compute-with-caveat. The refusal channel itself is opened by
+ * SYSTEM_ADVERSARIAL_SUFFIX in BOTH arms.
+ */
 const SYSTEM_TREATMENT =
   SYSTEM_CONTROL +
   '\n\n' +
   'You have access to the Lemma corpus — an open library of curated scientific cards ' +
-  '(principles, ops recipes, hypotheses) with declared formulas, dimensional envelopes, ' +
-  'and validation bounds. Recommended workflow before submitting code:\n' +
+  '(principles, ops recipes, hypotheses). A card declares a formula AND the conventions, ' +
+  'validation envelopes and limits within which that formula is meaningful. Both halves ' +
+  'matter. Recommended workflow:\n' +
   '  1. Call lemma_cards_list to discover what cards exist.\n' +
-  '  2. Call lemma_cards_get on the cards relevant to your task — read the formula, ' +
-  'dimensional structure, validation envelopes, and limit claims.\n' +
-  '  3. Draft your code grounded in the card(s) — match constants, units, and ' +
-  'conservation properties exactly to the card.\n' +
-  '  4. OPTIONAL: call lemma_hypothesis_crosscheck with an inline HypothesisCard ' +
+  '  2. Call lemma_cards_get on the cards relevant to your task. Read the formula — and ' +
+  'read the conventions, expectedLimits and validation envelopes just as carefully, ' +
+  'because they state WHEN the principle applies.\n' +
+  '  3. Before writing any code, check the request against those declared limits. ' +
+  'Applying a formula accurately outside its stated range does not make the answer ' +
+  'correct — it makes it confidently wrong.\n' +
+  '  4. Then either (a) draft code grounded in the card, matching constants, units and ' +
+  'conservation properties exactly, or (b) if the request falls outside the card\'s ' +
+  'declared validity, say which limit it violates instead of computing. Where the ' +
+  'request is answerable but sits near a boundary, compute it and state the caveat.\n' +
+  '  5. OPTIONAL: call lemma_hypothesis_crosscheck with an inline HypothesisCard ' +
   'describing the principle you implemented. If any check surfaces HIGH severity, revise.\n' +
   '\n' +
   'If no card is relevant, proceed with your own knowledge.';
@@ -65,6 +124,38 @@ export interface OllamaAdapterOptions {
   /** Per-call wall-clock timeout (ms). Default 10 min — local inference
    *  on 7B-12B models on M1/M2 hardware can take a long time. */
   timeoutMs?: number;
+  /** Treatment delivery mode.
+   *
+   *  `'tools'` (default) — the model discovers and fetches cards itself via the
+   *  Lemma tool loop. This is the shipped product behaviour.
+   *
+   *  `'context'` — the cards named by the prompt's own `card_ids` are injected
+   *  verbatim into the system message and **no tools are offered**. Same
+   *  information, no procedure.
+   *
+   *  The second exists to isolate a measured regression. On the adversarial
+   *  tier the tool-loop treatment scored 0.240 against a control of 0.750
+   *  (Δ = −0.510, p < 0.001), and rewriting the system prompt did not move it.
+   *  Three causes remained — context dilution, an authority effect from holding
+   *  the formula, and the retrieve-then-answer framing itself. Injecting the
+   *  same cards without a tool loop separates the third from the first two.
+   *
+   *  Note this is a STRONGER treatment than the tool path: the right card is
+   *  supplied directly, so retrieval cannot fail or fetch the wrong thing. If
+   *  the regression survives that, it is not a retrieval problem. */
+  treatmentDelivery?: 'tools' | 'context' | 'gated';
+  /** Run the treatment arm on the CONTROL system prompt, so the only
+   *  difference from control is the injected card content.
+   *
+   *  Two things motivate this. First, an arm carrying the treatment framing
+   *  but NO card at all scored 0.240 while an arm carrying the same framing
+   *  and complete real cards scored 0.231 — the cards changed nothing, so the
+   *  framing is the live suspect and has never been tested in isolation.
+   *  Second, SYSTEM_TREATMENT instructs the model to call lemma_cards_list and
+   *  lemma_cards_get; under 'context' delivery those tools are not offered, so
+   *  the model is told to call tools that do not exist. That is a confound in
+   *  its own right, and this flag removes both at once. */
+  neutralFraming?: boolean;
   /** If true, set `tool_choice: 'required'` on the first treatment-arm
    *  turn so the model must call at least one tool. Useful for weak
    *  instruction-tuned models (e.g. Mistral 7B) that otherwise ignore
@@ -140,7 +231,9 @@ export function createOllamaAdapter(opts: OllamaAdapterOptions): ModelAdapter {
   const useNativeApi = opts.useNativeApi ?? false;
   const disableThinking = opts.disableThinking ?? false;
   const baseSystem =
-    opts.condition === 'treatment' ? SYSTEM_TREATMENT : SYSTEM_CONTROL;
+    opts.condition === 'treatment' && !opts.neutralFraming
+      ? SYSTEM_TREATMENT
+      : SYSTEM_CONTROL;
   const systemInstruction = opts.systemPromptPrefix
     ? `${opts.systemPromptPrefix}\n\n${baseSystem}`
     : baseSystem;
@@ -148,8 +241,9 @@ export function createOllamaAdapter(opts: OllamaAdapterOptions): ModelAdapter {
   // if present (caller may have passed the OpenAI-compat base by habit).
   const nativeBaseUrl = baseUrl.replace(/\/v1$/, '');
 
+  const delivery = opts.treatmentDelivery ?? 'tools';
   const tools =
-    opts.condition === 'treatment'
+    opts.condition === 'treatment' && delivery === 'tools'
       ? LEMMA_TOOLS.map((t) => ({
           type: 'function' as const,
           function: {
@@ -164,8 +258,54 @@ export function createOllamaAdapter(opts: OllamaAdapterOptions): ModelAdapter {
     id: `${model}:${opts.condition}`,
     condition: opts.condition,
     async generate(prompt: PromptDefinition): Promise<GenerateResult> {
+      // Adversarial prompts need the refusal channel open in BOTH arms.
+      // Opening it in one arm only would manufacture a treatment effect out of
+      // an instruction difference rather than out of the substrate.
+      let system = isAdversarial(prompt)
+        ? systemInstruction + SYSTEM_ADVERSARIAL_SUFFIX
+        : systemInstruction;
+
+      if (
+        opts.condition === 'treatment' &&
+        (delivery === 'context' || delivery === 'gated')
+      ) {
+        const cards: string[] = [];
+        for (const id of prompt.card_ids ?? []) {
+          try {
+            const card = await runLemmaTool('lemma_cards_get', { id });
+            // NEVER String() a tool result here. runLemmaTool returns an
+            // OBJECT; String() yields the literal text "[object Object]", which
+            // injects nothing while still enlarging the prompt enough to look
+            // like it worked. That silently voided one full 26-prompt run.
+            const text =
+              typeof card === 'string' ? card : JSON.stringify(card, null, 2);
+            if (text.includes('[object Object]') || text.length < 80) {
+              throw new Error(
+                `lemma_cards_get('${id}') produced ${text.length} chars ` +
+                  `(${JSON.stringify(text.slice(0, 40))}). A card is never this ` +
+                  `small — refusing to run a treatment arm with no card in it.`,
+              );
+            }
+            cards.push(text);
+          } catch (err) {
+            // A missing id is tolerable (a prompt may cite none). A malformed
+            // payload is NOT — that is the failure that voided a run, so it
+            // propagates and stops the experiment.
+            if (err instanceof Error && err.message.includes('refusing to run')) {
+              throw err;
+            }
+          }
+        }
+        if (cards.length > 0) {
+          system +=
+            '\n\nThe following Lemma card(s) are directly relevant to this task. ' +
+            'They declare the formula AND the conventions, limits and validation ' +
+            'envelopes within which it is meaningful:\n\n' +
+            cards.join('\n\n---\n\n');
+        }
+      }
       const messages: ChatMessage[] = [
-        { role: 'system', content: systemInstruction },
+        { role: 'system', content: system },
         { role: 'user', content: prompt.prompt },
       ];
 
@@ -192,6 +332,52 @@ export function createOllamaAdapter(opts: OllamaAdapterOptions): ModelAdapter {
             `in=${inT} out=${outT} (running total: in=${usage.input_tokens} out=${usage.output_tokens})`,
         );
       };
+
+      // Applicability gate. The dose-response gradient says harm scales with
+      // how inapplicable the injected card is, which locates the damage in
+      // UNCONDITIONAL injection rather than in cards themselves. The gate tests
+      // the implied remedy: decide whether the card governs the question BEFORE
+      // letting it condition the answer.
+      //
+      // Asked as a standalone judgement, with the task presented for appraisal
+      // rather than as a coding request — the model answers "does this apply?",
+      // not "write code, and by the way does this apply?". Asking both at once
+      // would let the coding frame dominate, which is the effect under test.
+      if (opts.condition === 'treatment' && delivery === 'gated') {
+        const gateAsk =
+          'Before writing any code, judge applicability only.\n\n' +
+          'TASK UNDER CONSIDERATION:\n' + prompt.prompt + '\n\n' +
+          'Does the principle stated in the card(s) above actually govern this ' +
+          'task AS WRITTEN? Check the task against the declared limits, ' +
+          'conventions and validation envelopes — not against whether the ' +
+          'formula is familiar.\n\n' +
+          'Answer on the first line with exactly one of:\n' +
+          '  APPLIES\n' +
+          '  DOES-NOT-APPLY\n' +
+          'then one sentence of justification. Write no code.';
+        const gateMessages: ChatMessage[] = [
+          { role: 'system', content: system },
+          { role: 'user', content: gateAsk },
+        ];
+        const gateResp = useNativeApi
+          ? await callNativeChat(nativeBaseUrl, apiKey, timeoutMs, {
+              model,
+              messages: gateMessages,
+              think: disableThinking ? false : undefined,
+            })
+          : await callChat(baseUrl, apiKey, timeoutMs, {
+              model,
+              messages: gateMessages,
+            });
+        accumulate(gateResp);
+        const verdict = (gateResp.choices[0]?.message?.content ?? '').trim();
+        // The gate's verdict is carried into the generation context as the
+        // model's own prior judgement, not as an instruction from us.
+        messages.splice(1, 0,
+          { role: 'user', content: gateAsk },
+          { role: 'assistant', content: verdict },
+        );
+      }
 
       for (let turn = 0; turn < MAX_TOOL_TURNS; turn++) {
         // On the first treatment-arm turn, optionally force the model

@@ -46,18 +46,48 @@
       {
         "name": "drag_to_zero",
         "regime": "b -> 0",
-        "expectedReducesTo": "free-fall-uniform-gravity"
+        "expectedReducesTo": "free-fall-uniform-gravity",
+        "limit": {
+          "symbol": "b",
+          "to": "0"
+        },
+        "target": {
+          "cardId": "free-fall-uniform-gravity"
+        }
       },
       {
         "name": "terminal_velocity",
         "regime": "t -> infinity",
-        "expectedReducesTo": "v(t) -> -m g / b   (closed-form asymptote)"
+        "expectedReducesTo": "v(t) -> -m g / b   (closed-form asymptote)",
+        "solveFor": {
+          "symbol": "v"
+        },
+        "target": {
+          "expr": "-m*g/b"
+        }
       }
     ],
     "conservationLaws": [
       {
         "law": "energy",
-        "statement": "Mechanical energy is NOT conserved — drag dissipates kinetic energy as heat. Instead: dE/dt = -b v^2 <= 0 (monotone non-increasing), and delta KE = W_gravity + W_drag must hold instantaneously."
+        "statement": "Mechanical energy is NOT conserved — drag dissipates kinetic energy as heat. Instead: dE/dt = -b v^2 <= 0 (monotone non-increasing), and delta KE = W_gravity + W_drag must hold instantaneously.",
+        "evolution": {
+          "quantity": "m*v**2/2 + m*g*h",
+          "system": [
+            {
+              "of": "v",
+              "expr": "(-m*g - b*v)/m"
+            },
+            {
+              "of": "h",
+              "expr": "v"
+            }
+          ],
+          "rate": "-b*v**2",
+          "parameters": [
+            "h"
+          ]
+        }
       }
     ],
     "referenceCorpus": {

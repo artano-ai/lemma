@@ -56,18 +56,26 @@ from .dimensional import (
     is_dimensionless,
     stringify_dims,
 )
-from .engine import run_hypothesis_checks, run_usce_checks
+from .convergence import run_convergence_check
+from .series import SeriesCondition, run_series_checks
+from .engine import run_agreement_checks, run_hypothesis_checks, run_usce_checks
 from .tools import (
+    agreement_check,
     cards_get,
     cards_list,
+    convergence_check,
     hypothesis_crosscheck,
     ops_get,
+    series_check,
+    usce_check,
 )
 from .types import (
     Author,
     CardMetadata,
     Card,
+    CrossMethodTolerance,
     CheckSeverity,
+    CONVENTIONAL_CONSERVATION_LAWS,
     ConservationLaw,
     ConservationLawSpec,
     DerivedFrom,
@@ -103,6 +111,7 @@ __all__ = [
     # card models
     "Author",
     "CardMetadata",
+    "CrossMethodTolerance",
     "Card",
     "PrincipleCard",
     "OpsCard",
@@ -113,6 +122,7 @@ __all__ = [
     "LimitCheckSpec",
     "ConservationLawSpec",
     "ConservationLaw",
+    "CONVENTIONAL_CONSERVATION_LAWS",
     "ReferenceCorpusCheckSpec",
     "DerivedFrom",
     "HypothesisOrigin",
@@ -151,6 +161,10 @@ __all__ = [
     "stringify_dims",
     "is_dimensionless",
     # engine
+    "run_agreement_checks",
+    "run_convergence_check",
+    "run_series_checks",
+    "SeriesCondition",
     "run_hypothesis_checks",
     "run_usce_checks",
     # tools (pure-Python implementations of the MCP tool surface)
@@ -158,6 +172,10 @@ __all__ = [
     "cards_get",
     "ops_get",
     "hypothesis_crosscheck",
+    "usce_check",
+    "series_check",
+    "convergence_check",
+    "agreement_check",
     # MCP client
     "LemmaClient",
     "LemmaToolError",

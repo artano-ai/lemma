@@ -51,7 +51,14 @@ function walk(dir: string): string[] {
   return out;
 }
 
-const CARDS_DIR = findCardsDir();
+/**
+ * Where the corpus actually resolved from. Exported because "which cards am I
+ * checking against" is a real question with a non-obvious answer — a bundled
+ * copy can shadow the working tree — and a consumer that has to re-derive it
+ * would be duplicating the search order and free to drift from it. Mirrors
+ * ``CARDS_DIR`` in the Python SDK.
+ */
+export const CARDS_DIR = findCardsDir();
 const ALL_CARD_FILES = walk(CARDS_DIR);
 
 function isPrincipleRecord(card: unknown): boolean {

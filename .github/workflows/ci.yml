@@ -21,6 +21,27 @@ jobs:
           node-version: "20"
       - name: Validate every card against schema/card.v0.1.json
         run: npx ajv-cli@5 validate --spec=draft2020 -s schema/card.v0.1.json -d "cards/**/*.json"
+      # ajv validates one file at a time, so every cross-file question is
+      # invisible to it: duplicate ids, dangling references, a domain that
+      # disagrees with its folder, and the TypeScript types drifting from the
+      # schema they project. All four passed ajv cleanly before this was added.
+      - name: Check corpus integrity
+        run: node scripts/check-corpus.mjs
+
+      # ajv answers "is this well-formed"; check-corpus answers "is the corpus
+      # consistent". Neither answers "is this card RIGHT" — which is the class
+      # of defect this project exists to catch. The false Lyapunov claim was
+      # schema-valid, fluent and wrong, and passed both of the above.
+      #
+      # `warn` (the engine declining to check) never fails the build: treating
+      # "could not check" as a rejection would teach contributors that
+      # declaring a claim is punished, so the safe move would be to declare
+      # nothing. Only `fail` blocks.
+      - name: Build the engine
+        working-directory: mcp-server
+        run: npm install --no-audit --no-fund && npx tsc
+      - name: Cross-check declared claims
+        run: node scripts/crosscheck-cards.mjs
 
   python:
     name: Python SDK tests
@@ -56,4 +77,36 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
       - name: Run tests
+        run: pnpm test
+
+  cli:
+    name: CLI typecheck + tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "9"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      # The CLI depends on @artano-ai/mcp-server. Installing that from the
+      # registry would test the CLI against the last *published* engine, so a
+      # break introduced in this very commit would still go green. Build the
+      # sibling and link it, so CI exercises the engine as it stands here.
+      - name: Build the local engine
+        working-directory: mcp-server
+        run: pnpm install --frozen-lockfile && pnpm build
+      - name: Install and link the local engine
+        working-directory: cli
+        run: |
+          pnpm install --no-frozen-lockfile
+          rm -rf node_modules/@artano-ai/mcp-server
+          mkdir -p node_modules/@artano-ai
+          ln -s ../../../mcp-server node_modules/@artano-ai/mcp-server
+      - name: Typecheck
+        working-directory: cli
+        run: pnpm typecheck
+      - name: Run tests
+        working-directory: cli
         run: pnpm test

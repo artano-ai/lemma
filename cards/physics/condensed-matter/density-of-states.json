@@ -18,7 +18,8 @@
   "expectedLimits": [
     "finite at insulator/semiconductor gap edges, zero inside the gap",
     "metallic systems: g(epsilon_F) > 0",
-    "smooth under k-mesh refinement (Methfessel-Paxton or Gaussian smearing)"
+    "smooth under k-mesh refinement (Methfessel-Paxton or Gaussian smearing)",
+    "no validation envelope, deliberately: g(epsilon) has no system-independent range. It scales with the cell volume and the number of bands, and its shape depends on the basis, the k-mesh and the smearing width. Any numeric bound would encode one calculation's setup rather than the physics, and would then pass or fail later calculations for reasons unrelated to correctness"
   ],
   "references": [
     "Ashcroft & Mermin, Solid State Physics, ch.8",
@@ -33,5 +34,13 @@
       }
     ],
     "tier": "silver"
-  }
+  },
+  "seriesConditions": [
+    {
+      "of": "g",
+      "op": ">=",
+      "value": 0,
+      "basis": "a density of states counts levels per unit energy, so it is non-negative by definition. This card deliberately declares no validationEnvelopes — g scales with cell volume and band count and its shape depends on basis, k-mesh and smearing — but the sign is universal where the magnitude is not"
+    }
+  ]
 }

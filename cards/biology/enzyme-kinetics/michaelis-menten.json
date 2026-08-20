@@ -24,7 +24,8 @@
     "[S] -> infinity:  v -> V_max  (zero-order saturation)",
     "Lineweaver-Burk linearisation: 1/v = (K_M / V_max)(1/[S]) + 1/V_max",
     "competitive inhibitor: K_M' = K_M (1 + [I]/K_I), V_max unchanged",
-    "non-competitive inhibitor: V_max' = V_max / (1 + [I]/K_I), K_M unchanged"
+    "non-competitive inhibitor: V_max' = V_max / (1 + [I]/K_I), K_M unchanged",
+    "envelope basis: v / V_max = [S] / (K_M + [S]), which for non-negative [S] and K_M is algebraically confined to [0, 1) — it approaches 1 only as [S] -> infinity. A fitted rate exceeding V_max is a fit error, not fast kinetics"
   ],
   "references": [
     "Michaelis & Menten (1913) — Die Kinetik der Invertinwirkung",
@@ -32,6 +33,12 @@
     "Lehninger — Principles of Biochemistry, ch.6",
     "IUBMB — Enzyme Nomenclature recommendations"
   ],
+  "validationEnvelopes": {
+    "velocityFraction_v_over_Vmax": [
+      0.0,
+      1.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

@@ -24,7 +24,8 @@
     "directional selection on aa (relative fitness w_aa < 1): q decreases each generation, deviation from HWE; equilibrium re-established only after fitness equalises",
     "non-random mating (assortative or inbreeding): excess homozygotes (F > 0); HWE not satisfied",
     "migration / gene flow: allele frequencies converge across populations; transient deviation from HWE",
-    "mutation rate mu: equilibrium frequencies shift slightly; HWE remains a good approximation for typical mu ~ 10^-8"
+    "mutation rate mu: equilibrium frequencies shift slightly; HWE remains a good approximation for typical mu ~ 10^-8",
+    "envelope basis: p^2 + 2pq + q^2 = (p + q)^2 = 1 is an identity, not an empirical range — the window is round-off only. An allele frequency is a probability and cannot leave [0, 1]. Both catch the common error of reporting counts where frequencies were expected"
   ],
   "references": [
     "Hardy (1908) — Mendelian Proportions in a Mixed Population, Science",
@@ -32,6 +33,16 @@
     "Hartl & Clark — Principles of Population Genetics, ch.2-3",
     "Crow & Kimura — An Introduction to Population Genetics Theory, ch.1"
   ],
+  "validationEnvelopes": {
+    "genotypeFrequencySum": [
+      0.999999,
+      1.000001
+    ],
+    "alleleFrequency": [
+      0.0,
+      1.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

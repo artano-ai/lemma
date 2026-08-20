@@ -38,6 +38,7 @@ from typing import Any, Iterable, Sequence
 
 from .cards import load_cards
 from .engine import run_hypothesis_checks
+from .types import EvaluateResult, PrincipleCard
 from .types import (
     Card,
     HypothesisCard,
@@ -171,7 +172,15 @@ def cards_get(
     *,
     corpus: Iterable[Card] | None = None,
 ) -> str:
-    """Fetch a card by id and return its full JSON record as a string.
+    """Fetch a card by id and return its JSON record as a string.
+
+    ``metadata`` is omitted, matching the Node reference
+    (``mcp-server/src/tools/cards-get.ts``). This is the LLM-facing
+    path, and authorship is not physics: sending author names and
+    ORCIDs to a model provider on every tool call would leak
+    contributor data, spend context on it, and invite a model to
+    weight a claim by the prestige of whoever curated it. Read
+    metadata from the card files or the typed models instead.
 
     Refuses to fabricate — raises :class:`ValueError` for unknown
     ids, listing every valid id in the corpus.
@@ -196,7 +205,7 @@ def cards_get(
             f"(Hypothesis cards are listed separately — see hypothesis_crosscheck.)"
         )
 
-    return found.model_dump_json(indent=2, exclude_none=True)
+    return found.model_dump_json(indent=2, exclude_none=True, exclude={"metadata"})
 
 
 # ---------------------------------------------------------------------------
@@ -344,7 +353,12 @@ def hypothesis_crosscheck(
     lines.append("---")
     lines.append("Raw JSON:")
     lines.append("```json")
-    lines.append(json.dumps(verdict.model_dump(), indent=2))
+    # ensure_ascii=False to match the Node reference. JSON.stringify emits
+    # literal UTF-8; Python escapes non-ASCII by default, so the same verdict
+    # rendered "L·T^-2·M" there and "L\\u00b7T^-2\\u00b7M" here. Every dimension
+    # separator, em dash and empty-set glyph escaped, and an agent reading the
+    # block saw the escapes rather than the symbols.
+    lines.append(json.dumps(verdict.model_dump(), indent=2, ensure_ascii=False))
     lines.append("```")
 
     return "\n".join(lines)
@@ -356,3 +370,128 @@ __all__ = [
     "ops_get",
     "hypothesis_crosscheck",
 ]
+
+
+# ---------------------------------------------------------------------------
+# Finished-run checkers
+#
+# These four mirror the Node tools of the same names, including the rendered
+# Markdown, because the two MCP servers are drop-in alternatives: a runtime
+# swaps between them by changing one `command` in its config, and a verdict
+# that reads differently depending on which one is installed would make the
+# choice visible when it should be invisible.
+#
+# They arrived late: the Python server exposed four tools while the Node one
+# exposed nine, so a client connecting to `lemma serve` got a different surface
+# from one connecting to `lemma-mcp-server` despite both being documented as
+# "the Lemma MCP server". The engines behind them already existed here and were
+# parity-tested; only the tool wrappers were missing.
+# ---------------------------------------------------------------------------
+
+
+def _render_verdict(heading: str, card: PrincipleCard, result: EvaluateResult) -> str:
+    """Format a verdict exactly as ``tools/render.ts`` does on the Node side."""
+    lines = [
+        f"# {heading} — {card.name}",
+        f"Card: `{card.id}` v{card.version}",
+        "",
+        f"**Overall:** {result.overall.passing} / {result.overall.total} pass · "
+        f"severity {result.overall.severity}",
+        "",
+    ]
+    for check in result.checks:
+        glyph = "OK" if check.severity == "pass" else "X"
+        lines.append(f"- [{glyph}] **{check.name}** — {check.detail}")
+    lines.extend(["", result.diagnosis])
+    return "\n".join(lines)
+
+
+def _principle_or_raise(card_id: str, corpus: Iterable[Card] | None = None) -> PrincipleCard:
+    full = _corpus(corpus)
+    principles, _ops, _hyp = _split(full)
+    match = next((c for c in principles if c.id == card_id), None)
+    if match is None:
+        known = ", ".join(c.id for c in principles)
+        raise ValueError(
+            f'No principle card with id "{card_id}" in the corpus. Known ids: {known}.'
+        )
+    return match
+
+
+def usce_check(
+    *, id: str, output: dict[str, float], corpus: Iterable[Card] | None = None  # noqa: A002
+) -> str:
+    """Range-check a finished output against a card's validation envelopes."""
+    from .engine import run_usce_checks
+
+    card = _principle_or_raise(id, corpus)
+    return _render_verdict("USCE verdict", card, run_usce_checks(output, card))
+
+
+def series_check(
+    *,
+    id: str,  # noqa: A002
+    series: dict[str, list[float]],
+    corpus: Iterable[Card] | None = None,
+) -> str:
+    """Check a reported series against the card's declared ``seriesConditions``.
+
+    Reaches cards :func:`usce_check` structurally cannot: a density of states
+    has no system-independent magnitude, so those cards declare no envelopes,
+    but it cannot be negative in any material.
+    """
+    from .series import run_series_checks
+
+    card = _principle_or_raise(id, corpus)
+    for key, values in series.items():
+        if not isinstance(values, list) or any(
+            isinstance(v, bool) or not isinstance(v, (int, float)) for v in values
+        ):
+            raise ValueError(f'Series "{key}" must be an array of numbers.')
+    return _render_verdict("Series verdict", card, run_series_checks(series, card))
+
+
+def convergence_check(
+    *,
+    id: str,  # noqa: A002
+    refinement: list[list[float]],
+    corpus: Iterable[Card] | None = None,
+) -> str:
+    """Recompute an order of accuracy from an ``[h, error]`` refinement study.
+
+    Differs from reporting the order to :func:`usce_check`: that range-checks a
+    number you supply, this measures it from the study itself.
+    """
+    from .convergence import run_convergence_check
+
+    card = _principle_or_raise(id, corpus)
+    ok = isinstance(refinement, list) and all(
+        isinstance(pt, (list, tuple))
+        and len(pt) == 2
+        and all(not isinstance(v, bool) and isinstance(v, (int, float)) for v in pt)
+        for pt in refinement
+    )
+    if not ok:
+        raise ValueError(
+            "refinement must be an array of [h, error] pairs, e.g. "
+            "[[0.1, 1e-3], [0.05, 2.5e-4]]."
+        )
+    points = [(float(a), float(b)) for a, b in refinement]
+    return _render_verdict("Convergence verdict", card, run_convergence_check(points, card))
+
+
+def agreement_check(
+    *,
+    id: str,  # noqa: A002
+    outputs: dict[str, dict[str, float]],
+    corpus: Iterable[Card] | None = None,
+) -> str:
+    """Check whether independent methods agree, per the card's tolerances.
+
+    One relation above :func:`usce_check`: an envelope bounds a single run's
+    value, this bounds the disagreement *between* runs.
+    """
+    from .engine import run_agreement_checks
+
+    card = _principle_or_raise(id, corpus)
+    return _render_verdict("Agreement verdict", card, run_agreement_checks(outputs, card))

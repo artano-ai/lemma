@@ -16,7 +16,10 @@ venv/
 .mypy_cache/
 .ruff_cache/
 
-# Corpus + schema bundled into packages at build time (copies of cards/ + schema/)
+# Corpus + schema bundled into packages at build time (copies of cards/ + schema/).
+# These are generated artifacts, never edited by hand: a stale copy silently
+# shadows cards/ at runtime, so a check can pass against a snapshot the repo no
+# longer contains. Regenerate rather than edit.
 sdk-py/artano_lemma/_corpus/
 sdk-py/artano_lemma/_schema/
 

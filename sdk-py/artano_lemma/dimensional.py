@@ -100,8 +100,28 @@ def is_dimensionless(v: DimVecLike) -> bool:
 
 class DerivationError(ValueError):
     """Raised when an expression cannot be reduced to dimensions
-    deterministically. The caller falls back to the declared vectors
-    rather than guess."""
+    deterministically — a function call, a fractional or symbolic
+    power, an undeclared symbol. The caller falls back to the declared
+    vectors rather than guess."""
+
+
+class InconsistentTermsError(DerivationError):
+    """The expression *was* derived far enough to prove it is
+    self-inconsistent: a sum whose terms carry different dimensions has
+    no single dimension.
+
+    This is a **finding, not an inability**, which is why it is a
+    distinct type. Treating it as "could not derive" would fall back to
+    the author's declared vectors — and those are typically
+    self-consistent, so a formula the engine had just proven wrong
+    would be reported as a pass. The declared vectors cannot rescue a
+    formula whose own terms disagree.
+    """
+
+    def __init__(self, left: str, right: str) -> None:
+        self.left = left
+        self.right = right
+        super().__init__(f"added terms differ dimensionally: {left} vs {right}")
 
 
 def _zero() -> dict[str, int]:
@@ -163,9 +183,8 @@ def derive_dims(expr: str, symbols: Mapping[str, DimVecLike]) -> dict[str, int]:
             if isinstance(node.op, (ast.Add, ast.Sub)):
                 left, right = walk(node.left), walk(node.right)
                 if left != right:
-                    raise DerivationError(
-                        "added terms differ dimensionally: "
-                        f"{stringify_dims(left)} vs {stringify_dims(right)}"
+                    raise InconsistentTermsError(
+                        stringify_dims(left), stringify_dims(right)
                     )
                 return left
         raise DerivationError(f"unsupported expression: {type(node).__name__}")
@@ -181,6 +200,7 @@ __all__ = [
     "AXES",
     "DimVecLike",
     "DerivationError",
+    "InconsistentTermsError",
     "derive_dims",
     "dims_equal",
     "stringify_dims",

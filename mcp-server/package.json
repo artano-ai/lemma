@@ -1,7 +1,7 @@
 {
   "name": "@artano-ai/mcp-server",
   "version": "0.1.1",
-  "description": "Lemma's Model Context Protocol server — exposes the open scientific cards corpus, the cross-check engine, and RAG retrieval to any MCP-compatible client.",
+  "description": "Lemma's Model Context Protocol server \u2014 exposes the open scientific cards corpus, the cross-check engine, and RAG retrieval to any MCP-compatible client.",
   "license": "Apache-2.0",
   "author": "Arsalan Akhtar (Atomira Technologies, S.L.)",
   "type": "module",
@@ -15,7 +15,8 @@
   },
   "homepage": "https://openlemma.dev",
   "bin": {
-    "lemma-mcp-server": "./dist/index.js"
+    "lemma-mcp-server": "./dist/index.js",
+    "lemma-rag": "./dist/rag-cli.js"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -40,7 +41,8 @@
     "start": "node --env-file-if-exists=.env.local dist/index.js",
     "typecheck": "tsc --noEmit",
     "test": "node --import=tsx --test test/*.test.ts",
-    "prepack": "tsc && node scripts/bundle-cards.mjs"
+    "prepack": "tsc && node scripts/bundle-cards.mjs",
+    "rag": "node --import=tsx src/rag-cli.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",

@@ -22,7 +22,8 @@
     "u = 0 or v = 0: both sides equal 0 (trivial equality)",
     "specialisation R^2: (u_1 v_1 + u_2 v_2)^2 <= (u_1^2 + u_2^2)(v_1^2 + v_2^2)",
     "integral form (L^2): |integral f(x) g(x) dx|^2 <= integral |f|^2 dx * integral |g|^2 dx",
-    "implies the triangle inequality for any inner-product norm"
+    "implies the triangle inequality for any inner-product norm",
+    "envelope basis: the ratio |<u,v>| / (||u|| ||v||) is bounded by the inequality itself — 0 when the vectors are orthogonal, 1 exactly when they are linearly dependent. A computed ratio above 1 is not an unusual case, it is a violated theorem"
   ],
   "references": [
     "Cauchy (1821) — Cours d'Analyse, finite-dimensional case",
@@ -30,6 +31,12 @@
     "Schwarz (1888) — modern formulation in inner-product spaces",
     "Rudin — Real and Complex Analysis, ch.4"
   ],
+  "validationEnvelopes": {
+    "cauchySchwarzRatio": [
+      0.0,
+      1.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

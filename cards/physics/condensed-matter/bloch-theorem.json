@@ -22,7 +22,8 @@
     "k -> k + G (reciprocal lattice vector): same physical state, so band structure is periodic in reciprocal space",
     "free-electron limit (V -> 0): psi -> e^{i k r}, plane wave; bands fold at zone boundaries with vanishing gaps",
     "tight-binding limit (deep wells): u_nk localised on atoms, dispersion proportional to hopping integrals",
-    "irreducible Brillouin zone: symmetry reduces the unique k-space volume by the order of the point group"
+    "irreducible Brillouin zone: symmetry reduces the unique k-space volume by the order of the point group",
+    "no validation envelope, deliberately: the theorem constrains the FORM of the eigenfunctions (a periodic function times a plane-wave phase), not the magnitude of any scalar. What can be checked is structural — that psi(r + R) = exp(i k.R) psi(r) holds to round-off — and that is a different check class from a numeric range"
   ],
   "references": [
     "Bloch (1929) — Über die Quantenmechanik der Elektronen in Kristallgittern",

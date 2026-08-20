@@ -45,7 +45,29 @@ export function stringifyDims(v: DimVec): string {
   return parts.length === 0 ? 'dimensionless' : parts.join('·');
 }
 
+/** The expression could not be reduced to dimensions deterministically — a
+ *  function call, a fractional or symbolic power, an undeclared symbol. The
+ *  caller falls back to the declared vectors rather than guess. */
 export class DimDerivationError extends Error {}
+
+/**
+ * The expression *was* derived far enough to prove it is self-inconsistent:
+ * a sum whose terms carry different dimensions has no single dimension.
+ *
+ * This is a **finding, not an inability**, which is why it is a distinct type.
+ * Treating it as "could not derive" would fall back to the author's declared
+ * vectors — and those are typically self-consistent, so a formula the engine
+ * had just proven wrong would be reported as a pass. The declared vectors
+ * cannot rescue a formula whose own terms disagree.
+ */
+export class DimInconsistentTermsError extends DimDerivationError {
+  constructor(
+    readonly left: string,
+    readonly right: string,
+  ) {
+    super(`added terms differ dimensionally: ${left} vs ${right}`);
+  }
+}
 
 type Dims = Record<Axis, number>;
 
@@ -123,9 +145,7 @@ export function deriveDims(expr: string, symbols: Record<string, DimVec>): DimVe
       pos++;
       const right = parseTerm();
       if (!dimsEqualRaw(acc, right)) {
-        throw new DimDerivationError(
-          `added terms differ dimensionally: ${stringifyDims(acc)} vs ${stringifyDims(right)}`,
-        );
+        throw new DimInconsistentTermsError(stringifyDims(acc), stringifyDims(right));
       }
     }
     return acc;

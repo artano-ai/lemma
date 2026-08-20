@@ -1,0 +1,43 @@
+{
+  "name": "@artano-ai/cli",
+  "version": "0.1.0",
+  "description": "Lemma's command-line interface — verify finished outputs, cross-check proposed principles, and browse the open scientific cards corpus.",
+  "license": "Apache-2.0",
+  "author": "Arsalan Akhtar (Atomira Technologies, S.L.)",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artano-ai/lemma.git",
+    "directory": "cli"
+  },
+  "homepage": "https://openlemma.dev",
+  "bin": {
+    "lemma": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --import=tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import=tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@artano-ai/mcp-server": "^0.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

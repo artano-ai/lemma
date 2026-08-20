@@ -24,7 +24,8 @@
     "isobaric process (P const): delta Q = dH where H = U + PV is enthalpy",
     "isochoric process (V const): delta W = 0 (no PV work), so dU = delta Q",
     "isothermal ideal-gas expansion: dU = 0 (ideal gas internal energy depends only on T), so delta Q = delta W",
-    "cyclic process: integral of dU around the cycle = 0; net heat absorbed = net work done"
+    "cyclic process: integral of dU around the cycle = 0; net heat absorbed = net work done",
+    "envelope basis: |dU - (dQ - dW)| / |dU| = 0 exactly, so as with any conservation residual the bound is a double-precision accumulation allowance rather than a physical tolerance. Sign-convention errors (work done ON versus BY the system) surface here as a residual of order 2, not as a small discrepancy"
   ],
   "references": [
     "Clausius (1850) — Über die bewegende Kraft der Wärme",
@@ -32,6 +33,12 @@
     "Atkins — Physical Chemistry, ch.2",
     "Callen — Thermodynamics and an Introduction to Thermostatistics, ch.1-2"
   ],
+  "validationEnvelopes": {
+    "energyBalanceResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

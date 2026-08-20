@@ -24,7 +24,8 @@
     "f(x) = mx + b (linear): f'(c) = m for all c — every point witnesses the theorem",
     "endpoints excluded: differentiability at the open interior is required; f'(a) or f'(b) need not exist",
     "fails for non-differentiable kinks: f(x) = |x| on [-1, 1] has slope 0 between endpoints, but f'(c) jumps at 0 — no interior c with f'(c) = 0",
-    "implies: if f' = 0 throughout (a, b), then f is constant; foundation of the fundamental theorem of calculus"
+    "implies: if f' = 0 throughout (a, b), then f is constant; foundation of the fundamental theorem of calculus",
+    "no validation envelope, deliberately: the theorem asserts that some xi exists in (a, b), not what its value is. There is no output quantity to bound — a calculation either exhibits a valid xi or it does not, which is a structural check rather than a range check"
   ],
   "references": [
     "Lagrange (1797) — Théorie des fonctions analytiques",

@@ -1,0 +1,65 @@
+#!/bin/sh
+# Pre-push checks. Same checks the automated build runs, so a red build is
+# caught here instead of after the fact.
+#
+# Enable (once per clone):
+#   git config core.hooksPath .githooks
+#
+# Bypass for a genuine emergency:  git push --no-verify
+
+set -e
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+fail=0
+run() {
+  printf '  %-34s ' "$1"
+  shift
+  if out=$("$@" 2>&1); then
+    echo ok
+  else
+    echo FAILED
+    echo "$out" | sed 's/^/      /' | tail -25
+    fail=1
+  fi
+}
+
+echo "pre-push checks"
+
+run "corpus integrity" node scripts/check-corpus.mjs
+
+if [ -d mcp-server/node_modules ]; then
+  # Invoked directly rather than through `pnpm <script>`: pnpm runs a
+  # dependency-status check first, which triggers an install and fails on
+  # blocked native build scripts. That is an environment complaint, not a
+  # test result, and a hook that cries wolf is a hook people bypass.
+  run "mcp-server typecheck" sh -c 'cd mcp-server && npx tsc --noEmit'
+  run "mcp-server tests"     sh -c 'cd mcp-server && node --import=tsx --test test/*.test.ts'
+else
+  echo "  mcp-server                         skipped (no node_modules)"
+fi
+
+if [ -d eval/humaneval-sci/node_modules ]; then
+  # The scorers execute candidate code with `python -I`, which hides user
+  # site-packages. When numpy went missing that way, nothing failed — the
+  # harness just scored every numpy-importing candidate as a hard failure and
+  # produced complete, plausible, wrong results for three months. This is the
+  # check that would have caught it the same afternoon.
+  run "harness python env (numpy under -I)" \
+    sh -c 'cd eval/humaneval-sci && node --import=tsx scripts/test-python-env.ts'
+  run "harness preflight refuses bad env" \
+    sh -c 'cd eval/humaneval-sci && node --import=tsx scripts/test-preflight.ts'
+  run "harness scoring metric" \
+    sh -c 'cd eval/humaneval-sci && LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-unchecked.ts'
+  run "harness typecheck" \
+    sh -c 'cd eval/humaneval-sci && npx tsc --noEmit'
+else
+  echo "  eval harness                       skipped (no node_modules)"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo
+  echo "pre-push FAILED — push aborted. Override with: git push --no-verify"
+  exit 1
+fi
+echo "all pre-push checks passed"

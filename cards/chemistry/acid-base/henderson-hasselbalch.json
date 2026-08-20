@@ -24,7 +24,8 @@
     "[A^-] / [HA] -> infinity (mostly deprotonated):  pH -> +infinity from pKa; same caveat",
     "buffer capacity beta = 2.303 [A^-][HA]/([A^-]+[HA]) — maximised at [A^-] = [HA] (pH = pKa)",
     "outside the buffer window (|pH - pKa| > 1):  Henderson-Hasselbalch loses accuracy because the assumption that added H+/OH- doesn't significantly shift [HA] / [A^-] fails",
-    "blood plasma physiological example: H2CO3 / HCO3^- buffer, pKa1 ~ 6.1, [HCO3-]/[H2CO3] ~ 20 -> pH ~ 7.4"
+    "blood plasma physiological example: H2CO3 / HCO3^- buffer, pKa1 ~ 6.1, [HCO3-]/[H2CO3] ~ 20 -> pH ~ 7.4",
+    "envelope basis: the bound is this card's own stated validity window (0.1 <= [A-]/[HA] <= 10, equivalently |pH - pKa| <= 1), not an external range. Outside it the equation does not become inaccurate so much as inapplicable — the assumption that [HA] and [A-] equal their formal concentrations fails — so a ratio outside the envelope means the wrong tool was used, and the exact equilibrium expression is required"
   ],
   "references": [
     "Henderson (1908) — Concerning the Relationship Between the Strength of Acids and Their Capacity to Preserve Neutrality",
@@ -32,6 +33,12 @@
     "Atkins — Physical Chemistry, ch.6",
     "Po & Senozan (2001) — The Henderson-Hasselbalch Equation: Its History and Limitations, J. Chem. Educ."
   ],
+  "validationEnvelopes": {
+    "bufferRatio_A_over_HA": [
+      0.1,
+      10.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

@@ -26,17 +26,28 @@ lemma/
 │   ├── ops/
 │   └── hypotheses/
 ├── mcp-server/          Node MCP server — @artano-ai/mcp-server (Apache-2.0)
+├── cli/                 Command line — @artano-ai/cli (Apache-2.0)
 ├── sdk-py/              Python SDK — artano-lemma (Apache-2.0)
 └── eval/                Reference clients that consume the engine (Apache-2.0)
     └── humaneval-sci/   HumanEval-Sci benchmark harness
 ```
 
 The schema and the cards corpus are shared across every distribution
-surface. Two clients are bundled: a Node MCP server for agent runtimes
-that speak the Model Context Protocol, and a Python SDK for
-notebook-first scientific workflows that prefer to call Lemma
-in-process. Reference clients that exercise the engine live under
-`eval/` — currently the HumanEval-Sci benchmark harness.
+surface. Three clients are bundled: a Node MCP server for agent runtimes
+that speak the Model Context Protocol, a command line for shells and CI
+pipelines, and a Python SDK for notebook-first scientific workflows that
+prefer to call Lemma in-process. Reference clients that exercise the
+engine live under `eval/` — currently the HumanEval-Sci benchmark
+harness.
+
+The CLI is the surface for automation. It exits `0` when a check passes,
+`1` when the engine reports a HIGH severity, and `2` when it could not
+run at all — so a wrong number fails a build without a human reading
+anything, and a typo'd card id does not masquerade as bad science:
+
+```bash
+npx @artano-ai/cli verify free-fall-uniform-gravity --output '{"gEarth_m_per_s2": 9.81}'
+```
 
 ## Card variants
 

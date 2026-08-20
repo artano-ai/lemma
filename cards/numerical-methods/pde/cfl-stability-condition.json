@@ -24,7 +24,8 @@
     "C > C_max:  exponential instability; the discrete domain of dependence excludes the continuous one",
     "delta t, delta x -> 0 with C fixed:  consistent + stable -> convergent (Lax equivalence theorem)",
     "diffusion-only equations (parabolic): different stability bound, e.g. C_diff = D delta t / delta x^2 <= 1/2 for explicit forward Euler",
-    "stiff systems: explicit CFL forces impractically small delta t -> use implicit / IMEX schemes"
+    "stiff systems: explicit CFL forces impractically small delta t -> use implicit / IMEX schemes",
+    "envelope basis: C_max = 1 for the canonical case this card states — first-order upwind on the linear advection equation — and C is non-negative by construction. Schemes with a smaller C_max should tighten the upper bound rather than rely on this one; an implicit scheme is outside the envelope's scope entirely"
   ],
   "references": [
     "Courant, Friedrichs & Lewy (1928) — Über die partiellen Differenzengleichungen der mathematischen Physik",
@@ -32,6 +33,12 @@
     "LeVeque — Finite Difference Methods for Ordinary and Partial Differential Equations, ch.10",
     "Strikwerda — Finite Difference Schemes and Partial Differential Equations, ch.1"
   ],
+  "validationEnvelopes": {
+    "courantNumber": [
+      0.0,
+      1.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

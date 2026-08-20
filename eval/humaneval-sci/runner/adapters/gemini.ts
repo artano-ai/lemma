@@ -19,6 +19,8 @@ import { GoogleGenAI, Type, type Content, type FunctionDeclaration, type Tool } 
 import type { PromptDefinition, TokenUsage, TraceTurn } from '../../scorer/types.js';
 import { LEMMA_TOOLS, runLemmaTool } from '../lemma-tools.js';
 import type { Condition, GenerateResult, ModelAdapter } from '../runner.js';
+import { SYSTEM_ADVERSARIAL_SUFFIX } from './ollama.js';
+import { isAdversarial } from '../../scorer/refusal.js';
 
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
@@ -120,6 +122,13 @@ export function createGeminiAdapter(opts: GeminiAdapterOptions): ModelAdapter {
     id: `${model}:${opts.condition}`,
     condition: opts.condition,
     async generate(prompt: PromptDefinition): Promise<GenerateResult> {
+      // Adversarial prompts have no correct answer, and the base system prompt
+      // forbids commentary — which is the only channel a refusal can use. Open
+      // it in BOTH arms; opening it in one would manufacture a treatment effect
+      // out of an instruction difference. See ollama.ts for the measurement.
+      const system = isAdversarial(prompt)
+        ? systemInstruction + SYSTEM_ADVERSARIAL_SUFFIX
+        : systemInstruction;
       const history: Content[] = [
         { role: 'user', parts: [{ text: prompt.prompt }] },
       ];
@@ -159,7 +168,7 @@ export function createGeminiAdapter(opts: GeminiAdapterOptions): ModelAdapter {
           model,
           contents: history,
           config: {
-            systemInstruction,
+            systemInstruction: system,
             ...(tools ? { tools } : {}),
           },
         });
@@ -177,7 +186,7 @@ export function createGeminiAdapter(opts: GeminiAdapterOptions): ModelAdapter {
             return {
               candidate: text,
               usage,
-              trace: contentsToTrace(systemInstruction, history),
+              trace: contentsToTrace(system, history),
             };
           }
           // Model returned no tool calls AND no text — degenerate response,

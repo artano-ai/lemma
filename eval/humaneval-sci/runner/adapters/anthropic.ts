@@ -29,6 +29,8 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { PromptDefinition, TokenUsage, TraceTurn } from '../../scorer/types.js';
 import { LEMMA_TOOLS, runLemmaTool } from '../lemma-tools.js';
 import type { Condition, GenerateResult, ModelAdapter } from '../runner.js';
+import { SYSTEM_ADVERSARIAL_SUFFIX } from './ollama.js';
+import { isAdversarial } from '../../scorer/refusal.js';
 
 /** Project-locked default backbone model (the v0 application wraps
  *  third-party APIs with Claude Sonnet 4.6 as the default). */
@@ -89,7 +91,7 @@ export function createAnthropicAdapter(
       'wiring, not yet validated against committed baselines.',
   );
 
-  const system =
+  const baseSystem =
     opts.condition === 'treatment' ? SYSTEM_TREATMENT : SYSTEM_CONTROL;
 
   // The generic LemmaTool schema is already JSON-Schema-shaped, so it maps
@@ -107,6 +109,13 @@ export function createAnthropicAdapter(
     id: `${model}:${opts.condition}`,
     condition: opts.condition,
     async generate(prompt: PromptDefinition): Promise<GenerateResult> {
+      // Adversarial prompts have no correct answer, and the base system prompt
+      // forbids commentary — the only channel a refusal can use. Open it in
+      // BOTH arms; opening it in one would manufacture a treatment effect out
+      // of an instruction difference. See ollama.ts for the measurement.
+      const system = isAdversarial(prompt)
+        ? baseSystem + SYSTEM_ADVERSARIAL_SUFFIX
+        : baseSystem;
       const messages: Anthropic.MessageParam[] = [
         { role: 'user', content: prompt.prompt },
       ];

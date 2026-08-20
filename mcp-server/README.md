@@ -11,9 +11,13 @@ The server is the canonical distribution surface for the Lemma substrate. Plug i
 - **`ops_get`** — fetch an OpsCard (SLURM / Snakemake / Singularity recipes) rendered as Markdown for direct LLM consumption.
 - **`hypothesis_crosscheck`** — run the hypothesis cross-check engine on a HypothesisCard. Pass either an `id` (existing card) or an inline `card` object (e.g. one freshly proposed by an LLM). Verifies dimensional analysis (real), reference-corpus resolution (real), declared limit / conservation claims (recorded as warnings pending symbolic verification), and `derivedFrom` link resolution. Returns a verdict + diagnosis.
 
+- **`series_check`** — check a reported series against the sign and bound conditions a card declares in `seriesConditions`. Reaches cards `usce_check` structurally cannot: a density of states has no system-independent magnitude, so those cards declare no envelopes at all, but it can never be negative in any material.
+- **`convergence_check`** — recompute an order of accuracy from an `[h, error]` refinement study rather than trusting a reported number. A study contaminated by round-off-limited levels warns with the per-level orders attached rather than failing — that is a bad measurement, not a wrong method.
+- **`agreement_check`** — check whether independent methods agree, within a card's `crossMethodTolerances`. One relation above `usce_check`: an envelope bounds one run's value, this bounds the disagreement *between* runs. Fewer than two methods is an error, because a single method cannot corroborate itself.
+
 ### Retrieval
 
-- **`rag_lookup`** — retrieves passages from a Postgres + pgvector corpus indexed over the Siesta manual, ASE, pymatgen, numerical methods, SLURM/MareNostrum docs, and any extra source you point it at.
+- **`rag_lookup`** — semantic search over a Postgres + pgvector corpus **you populate yourself**, returning the most relevant passages. Nothing is bundled: point `lemma-rag ingest` at your own documentation (see [Building the retrieval index](#building-the-retrieval-index)). When no index is configured, or it holds no matches, the tool says so explicitly rather than returning an empty result that reads like "no such thing exists".
 
 Tools deliberately omitted: `read_file`, `write_file`, `list_files`, `run_shell`. Every modern tool-use runtime already provides those — this server adds the scientific layer on top.
 
@@ -30,7 +34,32 @@ pnpm build
 
 Copy `.env.example` to `.env.local` and fill in at least `LEMMA_RAG_DSN`. The other variables have working defaults for local development.
 
-The Postgres database must have the `pgvector` extension enabled and a `chunks` table of embedded passages. The server reads from that table; building and populating it (embedding your sources, then indexing) is a separate step run against the same schema.
+`LEMMA_RAG_DSN` is only needed for `rag_lookup`. The other eight tools read the bundled cards corpus and need no database at all.
+
+## Building the retrieval index
+
+`rag_lookup` searches an index you build. This package ships the tool to build it — `lemma-rag` — but no corpus.
+
+You need Postgres with the `pgvector` extension:
+
+```sh
+export LEMMA_RAG_DSN="postgres://user:pass@localhost:5432/lemma"
+
+lemma-rag init                       # create the schema, table and indexes
+lemma-rag ingest ./docs              # chunk, embed and upsert a directory
+lemma-rag ingest handbook.md         # …or a single file
+lemma-rag status                     # what is currently indexed
+lemma-rag forget /abs/path/to/doc.md # remove one source
+```
+
+`ingest` picks up `.md`, `.txt` and `.rst` under a directory (`--ext` to change that), splits on paragraph and sentence boundaries with overlap so a fact spanning a boundary stays retrievable, and **upserts** — re-ingesting an unchanged document is a no-op rather than a silent duplication that would skew retrieval toward whatever was ingested most often.
+
+Two things worth knowing:
+
+- **The vector column is sized from your embedder** — 768 for the default local model, 3072 for `gemini-embedding-001`. Switching providers against an existing index is refused with an explanation, rather than failing later on a Postgres type error that never mentions the embedding model.
+- **The ANN index is built after the first load, not before.** `ivfflat` clusters the rows it can see, so building it on an empty table gives lists that partition nothing and quietly degrades retrieval.
+
+The raw DDL is in [`src/rag/schema.sql`](src/rag/schema.sql) if you would rather apply it yourself.
 
 ## Wire it into a client
 

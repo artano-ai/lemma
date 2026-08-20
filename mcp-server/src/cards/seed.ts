@@ -11,6 +11,7 @@
  */
 export {
   ALL_CARDS,
+  CARDS_DIR,
   HYPOTHESIS_CARDS,
   OPS_CARDS,
   findHypothesisCard,

@@ -10,6 +10,19 @@
     "one-dimensional kinematics"
   ],
   "formulaTeX": "y(t) = y_0 + v_0\\, t - \\tfrac{1}{2}\\, g\\, t^2",
+  "formula": {
+    "expr": "-m*g",
+    "symbols": {
+      "m": {
+        "M": 1
+      },
+      "g": {
+        "L": 1,
+        "T": -2
+      }
+    },
+    "relation": "net force on the body, m dv/dt = -m g. NOT a transcription of formulaTeX above, which states the integrated position form y(t); the two describe the same physics at different levels of integration and must not be compared as if they were the same expression"
+  },
   "conventions": [
     "g > 0 (magnitude of gravitational acceleration)",
     "y positive upward, measured from chosen origin",
@@ -20,7 +33,8 @@
     "t = 0: y = y_0, v = v_0",
     "peak (v = 0): t* = v_0/g, y_max = y_0 + v_0^2/(2g)",
     "landing (y = 0, y_0 > 0): t_land = (v_0 + sqrt(v_0^2 + 2 g y_0))/g",
-    "energy conservation: (1/2) v^2 + g y = const along trajectory"
+    "energy conservation: (1/2) v^2 + g y = const along trajectory",
+    "machine formula: `formula.expr` gives the net force -m g (the equation of motion m dv/dt = -m g), which is the form a drag-corrected hypothesis reduces to as its drag coefficient vanishes. formulaTeX above states the integrated position form; the two describe the same physics at different levels of integration, and only the force form is what a limit claim compares against"
   ],
   "references": [
     "Halliday, Resnick & Walker — Fundamentals of Physics, ch.2",

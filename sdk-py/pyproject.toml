@@ -29,14 +29,28 @@ dependencies = [
   "jsonschema>=4.21",
   "typer>=0.12",
   "rich>=13.7",
+  # No upper bound: `server.py` imports the server class through a shim that
+  # accepts both the 1.x name (`mcp.server.fastmcp.FastMCP`) and the 2.x one
+  # (`mcp.server.MCPServer`). Verified against 1.29.0 and 2.0.0. Pinning below
+  # the current major to spare a rename would keep anyone on a modern mcp from
+  # installing this package at all.
   "mcp>=1.0",
 ]
 
 [project.optional-dependencies]
+# Opt-in symbolic discharge of declared limit claims. Kept out of the base
+# install: it is needed only for hypothesis cards that carry machine-readable
+# limit specs, and the engine degrades to recording the claim when it is absent
+# rather than erroring. Python-only — there is no Node counterpart, so the
+# cross-language parity fixture never enables it.
+symbolic = [
+  "sympy>=1.12",
+]
 dev = [
   "pytest>=8",
   "ruff>=0.5",
   "mypy>=1.10",
+  "sympy>=1.12",
 ]
 
 [project.scripts]

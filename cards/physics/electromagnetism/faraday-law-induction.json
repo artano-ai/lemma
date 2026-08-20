@@ -24,7 +24,8 @@
     "loop moving with velocity v through static B: EMF = integral of (v x B) . dl; recovers motional EMF",
     "self-inductance: EMF = -L dI/dt where L = Phi_B / I (geometry-dependent constant)",
     "high-frequency limit: combined with Maxwell's displacement current term (Ampère-Maxwell), yields electromagnetic wave propagation",
-    "quasi-static approximation: valid when wavelength of EM disturbance >> circuit dimensions; otherwise full radiation treatment required"
+    "quasi-static approximation: valid when wavelength of EM disturbance >> circuit dimensions; otherwise full radiation treatment required",
+    "envelope basis: the law states that the circulation of E and the rate of change of flux sum to zero, so the residual |closed-integral(E.dl) + dPhi_B/dt| / |dPhi_B/dt| is exactly zero and the bound is a double-precision accumulation allowance. A residual of order 2 is the sign error (Lenz's law dropped), not a small numerical discrepancy"
   ],
   "references": [
     "Faraday (1831) — Experimental Researches in Electricity, series I",
@@ -32,6 +33,12 @@
     "Jackson — Classical Electrodynamics, ch.5-6",
     "Griffiths — Introduction to Electrodynamics, ch.7"
   ],
+  "validationEnvelopes": {
+    "faradayResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

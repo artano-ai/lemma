@@ -36,3 +36,20 @@ test('no overlapping keys -> nothing checked / NONE', () => {
   assert.equal(r.overall.total, 0);
   assert.equal(r.overall.severity, 'NONE');
 });
+
+test('nothing checked -> NONE by default, HIGH when checks are required', () => {
+  const lax = runUsceChecks({ unrelatedKey: 1 }, card);
+  assert.equal(lax.overall.total, 0);
+  assert.equal(lax.overall.severity, 'NONE');
+
+  const strict = runUsceChecks({ unrelatedKey: 1 }, card, true);
+  assert.equal(strict.overall.total, 0);
+  assert.equal(strict.overall.severity, 'HIGH');
+  assert.ok(strict.diagnosis.includes('absent check'));
+});
+
+test('requiring checks does not change a verdict that checked something', () => {
+  const r = runUsceChecks({ gasConstant_J_per_molK: 8.3145 }, card, true);
+  assert.equal(r.overall.severity, 'NONE');
+  assert.equal(r.overall.total, 1);
+});

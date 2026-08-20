@@ -24,7 +24,8 @@
     "irreversible process in an isolated system: dS > 0; equality only at thermodynamic equilibrium",
     "two systems in thermal contact: heat flows from higher T to lower T until temperatures equalise (entropy maximum)",
     "free expansion of an ideal gas (V_1 -> V_2): Delta S = N k_B ln(V_2/V_1) > 0",
-    "Boltzmann H-theorem (kinetic theory): -H functional decreases under collisions, microscopic justification of second law"
+    "Boltzmann H-theorem (kinetic theory): -H functional decreases under collisions, microscopic justification of second law",
+    "envelope basis: k_B is a defined SI constant (exactly 1.380649e-23 J/K since the 2019 redefinition), so the bound is fixed rather than measured. Bracketed identically to the maxwell-boltzmann-speed-distribution card so the same constant is checked the same way wherever it appears"
   ],
   "references": [
     "Boltzmann (1877) — Über die Beziehung zwischen dem zweiten Hauptsatze...",
@@ -33,6 +34,12 @@
     "Reif — Fundamentals of Statistical and Thermal Physics, ch.3-4",
     "BIPM — SI Brochure 9th ed. (defining value of k_B)"
   ],
+  "validationEnvelopes": {
+    "boltzmannConstant_J_per_K": [
+      1.380648e-23,
+      1.38065e-23
+    ]
+  },
   "metadata": {
     "authors": [
       {

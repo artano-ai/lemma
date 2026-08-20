@@ -5,21 +5,37 @@
   "title": "Lemma Card",
   "description": "Open schema for Lemma cards. A card is one of four discriminated variants on `kind`. The discriminator is structural, not subject-area: PrincipleCard covers physics, chemistry, biology, climate, mathematics, engineering — they all share the same shape because the verification operations are universal. The actual subject area lives in `domain`.",
   "oneOf": [
-    { "$ref": "#/$defs/PrincipleCard" },
-    { "$ref": "#/$defs/OpsCard" },
-    { "$ref": "#/$defs/HypothesisCard" },
-    { "$ref": "#/$defs/UnidentifiedCard" }
+    {
+      "$ref": "#/$defs/PrincipleCard"
+    },
+    {
+      "$ref": "#/$defs/OpsCard"
+    },
+    {
+      "$ref": "#/$defs/HypothesisCard"
+    },
+    {
+      "$ref": "#/$defs/UnidentifiedCard"
+    }
   ],
   "$defs": {
     "PrincipleCard": {
       "type": "object",
       "required": [
-        "kind", "id", "version", "name",
-        "principles", "formulaTeX",
-        "conventions", "expectedLimits", "references"
+        "kind",
+        "id",
+        "version",
+        "name",
+        "principles",
+        "formulaTeX",
+        "conventions",
+        "expectedLimits",
+        "references"
       ],
       "properties": {
-        "kind": { "const": "principle" },
+        "kind": {
+          "const": "principle"
+        },
         "id": {
           "type": "string",
           "pattern": "^[a-z][a-z0-9-]*$",
@@ -30,14 +46,18 @@
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
           "description": "Semver. MAJOR for breaking convention changes (e.g. sign flip), MINOR for added expectedLimits, PATCH for typos / refs."
         },
-        "name": { "type": "string" },
+        "name": {
+          "type": "string"
+        },
         "domain": {
           "type": "string",
           "description": "Subject area for grouping. Free-form. Conventional values: physics-condensed-matter, physics-classical-mechanics, chemistry-thermodynamics, chemistry-stoichiometry, biology-population-dynamics, climate-radiative, mathematics-analysis, engineering-fluid-dynamics."
         },
         "principles": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "formulaTeX": {
           "type": "string",
@@ -45,15 +65,21 @@
         },
         "conventions": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "expectedLimits": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "references": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "validationEnvelopes": {
           "type": "object",
@@ -61,112 +87,284 @@
             "oneOf": [
               {
                 "type": "array",
-                "items": { "type": "number" },
+                "items": {
+                  "type": "number"
+                },
                 "minItems": 2,
                 "maxItems": 2
               },
-              { "type": "object" }
+              {
+                "type": "object"
+              }
             ]
           },
           "description": "Numerical bounds the engine asserts at runtime. Keys are domain-conventional (plasmonOmegaP, gEarth_m_per_s2, gasConstant_J_per_molK). Values are [min, max] tuples in conventional units."
         },
-        "metadata": { "$ref": "#/$defs/CardMetadata" }
+        "metadata": {
+          "$ref": "#/$defs/CardMetadata"
+        },
+        "crossMethodTolerances": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "relative": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Maximum fractional spread across methods, about the mean."
+              },
+              "absolute": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "description": "Maximum absolute spread, in the observable's own unit."
+              },
+              "gating": {
+                "type": "boolean",
+                "description": "Whether disagreement fails the verdict. Default true; set false for observables reported but known to be method-sensitive."
+              },
+              "basis": {
+                "type": "string",
+                "description": "Why this tolerance — the citation or reasoning behind the number."
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "relative"
+                ]
+              },
+              {
+                "required": [
+                  "absolute"
+                ]
+              }
+            ],
+            "additionalProperties": false
+          },
+          "description": "Agreement tolerances for comparing the SAME observable across independent methods. Keys match the output keys engines emit (as validationEnvelopes does). Distinct from validationEnvelopes: those bound one run's value absolutely, these bound the SPREAD between runs. Exactly one of relative/absolute per observable."
+        },
+        "formula": {
+          "$ref": "#/$defs/MachineFormula"
+        },
+        "convergence": {
+          "type": "object",
+          "description": "Qualifies how a claimed convergence order is measured. Exists because the engine was otherwise deciding a verdict with a number of its own: the per-level spread threshold separates 'this refinement study is not a clean power law' (warn) from 'the method converges at the wrong rate' (fail), and a number that flips a verdict belongs in the card with its reasoning, the same argument that gives crossMethodTolerances a basis. Omitted, the engine falls back to a documented default and SAYS SO in the verdict, so the provenance is never silent.",
+          "properties": {
+            "orderKey": {
+              "type": "string",
+              "description": "Which validationEnvelopes key holds the expected order. Defaults to observedConvergenceOrder."
+            },
+            "maxPerLevelSpread": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "How far consecutive per-level orders may spread before the sequence stops supporting an order estimate at all. Exceeding it yields warn (refuse to judge), never fail."
+            },
+            "basis": {
+              "type": "string",
+              "description": "Why this number — the reasoning behind the threshold."
+            }
+          },
+          "additionalProperties": false
+        },
+        "seriesConditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SeriesCondition"
+          },
+          "description": "Conditions every reported sample must satisfy. Distinct from validationEnvelopes, which bounds a magnitude: these bound a SIGN or relation, which can be universal where a magnitude is not. That is why cards deliberately carrying no envelope can still carry these — a density of states has no system-independent range but cannot be negative in any material, at any k-mesh, under any smearing."
+        }
       },
       "additionalProperties": false
     },
-
     "OpsCard": {
       "type": "object",
       "required": [
-        "kind", "id", "version", "name", "description",
-        "parameters", "validation", "references"
+        "kind",
+        "id",
+        "version",
+        "name",
+        "description",
+        "parameters",
+        "validation",
+        "references"
       ],
       "properties": {
-        "kind": { "const": "ops" },
-        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
-        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
-        "name": { "type": "string" },
-        "description": { "type": "string" },
+        "kind": {
+          "const": "ops"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
         "parameters": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["key", "label", "defaultValue", "required"],
+            "required": [
+              "key",
+              "label",
+              "defaultValue",
+              "required"
+            ],
             "properties": {
-              "key":          { "type": "string" },
-              "label":        { "type": "string" },
-              "defaultValue": { "type": "string" },
-              "required":     { "type": "boolean" },
-              "note":         { "type": "string" }
+              "key": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "defaultValue": {
+                "type": "string"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "note": {
+                "type": "string"
+              }
             }
           }
         },
         "validation": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "references": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "metadata": { "$ref": "#/$defs/CardMetadata" }
+        "metadata": {
+          "$ref": "#/$defs/CardMetadata"
+        }
       },
       "additionalProperties": false
     },
-
     "HypothesisCard": {
       "type": "object",
       "required": [
-        "kind", "id", "version", "name",
-        "proposal", "proposedFormulaTeX",
-        "checks", "references", "origin"
+        "kind",
+        "id",
+        "version",
+        "name",
+        "proposal",
+        "proposedFormulaTeX",
+        "checks",
+        "references",
+        "origin"
       ],
       "properties": {
-        "kind": { "const": "hypothesis" },
-        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
-        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
-        "name": { "type": "string" },
-        "proposal": { "type": "string" },
-        "proposedFormulaTeX": { "type": "string" },
+        "kind": {
+          "const": "hypothesis"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "proposal": {
+          "type": "string"
+        },
+        "proposedFormulaTeX": {
+          "type": "string"
+        },
         "derivedFrom": {
           "type": "object",
-          "required": ["cardId", "relationship"],
+          "required": [
+            "cardId",
+            "relationship"
+          ],
           "properties": {
-            "cardId": { "type": "string" },
-            "relationship": { "enum": ["extends", "replaces", "complements"] }
+            "cardId": {
+              "type": "string"
+            },
+            "relationship": {
+              "enum": [
+                "extends",
+                "replaces",
+                "complements"
+              ]
+            }
           },
           "additionalProperties": false
         },
-        "checks": { "$ref": "#/$defs/HypothesisChecksSpec" },
+        "checks": {
+          "$ref": "#/$defs/HypothesisChecksSpec"
+        },
         "references": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "origin": { "enum": ["llm", "human", "symbolic-regression"] },
-        "rationale": { "type": "string" },
-        "metadata": { "$ref": "#/$defs/CardMetadata" }
+        "origin": {
+          "enum": [
+            "llm",
+            "human",
+            "symbolic-regression"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/CardMetadata"
+        }
       },
       "additionalProperties": false
     },
-
     "HypothesisChecksSpec": {
       "type": "object",
       "properties": {
         "dimensional": {
           "type": "object",
-          "required": ["lhsLabel", "lhsDims", "rhsLabel", "rhsDims"],
+          "required": [
+            "lhsLabel",
+            "lhsDims",
+            "rhsLabel",
+            "rhsDims"
+          ],
           "properties": {
-            "lhsLabel": { "type": "string" },
-            "lhsDims":  { "$ref": "#/$defs/DimVec" },
-            "rhsLabel": { "type": "string" },
-            "rhsDims":  { "$ref": "#/$defs/DimVec" },
+            "lhsLabel": {
+              "type": "string"
+            },
+            "lhsDims": {
+              "$ref": "#/$defs/DimVec"
+            },
+            "rhsLabel": {
+              "type": "string"
+            },
+            "rhsDims": {
+              "$ref": "#/$defs/DimVec"
+            },
             "expr": {
               "type": "string",
               "description": "Optional plain-ASCII expression for the right-hand side (e.g. \"(1/2)*m*v**2\"). When given with `symbols`, the engine derives the RHS dimensions from the formula and checks them against lhsDims, instead of trusting the declared rhsDims."
             },
             "symbols": {
               "type": "object",
-              "additionalProperties": { "$ref": "#/$defs/DimVec" },
+              "additionalProperties": {
+                "$ref": "#/$defs/DimVec"
+              },
               "description": "Optional map of symbol name to its dimension vector, used to derive `expr`'s dimensions (e.g. { \"m\": {\"M\":1}, \"v\": {\"L\":1,\"T\":-1} })."
             }
           },
@@ -176,23 +374,263 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["name", "regime", "expectedReducesTo"],
+            "required": [
+              "name",
+              "regime",
+              "expectedReducesTo"
+            ],
             "properties": {
-              "name":              { "type": "string" },
-              "regime":            { "type": "string" },
-              "expectedReducesTo": { "type": "string" }
+              "name": {
+                "type": "string"
+              },
+              "regime": {
+                "type": "string"
+              },
+              "expectedReducesTo": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "object",
+                "description": "Machine form of `regime`. Present only when the regime is a genuine limiting process; a substitution is a different operation and must not be expressed here.",
+                "required": [
+                  "symbol",
+                  "to"
+                ],
+                "properties": {
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string",
+                    "description": "Limit point: '0', 'oo', '-oo', or a numeric literal."
+                  }
+                },
+                "additionalProperties": false
+              },
+              "target": {
+                "type": "object",
+                "description": "Machine form of `expectedReducesTo` — what the limit should equal. Either a corpus card (which must then declare `formula`) or an inline expression.",
+                "oneOf": [
+                  {
+                    "required": [
+                      "cardId"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "expr"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "point"
+                    ]
+                  }
+                ],
+                "properties": {
+                  "cardId": {
+                    "type": "string"
+                  },
+                  "expr": {
+                    "type": "string"
+                  },
+                  "point": {
+                    "type": "object",
+                    "description": "Declared fixed point, symbol -> expression.",
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "minProperties": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "substitute": {
+                "type": "object",
+                "description": "Machine form of a regime that SETS a variable rather than taking it to a limit — e.g. 'y = 0'. Distinct from `limit` on purpose: a substitution and a limit disagree wherever the function is discontinuous at the point, so conflating them silently produces wrong answers. Maps symbol -> value.",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "minProperties": 1
+              },
+              "solveFor": {
+                "type": "object",
+                "description": "Machine form of a regime that asks for a ROOT rather than a limit — e.g. terminal velocity, which is the v where the net force vanishes, not the limit of the force expression. Solves expr = 0 for the named symbol.",
+                "required": [
+                  "symbol"
+                ],
+                "properties": {
+                  "symbol": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "fixedPoint": {
+                "type": "object",
+                "description": "Machine form of a regime that names a STATIONARY POINT of a coupled system — the state at which every equation vanishes simultaneously. Distinct from `solveFor`, which roots a single expression: a fixed point of a two-equation system cannot be found from one equation, which is why the system is declared here rather than assumed.",
+                "required": [
+                  "system",
+                  "solveFor"
+                ],
+                "properties": {
+                  "system": {
+                    "type": "array",
+                    "minItems": 2,
+                    "description": "The coupled equations, each set to zero at the fixed point.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "of",
+                        "expr"
+                      ],
+                      "properties": {
+                        "of": {
+                          "type": "string",
+                          "description": "Which quantity this equation governs, e.g. 'x' for dx/dt."
+                        },
+                        "expr": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "solveFor": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "parameters": {
+                    "type": "array",
+                    "description": "Names the coupled system introduces beyond the hypothesis's own declared symbols — a two-equation system carries parameters the single declared equation does not. Declared rather than inferred so that no name is bound by guesswork: several common physics parameter names (gamma, beta, zeta, lambda, pi) collide with functions and constants in the algebra system, and an unbound collision computes a different expression than the card declared.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "description": "Inequalities selecting WHICH fixed point is claimed, e.g. 'y > 0'. A coupled system usually has several stationary points, and verifying stationarity alone would accept an extinction point for a claim about coexistence. A condition that is demonstrably violated refutes the claim; one the algebra system cannot decide without sign assumptions leaves the stationarity verdict standing and is reported as unverified.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
             },
-            "additionalProperties": false
+            "additionalProperties": false,
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "limit",
+                    "substitute"
+                  ]
+                },
+                {
+                  "required": [
+                    "limit",
+                    "solveFor"
+                  ]
+                },
+                {
+                  "required": [
+                    "limit",
+                    "fixedPoint"
+                  ]
+                },
+                {
+                  "required": [
+                    "substitute",
+                    "solveFor"
+                  ]
+                },
+                {
+                  "required": [
+                    "substitute",
+                    "fixedPoint"
+                  ]
+                },
+                {
+                  "required": [
+                    "solveFor",
+                    "fixedPoint"
+                  ]
+                }
+              ]
+            }
           }
         },
         "conservationLaws": {
           "type": "array",
           "items": {
             "type": "object",
-            "required": ["law", "statement"],
+            "required": [
+              "law",
+              "statement"
+            ],
             "properties": {
-              "law": { "enum": ["energy", "momentum", "charge", "particle-number", "total-spin", "parity"] },
-              "statement": { "type": "string" }
+              "law": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Which quantity the claim is about. Free-form, matching how `domain` works — a closed enum here was physics-only and forced non-physics cards to mislabel themselves. Conventional values: energy, momentum, charge, particle-number, total-spin, parity, mass, probability, lyapunov-function."
+              },
+              "statement": {
+                "type": "string"
+              },
+              "evolution": {
+                "type": "object",
+                "description": "Machine form of how a declared quantity evolves under the system. `rate` of '0' is genuine conservation; a non-zero rate is a dissipation claim, which is what the corpus's cards actually assert — mechanical energy under drag, and a Lyapunov function under logistic predation. Checked by differentiating `quantity` along `system` and comparing against `rate`.",
+                "required": [
+                  "quantity",
+                  "system",
+                  "rate"
+                ],
+                "properties": {
+                  "quantity": {
+                    "type": "string",
+                    "description": "The conserved or dissipated quantity, e.g. total mechanical energy."
+                  },
+                  "system": {
+                    "type": "array",
+                    "minItems": 1,
+                    "description": "Time derivatives of the state variables the quantity depends on.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "of",
+                        "expr"
+                      ],
+                      "properties": {
+                        "of": {
+                          "type": "string",
+                          "description": "State variable, e.g. 'v'."
+                        },
+                        "expr": {
+                          "type": "string",
+                          "description": "Its time derivative."
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "rate": {
+                    "type": "string",
+                    "description": "Claimed time derivative of `quantity`. '0' means conserved."
+                  },
+                  "parameters": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Names this block introduces beyond the card's declared symbols."
+                  }
+                },
+                "additionalProperties": false
+              }
             },
             "additionalProperties": false
           }
@@ -200,62 +638,218 @@
         "referenceCorpus": {
           "type": "object",
           "properties": {
-            "mustAgreeWith": { "type": "array", "items": { "type": "string" } },
-            "mayContradict": { "type": "array", "items": { "type": "string" } }
+            "mustAgreeWith": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mayContradict": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           "additionalProperties": false
         }
       },
       "additionalProperties": false
     },
-
     "DimVec": {
       "type": "object",
       "description": "Canonical dimension vector. Each axis is an integer exponent. Omitted axes default to 0. L=length, T=time, M=mass, E=energy, Q=charge, Theta=temperature, N=count.",
       "properties": {
-        "L":     { "type": "integer" },
-        "T":     { "type": "integer" },
-        "M":     { "type": "integer" },
-        "E":     { "type": "integer" },
-        "Q":     { "type": "integer" },
-        "Theta": { "type": "integer" },
-        "N":     { "type": "integer" }
+        "L": {
+          "type": "integer"
+        },
+        "T": {
+          "type": "integer"
+        },
+        "M": {
+          "type": "integer"
+        },
+        "E": {
+          "type": "integer"
+        },
+        "Q": {
+          "type": "integer"
+        },
+        "Theta": {
+          "type": "integer"
+        },
+        "N": {
+          "type": "integer"
+        }
       },
       "additionalProperties": false
     },
-
     "Author": {
       "type": "object",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
-        "name":   { "type": "string" },
-        "orcid":  { "type": "string" },
-        "github": { "type": "string" },
-        "role":   { "enum": ["author", "curator", "reviewer", "translator", "maintainer"] }
+        "name": {
+          "type": "string"
+        },
+        "orcid": {
+          "type": "string"
+        },
+        "github": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "author",
+            "curator",
+            "reviewer",
+            "translator",
+            "maintainer"
+          ]
+        }
       },
       "additionalProperties": false
     },
     "CardMetadata": {
       "type": "object",
-      "required": ["authors"],
+      "required": [
+        "authors"
+      ],
       "properties": {
-        "authors": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Author" } },
-        "tier":    { "enum": ["bronze", "silver", "gold"] },
-        "created": { "type": "string" },
-        "updated": { "type": "string" }
+        "authors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/Author"
+          }
+        },
+        "tier": {
+          "enum": [
+            "bronze",
+            "silver",
+            "gold"
+          ]
+        },
+        "created": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
-
     "UnidentifiedCard": {
       "type": "object",
-      "required": ["kind", "id", "version", "name", "reason"],
+      "required": [
+        "kind",
+        "id",
+        "version",
+        "name",
+        "reason"
+      ],
       "properties": {
-        "kind":    { "const": "unidentified" },
-        "id":      { "const": "none" },
-        "version": { "const": "0.0.0" },
-        "name":    { "type": "string" },
-        "reason":  { "type": "string" }
+        "kind": {
+          "const": "unidentified"
+        },
+        "id": {
+          "const": "none"
+        },
+        "version": {
+          "const": "0.0.0"
+        },
+        "name": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MachineFormula": {
+      "type": "object",
+      "description": "Machine-readable form of formulaTeX. Optional and additive: formulaTeX stays the human-facing statement, this is what a program evaluates. Same grammar as the dimensional check's expr/symbols so the corpus has one expression language, not two. Required before a limit claim can name this card as what it reduces to.",
+      "required": [
+        "expr",
+        "symbols",
+        "relation"
+      ],
+      "properties": {
+        "expr": {
+          "type": "string",
+          "description": "Plain-ASCII expression, e.g. 'y0 + v0*t - (1/2)*g*t**2'."
+        },
+        "symbols": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/DimVec"
+          },
+          "description": "Every free symbol in expr, mapped to its dimensions."
+        },
+        "relation": {
+          "type": "string",
+          "description": "What this expression actually encodes, in plain English. Required because `expr` need NOT be a transcription of formulaTeX: a card may state the integrated form for a human and the differential form for a machine. Without this a consumer assumes they are the same relation and compares two expressions that were never meant to match."
+        }
+      },
+      "additionalProperties": false
+    },
+    "SeriesCondition": {
+      "type": "object",
+      "description": "A condition every reported sample of a quantity must satisfy. Structured rather than an expression on purpose: an expression language would need a computer-algebra system to evaluate, which would make the check Python-only like the symbolic adapter. Every such claim in the corpus fits this shape without algebra.",
+      "required": [
+        "of",
+        "op",
+        "value"
+      ],
+      "properties": {
+        "of": {
+          "type": "string",
+          "description": "Which reported quantity this constrains."
+        },
+        "op": {
+          "enum": [
+            "<",
+            "<=",
+            ">",
+            ">="
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "where": {
+          "type": "object",
+          "required": [
+            "of",
+            "op",
+            "value"
+          ],
+          "properties": {
+            "of": {
+              "type": "string",
+              "description": "Which reported quantity this constrains."
+            },
+            "op": {
+              "enum": [
+                "<",
+                "<=",
+                ">",
+                ">="
+              ]
+            },
+            "value": {
+              "type": "number"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Restricts which samples the claim covers. Load-bearing, not a nicety: `Im chi_0(omega > 0) <= 0` says nothing about negative frequencies, where Im chi is legitimately positive, so testing outside the declared domain would manufacture a violation the card never asserted."
+        },
+        "basis": {
+          "type": "string",
+          "description": "Why this condition holds — the reasoning a reviewer would check."
+        }
       },
       "additionalProperties": false
     }

@@ -1,0 +1,1889 @@
+{
+  "note": [
+    "Cross-language parity fixture for the Lemma engine.",
+    "",
+    "The engine ships twice: TypeScript in mcp-server/src/cards/ and Python in",
+    "sdk-py/artano_lemma/engine.py. Both are supposed to return byte-identical",
+    "verdicts AND byte-identical prose, so a consumer that diffs results across",
+    "the two implementations sees zero noise. Nothing enforced that until this",
+    "file existed: each suite tested its own language against its own output, so",
+    "the two could drift while both stayed green.",
+    "",
+    "Every case below is run through both implementations and compared against",
+    "`expected`. A drift in either language fails that language's own CI job.",
+    "",
+    "The cards here are deliberately synthetic and self-contained: this fixture",
+    "tests ENGINE parity, not corpus contents, so editing a real card must never",
+    "break it.",
+    "",
+    "To regenerate after an intentional wording change, see parity/README.md.",
+    "Never regenerate from one language alone -- that blesses whichever side is",
+    "wrong."
+  ],
+  "cases": [
+    {
+      "id": "usce/value-inside-envelope",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "gEarth_m_per_s2": 9.81
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce",
+          "version": "1.0.0",
+          "name": "parity usce fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "gEarth_m_per_s2": [
+              9.7,
+              9.9
+            ]
+          }
+        },
+        "requireChecks": false
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.envelope.gEarth_m_per_s2",
+            "severity": "pass",
+            "detail": "gEarth_m_per_s2 = 9.81 is within [9.7, 9.9]."
+          }
+        ],
+        "diagnosis": "All checked values fall within the card's validation envelopes.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "usce/whole-numbers-render-identically-on-the-pass-branch",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "deltaGauge_meV_per_atom": 1.0
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce-whole",
+          "version": "1.0.0",
+          "name": "parity whole-number fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "deltaGauge_meV_per_atom": [
+              0.0,
+              2.0
+            ]
+          }
+        },
+        "requireChecks": false
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.envelope.deltaGauge_meV_per_atom",
+            "severity": "pass",
+            "detail": "deltaGauge_meV_per_atom = 1 is within [0, 2]."
+          }
+        ],
+        "diagnosis": "All checked values fall within the card's validation envelopes.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "usce/value-outside-envelope",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "gEarth_m_per_s2": 12.5
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce",
+          "version": "1.0.0",
+          "name": "parity usce fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "gEarth_m_per_s2": [
+              9.7,
+              9.9
+            ]
+          }
+        },
+        "requireChecks": false
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.envelope.gEarth_m_per_s2",
+            "severity": "fail",
+            "detail": "gEarth_m_per_s2 = 12.5 is outside [9.7, 9.9] — the output violates the card's validation envelope."
+          }
+        ],
+        "diagnosis": "The output violates one or more of the card's validation envelopes — a finished result outside the card's stated bounds.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "usce/nothing-overlapped-default-is-permissive",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "someOtherKey": 1.0
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce",
+          "version": "1.0.0",
+          "name": "parity usce fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "gEarth_m_per_s2": [
+              9.7,
+              9.9
+            ]
+          }
+        },
+        "requireChecks": false
+      },
+      "expected": {
+        "checks": [],
+        "diagnosis": "No validation envelopes overlapped the provided output keys — nothing to check. Report the keys the card declares to verify them.",
+        "overall": {
+          "passing": 0,
+          "total": 0,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "usce/nothing-overlapped-required-is-a-failure",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "someOtherKey": 1.0
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce",
+          "version": "1.0.0",
+          "name": "parity usce fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "gEarth_m_per_s2": [
+              9.7,
+              9.9
+            ]
+          }
+        },
+        "requireChecks": true
+      },
+      "expected": {
+        "checks": [],
+        "diagnosis": "No validation envelopes overlapped the provided output keys — nothing to check. Report the keys the card declares to verify them. Reported as a failure because this caller requires that a verification actually check something: an absent check must not be mistaken for a passing one.",
+        "overall": {
+          "passing": 0,
+          "total": 0,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "usce/one-pass-one-fail-rolls-up-to-high",
+      "fn": "usce",
+      "input": {
+        "output": {
+          "gEarth_m_per_s2": 9.81,
+          "gasConstant_J_per_molK": 99.0
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-usce",
+          "version": "1.0.0",
+          "name": "parity usce fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "gEarth_m_per_s2": [
+              9.7,
+              9.9
+            ],
+            "gasConstant_J_per_molK": [
+              8.0,
+              9.0
+            ]
+          }
+        },
+        "requireChecks": false
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.envelope.gEarth_m_per_s2",
+            "severity": "pass",
+            "detail": "gEarth_m_per_s2 = 9.81 is within [9.7, 9.9]."
+          },
+          {
+            "name": "USCE.envelope.gasConstant_J_per_molK",
+            "severity": "fail",
+            "detail": "gasConstant_J_per_molK = 99 is outside [8, 9] — the output violates the card's validation envelope."
+          }
+        ],
+        "diagnosis": "The output violates one or more of the card's validation envelopes — a finished result outside the card's stated bounds.",
+        "overall": {
+          "passing": 1,
+          "total": 2,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "hypothesis/all-checks-resolve",
+      "fn": "hypothesis",
+      "input": {
+        "card": {
+          "kind": "hypothesis",
+          "id": "parity-hyp-ok",
+          "version": "0.1.0",
+          "name": "parity hypothesis fixture",
+          "proposal": "Kinetic energy of a moving mass.",
+          "proposedFormulaTeX": "E = \\tfrac{1}{2} m v^2",
+          "derivedFrom": {
+            "cardId": "parity-base",
+            "relationship": "extends"
+          },
+          "checks": {
+            "dimensional": {
+              "lhsLabel": "E [J]",
+              "lhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "rhsLabel": "(1/2) m v^2 [J]",
+              "rhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "expr": "(1/2)*m*v**2",
+              "symbols": {
+                "m": {
+                  "M": 1
+                },
+                "v": {
+                  "L": 1,
+                  "T": -1
+                }
+              }
+            },
+            "limits": [
+              {
+                "name": "rest",
+                "regime": "v -> 0",
+                "expectedReducesTo": "E -> 0"
+              }
+            ],
+            "conservationLaws": [
+              {
+                "law": "energy",
+                "statement": "Total mechanical energy is conserved absent dissipation."
+              }
+            ],
+            "referenceCorpus": {
+              "mustAgreeWith": [
+                "parity-base"
+              ]
+            }
+          },
+          "references": [
+            "r"
+          ],
+          "origin": "human",
+          "rationale": "Fixture exercising every check class with everything resolvable."
+        },
+        "corpus": [
+          {
+            "kind": "principle",
+            "id": "parity-base",
+            "version": "1.0.0",
+            "name": "parity base card",
+            "principles": [
+              "p"
+            ],
+            "formulaTeX": "x",
+            "conventions": [
+              "c"
+            ],
+            "expectedLimits": [
+              "l"
+            ],
+            "references": [
+              "r"
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Hypothesis.dimensional_analysis",
+            "severity": "pass",
+            "detail": "Derived from formula: (1/2) m v^2 [J] = L^2·T^-2·M matches LHS [E [J]] = L^2·T^-2·M"
+          },
+          {
+            "name": "Hypothesis.reference_corpus",
+            "severity": "pass",
+            "detail": "All declared references resolve — 1 mustAgreeWith (parity-base), 0 mayContradict (∅)."
+          },
+          {
+            "name": "Hypothesis.limit_rest",
+            "severity": "warn",
+            "detail": "Claim recorded: in the regime v -> 0, the proposal should reduce to E -> 0. Symbolic verification pending."
+          },
+          {
+            "name": "Hypothesis.conservation_energy",
+            "severity": "warn",
+            "detail": "Claim recorded: energy conservation — Total mechanical energy is conserved absent dissipation.. Symbolic / numeric verification pending."
+          },
+          {
+            "name": "Hypothesis.derived_from",
+            "severity": "pass",
+            "detail": "Hypothesis extends corpus card \"parity-base\" — link resolves."
+          }
+        ],
+        "diagnosis": "Hypothesis passes hard checks (dimensional analysis, reference resolution) but its limit / conservation claims have not been formally verified. Human reviewer or symbolic engine (SymPy/PySR) should close the open warnings before promotion to a verified card.",
+        "overall": {
+          "passing": 3,
+          "total": 5,
+          "severity": "LOW"
+        }
+      }
+    },
+    {
+      "id": "hypothesis/dimensional-mismatch-from-formula",
+      "fn": "hypothesis",
+      "input": {
+        "card": {
+          "kind": "hypothesis",
+          "id": "parity-hyp-dim",
+          "version": "0.1.0",
+          "name": "parity dimensional mismatch",
+          "proposal": "Claims energy but the formula is a momentum.",
+          "proposedFormulaTeX": "E = m v",
+          "checks": {
+            "dimensional": {
+              "lhsLabel": "E [J]",
+              "lhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "rhsLabel": "m v",
+              "rhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "expr": "m*v",
+              "symbols": {
+                "m": {
+                  "M": 1
+                },
+                "v": {
+                  "L": 1,
+                  "T": -1
+                }
+              }
+            }
+          },
+          "references": [
+            "r"
+          ],
+          "origin": "llm",
+          "rationale": "The declared vectors agree with each other but the formula does not have those dimensions."
+        },
+        "corpus": []
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Hypothesis.dimensional_analysis",
+            "severity": "fail",
+            "detail": "Dimensional mismatch — the formula m v derives to L·T^-1·M, but LHS [E [J]] is L^2·T^-2·M. The proposed equation does not hold dimensionally."
+          }
+        ],
+        "diagnosis": "Hypothesis fails one or more hard cross-checks. Reject or refine before any human review — the cited contradictions point to either a malformed proposal or a corpus inconsistency that itself needs auditing.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "hypothesis/self-inconsistent-formula-fails-rather-than-falling-back",
+      "fn": "hypothesis",
+      "input": {
+        "card": {
+          "kind": "hypothesis",
+          "id": "parity-hyp-inconsistent",
+          "version": "0.1.0",
+          "name": "parity self-inconsistent formula",
+          "proposal": "A formula whose own terms carry different dimensions.",
+          "proposedFormulaTeX": "E = m v^2 + m v",
+          "checks": {
+            "dimensional": {
+              "lhsLabel": "E [J]",
+              "lhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "rhsLabel": "m v^2 + m v",
+              "rhsDims": {
+                "M": 1,
+                "L": 2,
+                "T": -2
+              },
+              "expr": "m*v**2 + m*v",
+              "symbols": {
+                "m": {
+                  "M": 1
+                },
+                "v": {
+                  "L": 1,
+                  "T": -1
+                }
+              }
+            }
+          },
+          "references": [
+            "r"
+          ],
+          "origin": "llm",
+          "rationale": "A sum of an energy and a momentum has no single dimension; the engine must report that as a failure, not fall back to the self-consistent declared vectors and call it a pass."
+        },
+        "corpus": []
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Hypothesis.dimensional_analysis",
+            "severity": "fail",
+            "detail": "Dimensional inconsistency — the formula m v^2 + m v adds terms of different dimensions (L^2·T^-2·M vs L·T^-1·M), so it has no single dimension. This is a defect in the formula itself rather than a limit of the derivation, so the declared vectors are not consulted."
+          }
+        ],
+        "diagnosis": "Hypothesis fails one or more hard cross-checks. Reject or refine before any human review — the cited contradictions point to either a malformed proposal or a corpus inconsistency that itself needs auditing.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "hypothesis/unresolvable-reference",
+      "fn": "hypothesis",
+      "input": {
+        "card": {
+          "kind": "hypothesis",
+          "id": "parity-hyp-ref",
+          "version": "0.1.0",
+          "name": "parity unresolvable reference",
+          "proposal": "Cites a card that is not in the corpus.",
+          "proposedFormulaTeX": "x",
+          "checks": {
+            "referenceCorpus": {
+              "mustAgreeWith": [
+                "card-that-does-not-exist"
+              ]
+            }
+          },
+          "references": [
+            "r"
+          ],
+          "origin": "llm",
+          "rationale": "Fixture for reference resolution failure."
+        },
+        "corpus": []
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Hypothesis.reference_corpus",
+            "severity": "fail",
+            "detail": "Declared reference cards not in corpus: card-that-does-not-exist. Hypothesis cannot be cross-checked against missing references."
+          }
+        ],
+        "diagnosis": "Hypothesis fails one or more hard cross-checks. Reject or refine before any human review — the cited contradictions point to either a malformed proposal or a corpus inconsistency that itself needs auditing.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "hypothesis/derived-from-missing-card",
+      "fn": "hypothesis",
+      "input": {
+        "card": {
+          "kind": "hypothesis",
+          "id": "parity-hyp-derived",
+          "version": "0.1.0",
+          "name": "parity derivedFrom missing",
+          "proposal": "Extends a card that is not in the corpus.",
+          "proposedFormulaTeX": "x",
+          "derivedFrom": {
+            "cardId": "absent-parent",
+            "relationship": "extends"
+          },
+          "checks": {},
+          "references": [
+            "r"
+          ],
+          "origin": "llm",
+          "rationale": "Fixture for derivedFrom link failure."
+        },
+        "corpus": []
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Hypothesis.derived_from",
+            "severity": "fail",
+            "detail": "Hypothesis declares it extends card \"absent-parent\", which is not in the corpus."
+          }
+        ],
+        "diagnosis": "Hypothesis fails one or more hard cross-checks. Reject or refine before any human review — the cited contradictions point to either a malformed proposal or a corpus inconsistency that itself needs auditing.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "agreement/methods-agree",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "madar": {
+            "latticeConstant_A": 5.47,
+            "indirectGap_eV": 0.536
+          },
+          "kavosh": {
+            "latticeConstant_A": 5.458,
+            "indirectGap_eV": 0.559
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.latticeConstant_A",
+            "severity": "pass",
+            "detail": "latticeConstant_A: kavosh=5.458, madar=5.47 — spread 0.002196 is within the relative tolerance 0.01."
+          },
+          {
+            "name": "Agreement.indirectGap_eV",
+            "severity": "pass",
+            "detail": "indirectGap_eV: kavosh=0.559, madar=0.536 — spread 0.023 is within the absolute tolerance 0.05."
+          }
+        ],
+        "diagnosis": "All 2 compared observables agree within the card's tolerances across 2 methods. Not comparable (reported by fewer than two methods): bulkModulus_GPa.",
+        "overall": {
+          "passing": 2,
+          "total": 2,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "agreement/relative-tolerance-exceeded",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "a": {
+            "latticeConstant_A": 5.4
+          },
+          "b": {
+            "latticeConstant_A": 5.65
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.latticeConstant_A",
+            "severity": "fail",
+            "detail": "latticeConstant_A: a=5.4, b=5.65 — spread 0.04525 exceeds the relative tolerance 0.01."
+          }
+        ],
+        "diagnosis": "The methods disagree beyond the card's tolerance on at least one gating observable. Agreement is evidence of consistency, not correctness — but disagreement at this scale means the methods are not describing the same result. Not comparable (reported by fewer than two methods): bulkModulus_GPa, indirectGap_eV.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "agreement/absolute-tolerance-exceeded",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "a": {
+            "indirectGap_eV": 0.3
+          },
+          "b": {
+            "indirectGap_eV": 0.56
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.indirectGap_eV",
+            "severity": "fail",
+            "detail": "indirectGap_eV: a=0.3, b=0.56 — spread 0.26 exceeds the absolute tolerance 0.05."
+          }
+        ],
+        "diagnosis": "The methods disagree beyond the card's tolerance on at least one gating observable. Agreement is evidence of consistency, not correctness — but disagreement at this scale means the methods are not describing the same result. Not comparable (reported by fewer than two methods): bulkModulus_GPa, latticeConstant_A.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "agreement/non-gating-observable-warns-only",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "madar": {
+            "latticeConstant_A": 5.47,
+            "bulkModulus_GPa": 133.0
+          },
+          "kavosh": {
+            "latticeConstant_A": 5.458,
+            "bulkModulus_GPa": 81.0
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.latticeConstant_A",
+            "severity": "pass",
+            "detail": "latticeConstant_A: kavosh=5.458, madar=5.47 — spread 0.002196 is within the relative tolerance 0.01."
+          },
+          {
+            "name": "Agreement.bulkModulus_GPa",
+            "severity": "warn",
+            "detail": "bulkModulus_GPa: kavosh=81, madar=133 — spread 52 exceeds the absolute tolerance 25, reported but not gating."
+          }
+        ],
+        "diagnosis": "The methods agree on every gating observable. A non-gating observable diverges; that diagnoses a method rather than invalidating the comparison, and is reported. Not comparable (reported by fewer than two methods): indirectGap_eV.",
+        "overall": {
+          "passing": 1,
+          "total": 2,
+          "severity": "LOW"
+        }
+      }
+    },
+    {
+      "id": "agreement/nothing-comparable-is-a-failure",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "a": {
+            "somethingElse": 1.0
+          },
+          "b": {
+            "anotherThing": 2.0
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [],
+        "diagnosis": "No observable was reported by two or more methods, so nothing was compared. This is not agreement — it is an absent comparison, and is reported as a failure so it cannot be mistaken for one. Declared but not comparable: bulkModulus_GPa, indirectGap_eV, latticeConstant_A.",
+        "overall": {
+          "passing": 0,
+          "total": 0,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "agreement/single-method-observable-is-named-not-dropped",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "a": {
+            "latticeConstant_A": 5.47,
+            "indirectGap_eV": 0.54
+          },
+          "b": {
+            "latticeConstant_A": 5.46
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.latticeConstant_A",
+            "severity": "pass",
+            "detail": "latticeConstant_A: a=5.47, b=5.46 — spread 0.00183 is within the relative tolerance 0.01."
+          }
+        ],
+        "diagnosis": "All 1 compared observables agree within the card's tolerances across 2 methods. Not comparable (reported by fewer than two methods): bulkModulus_GPa, indirectGap_eV.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "agreement/three-methods-use-full-spread",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "a": {
+            "latticeConstant_A": 5.46
+          },
+          "b": {
+            "latticeConstant_A": 5.47
+          },
+          "c": {
+            "latticeConstant_A": 5.65
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "Agreement.latticeConstant_A",
+            "severity": "fail",
+            "detail": "latticeConstant_A: a=5.46, b=5.47, c=5.65 — spread 0.03438 exceeds the relative tolerance 0.01."
+          }
+        ],
+        "diagnosis": "The methods disagree beyond the card's tolerance on at least one gating observable. Agreement is evidence of consistency, not correctness — but disagreement at this scale means the methods are not describing the same result. Not comparable (reported by fewer than two methods): bulkModulus_GPa, indirectGap_eV.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "agreement/single-method-refuses",
+      "fn": "agreement",
+      "input": {
+        "outputs": {
+          "madar": {
+            "latticeConstant_A": 5.47
+          }
+        },
+        "card": {
+          "$use": "agreementCard"
+        }
+      },
+      "expected": {
+        "threw": "cross-method agreement needs at least two methods, got 1 (madar). A single method cannot corroborate itself."
+      }
+    },
+    {
+      "id": "convergence/clean-second-order",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            1.0000000000000003e-05
+          ],
+          [
+            0.05,
+            2.5000000000000006e-06
+          ],
+          [
+            0.025,
+            6.250000000000002e-07
+          ],
+          [
+            0.0125,
+            1.5625000000000004e-07
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-2",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "pass",
+            "detail": "Observed convergence order 2 is within [1.8, 2.2], measured over 4 refinement levels (per-level: 2, 2, 2)."
+          }
+        ],
+        "diagnosis": "The measured convergence order matches the order the card declares.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "convergence/wrong-order-is-a-genuine-fail",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            0.0001
+          ],
+          [
+            0.05,
+            5e-05
+          ],
+          [
+            0.025,
+            2.5e-05
+          ],
+          [
+            0.0125,
+            1.25e-05
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-2",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "fail",
+            "detail": "Observed convergence order 1 is outside [1.8, 2.2] (per-level: 1, 1, 1). The refinement study is a clean power law, so this is a genuine order mismatch rather than a noisy measurement — the method is not converging at the rate the card declares."
+          }
+        ],
+        "diagnosis": "The measured convergence order contradicts the card. A clean power law at the wrong slope points at the implementation, not at the measurement.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "convergence/round-off-tail-warns-rather-than-fails",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            1.0000000000000003e-05
+          ],
+          [
+            0.05,
+            2.5000000000000006e-06
+          ],
+          [
+            0.025,
+            6.250000000000002e-07
+          ],
+          [
+            0.0125,
+            1.5625000000000004e-07
+          ],
+          [
+            0.00625,
+            3.9e-08
+          ],
+          [
+            0.003125,
+            4.2e-08
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-2",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "warn",
+            "detail": "The refinement sequence is not a clean power law: per-level orders are 2, 2, 2, 2, -0.107, spanning 2.11 (> 0.5, the engine default, not declared by this card). The overall fit gives 1.7, but that number does not describe this data. A tail that flattens usually means round-off-limited levels at small h; a leading level that is off usually means the asymptotic regime had not been reached yet. Drop the offending levels and re-run rather than reading this as a verdict on the method."
+          }
+        ],
+        "diagnosis": "The refinement study does not support an order estimate — neither confirmed nor refuted. Inspect the per-level orders before drawing a conclusion.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "convergence/too-few-levels",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            1e-05
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-2",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "warn",
+            "detail": "A convergence order needs at least two refinement levels; got 1. Neither confirmed nor refuted."
+          }
+        ],
+        "diagnosis": "Too few refinement levels to estimate an order.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "convergence/zero-error-is-not-fittable",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            0.0
+          ],
+          [
+            0.05,
+            1e-06
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-2",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "warn",
+            "detail": "Refinement levels must have positive h and positive error to fit a power law; got (0.1, 0). An error of exactly zero usually means the exact solution was recovered at that level, which carries no order information."
+          }
+        ],
+        "diagnosis": "Refinement data is not fittable as a power law.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "convergence/no-envelope-declared",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            1.0000000000000003e-05
+          ],
+          [
+            0.05,
+            2.5000000000000006e-06
+          ],
+          [
+            0.025,
+            6.250000000000002e-07
+          ],
+          [
+            0.0125,
+            1.5625000000000004e-07
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-none",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-none",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "someOtherKey": [
+              0.0,
+              1.0
+            ]
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "warn",
+            "detail": "Card \"parity-convergence-none\" declares no observedConvergenceOrder envelope, so there is nothing to check the measured order against. Add one to make this claim verifiable."
+          }
+        ],
+        "diagnosis": "No observedConvergenceOrder envelope on this card — the order was not checked.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/dos-non-negative-holds",
+      "fn": "series",
+      "input": {
+        "series": {
+          "epsilon": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ],
+          "g": [
+            0.0,
+            0.3,
+            1.2,
+            0.8,
+            0.0
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "g",
+            "op": ">=",
+            "value": 0
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_g",
+            "severity": "pass",
+            "detail": "g >= 0 holds across all 5 covered samples."
+          }
+        ],
+        "diagnosis": "Every declared condition holds across the reported series.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/dos-negative-bin-is-a-fail",
+      "fn": "series",
+      "input": {
+        "series": {
+          "epsilon": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ],
+          "g": [
+            0.0,
+            -0.4,
+            1.2,
+            0.8,
+            0.0
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "g",
+            "op": ">=",
+            "value": 0
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_g",
+            "severity": "fail",
+            "detail": "g >= 0 is violated by 1 of 5 covered samples; the worst is -0.4 at index 1. This is not a tolerance question — the quantity is outside its own definition."
+          }
+        ],
+        "diagnosis": "A reported series violates a condition the card declares. Unlike a value outside an envelope, a sign violation is not a matter of tolerance — the quantity is outside its own definition.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "series/passivity-with-domain-restriction",
+      "fn": "series",
+      "input": {
+        "series": {
+          "omega": [
+            -1,
+            0,
+            1,
+            2,
+            3
+          ],
+          "imChi": [
+            0.5,
+            0.0,
+            -0.2,
+            -0.4,
+            -0.1
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "imChi",
+            "op": "<=",
+            "value": 0,
+            "where": {
+              "of": "omega",
+              "op": ">",
+              "value": 0
+            }
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_imChi",
+            "severity": "pass",
+            "detail": "imChi <= 0 where omega > 0 holds across all 3 covered samples."
+          }
+        ],
+        "diagnosis": "Every declared condition holds across the reported series.",
+        "overall": {
+          "passing": 1,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/gain-inside-the-domain-is-a-fail",
+      "fn": "series",
+      "input": {
+        "series": {
+          "omega": [
+            -1,
+            0,
+            1,
+            2,
+            3
+          ],
+          "imChi": [
+            0.5,
+            0.0,
+            -0.2,
+            0.9,
+            -0.1
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "imChi",
+            "op": "<=",
+            "value": 0,
+            "where": {
+              "of": "omega",
+              "op": ">",
+              "value": 0
+            }
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_imChi",
+            "severity": "fail",
+            "detail": "imChi <= 0 where omega > 0 is violated by 1 of 3 covered samples; the worst is 0.9 at index 3. This is not a tolerance question — the quantity is outside its own definition."
+          }
+        ],
+        "diagnosis": "A reported series violates a condition the card declares. Unlike a value outside an envelope, a sign violation is not a matter of tolerance — the quantity is outside its own definition.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    },
+    {
+      "id": "series/vacuous-domain-warns",
+      "fn": "series",
+      "input": {
+        "series": {
+          "omega": [
+            -3,
+            -2,
+            -1
+          ],
+          "imChi": [
+            0.5,
+            0.4,
+            0.3
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "imChi",
+            "op": "<=",
+            "value": 0,
+            "where": {
+              "of": "omega",
+              "op": ">",
+              "value": 0
+            }
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_imChi",
+            "severity": "warn",
+            "detail": "Condition \"imChi <= 0 where omega > 0\" covers no reported sample, so it is vacuous here — neither confirmed nor refuted. Report samples inside the declared domain to test it."
+          }
+        ],
+        "diagnosis": "Some conditions could not be evaluated against the series provided — recorded, neither confirmed nor refuted.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/quantity-not-reported-warns",
+      "fn": "series",
+      "input": {
+        "series": {
+          "omega": [
+            1,
+            2
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "imChi",
+            "op": "<=",
+            "value": 0,
+            "where": {
+              "of": "omega",
+              "op": ">",
+              "value": 0
+            }
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_imChi",
+            "severity": "warn",
+            "detail": "Condition \"imChi <= 0 where omega > 0\" was declared, but the run reports no \"imChi\" series. Reported: omega. Neither confirmed nor refuted."
+          }
+        ],
+        "diagnosis": "Some conditions could not be evaluated against the series provided — recorded, neither confirmed nor refuted.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/ragged-columns-warn",
+      "fn": "series",
+      "input": {
+        "series": {
+          "omega": [
+            1,
+            2,
+            3
+          ],
+          "imChi": [
+            -0.1
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ]
+        },
+        "conditions": [
+          {
+            "of": "imChi",
+            "op": "<=",
+            "value": 0
+          }
+        ]
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_imChi",
+            "severity": "warn",
+            "detail": "The reported columns have different lengths (1, 3), so they are not samples of one series and cannot be compared point by point."
+          }
+        ],
+        "diagnosis": "Some conditions could not be evaluated against the series provided — recorded, neither confirmed nor refuted.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "convergence/threshold-declared-by-the-card",
+      "fn": "convergence",
+      "input": {
+        "points": [
+          [
+            0.1,
+            1.0000000000000003e-05
+          ],
+          [
+            0.05,
+            2.5000000000000006e-06
+          ],
+          [
+            0.025,
+            6.250000000000002e-07
+          ],
+          [
+            0.0125,
+            1.5625000000000004e-07
+          ],
+          [
+            0.00625,
+            3.9e-08
+          ],
+          [
+            0.003125,
+            4.2e-08
+          ]
+        ],
+        "card": {
+          "kind": "principle",
+          "id": "parity-convergence-declared",
+          "version": "1.0.0",
+          "name": "parity parity-convergence-2",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "validationEnvelopes": {
+            "observedConvergenceOrder": [
+              1.8,
+              2.2
+            ]
+          },
+          "convergence": {
+            "maxPerLevelSpread": 0.4,
+            "basis": "fixture: matches the acceptance window"
+          }
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.convergence_observedConvergenceOrder",
+            "severity": "warn",
+            "detail": "The refinement sequence is not a clean power law: per-level orders are 2, 2, 2, 2, -0.107, spanning 2.11 (> 0.4, declared by parity-convergence-declared). The overall fit gives 1.7, but that number does not describe this data. A tail that flattens usually means round-off-limited levels at small h; a leading level that is off usually means the asymptotic regime had not been reached yet. Drop the offending levels and re-run rather than reading this as a verdict on the method."
+          }
+        ],
+        "diagnosis": "The refinement study does not support an order estimate — neither confirmed nor refuted. Inspect the per-level orders before drawing a conclusion.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "NONE"
+        }
+      }
+    },
+    {
+      "id": "series/conditions-read-from-the-card",
+      "fn": "series",
+      "input": {
+        "series": {
+          "epsilon": [
+            -2,
+            -1,
+            0,
+            1,
+            2
+          ],
+          "g": [
+            0.0,
+            -0.4,
+            1.2,
+            0.8,
+            0.0
+          ]
+        },
+        "card": {
+          "kind": "principle",
+          "id": "parity-series-declared",
+          "version": "1.0.0",
+          "name": "parity series fixture",
+          "principles": [
+            "p"
+          ],
+          "formulaTeX": "x",
+          "conventions": [
+            "c"
+          ],
+          "expectedLimits": [
+            "l"
+          ],
+          "references": [
+            "r"
+          ],
+          "seriesConditions": [
+            {
+              "of": "g",
+              "op": ">=",
+              "value": 0,
+              "basis": "fixture"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "checks": [
+          {
+            "name": "USCE.series_g",
+            "severity": "fail",
+            "detail": "g >= 0 is violated by 1 of 5 covered samples; the worst is -0.4 at index 1. This is not a tolerance question — the quantity is outside its own definition."
+          }
+        ],
+        "diagnosis": "A reported series violates a condition the card declares. Unlike a value outside an envelope, a sign violation is not a matter of tolerance — the quantity is outside its own definition.",
+        "overall": {
+          "passing": 0,
+          "total": 1,
+          "severity": "HIGH"
+        }
+      }
+    }
+  ],
+  "shared": {
+    "agreementCard": {
+      "kind": "principle",
+      "id": "parity-agreement",
+      "version": "1.0.0",
+      "name": "parity agreement fixture",
+      "principles": [
+        "p"
+      ],
+      "formulaTeX": "x",
+      "conventions": [
+        "c"
+      ],
+      "expectedLimits": [
+        "l"
+      ],
+      "references": [
+        "r"
+      ],
+      "crossMethodTolerances": {
+        "latticeConstant_A": {
+          "relative": 0.01
+        },
+        "indirectGap_eV": {
+          "absolute": 0.05
+        },
+        "bulkModulus_GPa": {
+          "absolute": 25.0,
+          "gating": false
+        }
+      }
+    }
+  }
+}

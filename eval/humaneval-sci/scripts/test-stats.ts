@@ -58,7 +58,7 @@ function makeRuns(scores: number[]): CombinedScore[][] {
       prompt_id: 'synthetic',
       card_ids: [],
       functional: { passed: 0, total: 0, pass_rate: s, failures: [] },
-      verification: { severity: 'NONE', passing: 0, total: 0, details: [] },
+      verification: { severity: 'NONE', unchecked: 0, passing: 0, total: 0, details: [] },
       overall_score: s,
     },
   ]);

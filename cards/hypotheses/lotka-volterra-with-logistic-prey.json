@@ -20,29 +20,109 @@
       "rhsDims": {
         "N": 1,
         "T": -1
+      },
+      "expr": "alpha*x*(1 - x/K) - beta*x*y",
+      "symbols": {
+        "alpha": {
+          "T": -1
+        },
+        "beta": {
+          "N": -1,
+          "T": -1
+        },
+        "x": {
+          "N": 1
+        },
+        "y": {
+          "N": 1
+        },
+        "K": {
+          "N": 1
+        }
       }
     },
     "limits": [
       {
         "name": "infinite_carrying_capacity",
         "regime": "K -> infinity",
-        "expectedReducesTo": "lotka-volterra-predator-prey"
+        "expectedReducesTo": "lotka-volterra-predator-prey",
+        "limit": {
+          "symbol": "K",
+          "to": "oo"
+        },
+        "target": {
+          "cardId": "lotka-volterra-predator-prey"
+        }
       },
       {
         "name": "no_predators",
         "regime": "y = 0",
-        "expectedReducesTo": "logistic prey growth: dot x = alpha x (1 - x / K) -> stable carrying-capacity equilibrium at x = K"
+        "expectedReducesTo": "logistic prey growth: dot x = alpha x (1 - x / K) -> stable carrying-capacity equilibrium at x = K",
+        "substitute": {
+          "y": "0"
+        },
+        "target": {
+          "expr": "alpha*x*(1 - x/K)"
+        }
       },
       {
         "name": "coexistence_equilibrium",
         "regime": "fixed point with y > 0 and gamma/delta < K",
-        "expectedReducesTo": "(x*, y*) = (gamma / delta, (alpha / beta) (1 - gamma / (delta K))) — globally asymptotically stable, replacing the neutral centre of the canonical model"
+        "expectedReducesTo": "(x*, y*) = (gamma / delta, (alpha / beta) (1 - gamma / (delta K))) — globally asymptotically stable, replacing the neutral centre of the canonical model",
+        "fixedPoint": {
+          "system": [
+            {
+              "of": "x",
+              "expr": "alpha*x*(1 - x/K) - beta*x*y"
+            },
+            {
+              "of": "y",
+              "expr": "delta*x*y - gamma*y"
+            }
+          ],
+          "solveFor": [
+            "x",
+            "y"
+          ],
+          "parameters": [
+            "gamma",
+            "delta"
+          ],
+          "conditions": [
+            "y > 0",
+            "gamma/delta < K"
+          ]
+        },
+        "target": {
+          "point": {
+            "x": "gamma/delta",
+            "y": "(alpha/beta)*(1 - gamma/(delta*K))"
+          }
+        }
       }
     ],
     "conservationLaws": [
       {
-        "law": "energy",
-        "statement": "No conserved energy-like quantity. The Volterra invariant V(x, y) = delta x - gamma ln x + beta y - alpha ln y is no longer conserved — d V / dt = -(alpha / K) (x - x*)^2 <= 0, which is precisely a Lyapunov function proving asymptotic stability of the coexistence equilibrium."
+        "law": "lyapunov-function",
+        "statement": "No conserved energy-like quantity. The classical Volterra invariant is not conserved and is not a Lyapunov function here — its rate under logistic predation is alpha x (gamma - delta x) / K, which is positive for x < x*. The Lyapunov function for this system is V(x, y) = delta (x - x* ln x) + beta (y - y* ln y), differing from the classical invariant only in the coefficient of ln y and coinciding with it as K -> infinity. Its rate is d V / dt = -(alpha delta / K) (x - x*)^2 <= 0, proving asymptotic stability of the coexistence equilibrium.",
+        "evolution": {
+          "quantity": "delta*(x - (gamma/delta)*log(x)) + beta*(y - (alpha/beta)*(1 - gamma/(delta*K))*log(y))",
+          "system": [
+            {
+              "of": "x",
+              "expr": "alpha*x*(1 - x/K) - beta*x*y"
+            },
+            {
+              "of": "y",
+              "expr": "delta*x*y - gamma*y"
+            }
+          ],
+          "rate": "-(alpha*delta/K)*(x - gamma/delta)**2",
+          "parameters": [
+            "gamma",
+            "delta"
+          ]
+        }
       }
     ],
     "referenceCorpus": {

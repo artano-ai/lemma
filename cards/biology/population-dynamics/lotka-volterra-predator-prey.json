@@ -10,6 +10,25 @@
     "deterministic, well-mixed two-species ecosystem"
   ],
   "formulaTeX": "\\dot{x} = \\alpha\\, x \\;-\\; \\beta\\, x\\, y, \\qquad \\dot{y} = \\delta\\, x\\, y \\;-\\; \\gamma\\, y",
+  "formula": {
+    "expr": "alpha*x - beta*x*y",
+    "symbols": {
+      "alpha": {
+        "T": -1
+      },
+      "beta": {
+        "N": -1,
+        "T": -1
+      },
+      "x": {
+        "N": 1
+      },
+      "y": {
+        "N": 1
+      }
+    },
+    "relation": "the prey equation only, dot x = alpha x - beta x y. The system has two coupled equations and this field carries one"
+  },
   "conventions": [
     "x(t) is the prey population; y(t) is the predator population",
     "alpha > 0 is the prey intrinsic growth rate (per capita, in absence of predators)",
@@ -25,7 +44,10 @@
     "trajectories around the coexistence fixed point are closed orbits (conserved quantity: V(x, y) = delta x - gamma ln x + beta y - alpha ln y)",
     "small perturbations from the fixed point: linearised oscillations with angular frequency omega = sqrt(alpha gamma)",
     "limit-cycle behaviour fragile: any logistic / saturation correction (carrying capacity, functional response) destroys the closed orbits and replaces them with damped or limit-cycle dynamics",
-    "stochastic limit (small populations): demographic noise can drive extinction of one species, breaking the deterministic picture"
+    "stochastic limit (small populations): demographic noise can drive extinction of one species, breaking the deterministic picture",
+    "envelope basis: x and y are populations, so a negative value is a solver failure rather than a modelling choice — the bound is zero-width because there is no acceptable amount of negative population. Typically produced by too large a step near the low-population phase of the cycle, where the trajectory passes close to the axes",
+    "the populations themselves carry no upper envelope: alpha, beta, gamma and delta are free parameters, so the orbit amplitude and the coexistence point (gamma/delta, alpha/beta) move with them and any maximum would be invented. The conserved quantity V is likewise not enveloped — it is conserved by the exact flow, so any non-symplectic integrator drifts and a bound on it would measure integrator quality rather than correctness",
+    "machine formula: `formula.expr` gives the PREY equation (dot x = alpha x - beta x y) only. The system has two coupled equations and the schema's single-expression form carries one; the prey equation is the one a carrying-capacity correction modifies, so it is what a K -> infinity limit claim reduces to. A card format able to express the full system is a v0.2 question"
   ],
   "references": [
     "Lotka (1925) — Elements of Physical Biology",
@@ -33,6 +55,12 @@
     "Murray — Mathematical Biology I: An Introduction, ch.3",
     "Edelstein-Keshet — Mathematical Models in Biology, ch.6"
   ],
+  "validationEnvelopes": {
+    "negativePopulationFraction": [
+      0.0,
+      0.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

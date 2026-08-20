@@ -1,0 +1,14 @@
+# Review routing: a card change requests its owner automatically, so a
+# submission never sits unassigned waiting for someone to notice it.
+#
+# The corpus is the reviewed artefact — schema, engines and docs can move
+# faster, but a card is what gets cited, so it is what needs an owner.
+#
+# Note for whoever edits this next: GitHub silently ignores an owner it cannot
+# resolve. A typo here does not error — it just stops requesting reviewers,
+# while the file still looks configured. Verify any change by opening a PR that
+# touches cards/ and confirming a reviewer is auto-assigned.
+
+/cards/                 @arsalan-akhtar
+/schema/                @arsalan-akhtar
+/mcp-server/src/cards/  @arsalan-akhtar

@@ -24,7 +24,8 @@
     "compressible flow with shocks: equation holds in weak (integral) form; strong form fails at the shock surface",
     "1D flow in a duct of variable area A(x): rho v A = const along the duct (steady, single direction)",
     "diffusive analogue (Fick's law): replace rho v with -D grad rho to get the diffusion equation",
-    "subsumes total mass conservation: integral of rho over all space is invariant in a closed system"
+    "subsumes total mass conservation: integral of rho over all space is invariant in a closed system",
+    "envelope basis: the equation states that d(rho)/dt + div(rho v) is identically zero, so the bound is a double-precision accumulation allowance rather than a physical tolerance. On a discretised field the residual also absorbs truncation error, so a value far above the bound usually indicates an under-resolved grid or a boundary-condition error rather than violated mass conservation"
   ],
   "references": [
     "Euler (1757) — Principes généraux du mouvement des fluides",
@@ -32,6 +33,12 @@
     "Landau & Lifshitz — Fluid Mechanics, ch.1",
     "Anderson — Computational Fluid Dynamics: The Basics with Applications, ch.2"
   ],
+  "validationEnvelopes": {
+    "continuityResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

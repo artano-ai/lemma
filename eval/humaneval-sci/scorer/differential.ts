@@ -34,6 +34,9 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { pythonBin } from '../runner/paths.js';
+import { assertPythonEnv } from './preflight.js';
+
 import type { PromptDefinition, Severity, TestCase } from './types.js';
 
 export interface DifferentialOptions {
@@ -70,7 +73,13 @@ const DEFAULTS: Required<DifferentialOptions> = {
   rtol: 1e-3,
   atol: 1e-6,
   timeoutMs: 15_000,
-  pythonBin: 'python3',
+  // Getter, not a value: DEFAULTS is module-level, so resolving eagerly
+  // would freeze the interpreter at import time and silently ignore
+  // HUMANEVAL_SCI_PYTHON set by a caller afterwards. Spreading DEFAULTS
+  // inside the scorer re-reads it per call.
+  get pythonBin() {
+    return pythonBin();
+  },
 };
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -82,6 +91,9 @@ export async function scoreDifferential(
   options: DifferentialOptions = {},
 ): Promise<DifferentialResult> {
   const opts = { ...DEFAULTS, ...options };
+  // Refuse to score against an interpreter that cannot run the reference.
+  // Probed once per interpreter; see preflight.ts for why this is not optional.
+  assertPythonEnv(opts.pythonBin);
 
   const functionName = extractFunctionName(prompt);
   if (!functionName) {

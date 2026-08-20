@@ -23,7 +23,8 @@
     "anti-parallel u and v: strict inequality; ||u + v|| can be much smaller than ||u|| + ||v||",
     "reverse triangle inequality: |||u|| - ||v||| <= ||u - v||  — useful for Lipschitz continuity arguments",
     "polygon generalisation: ||sum_i u_i|| <= sum_i ||u_i|| for any finite (or absolutely convergent) sum",
-    "integral form (Minkowski for L^p): ||f + g||_p <= ||f||_p + ||g||_p for 1 <= p <= infinity"
+    "integral form (Minkowski for L^p): ||f + g||_p <= ||f||_p + ||g||_p for 1 <= p <= infinity",
+    "envelope basis: the ratio ||u + v|| / (||u|| + ||v||) is bounded by the inequality itself — 1 exactly when u and v are non-negative multiples of one another, 0 when v = -u. Above 1 means the norm is not a norm"
   ],
   "references": [
     "Euclid — Elements, Book I, Proposition 20 (geometric origin in Euclidean plane)",
@@ -31,6 +32,12 @@
     "Rudin — Principles of Mathematical Analysis, ch.4",
     "Conway — A Course in Functional Analysis, ch.1"
   ],
+  "validationEnvelopes": {
+    "triangleInequalityRatio": [
+      0.0,
+      1.0
+    ]
+  },
   "metadata": {
     "authors": [
       {

@@ -23,7 +23,8 @@
     "low-density limit rho -> 0+: Wigner crystal regime, strong correlation",
     "slowly-varying density: LDA is exact for the uniform electron gas, accurate for solids with delocalised electrons (sp-bonded metals, simple semiconductors)",
     "LDA underestimates band gaps by 30-50% (the band-gap problem) — fundamental limitation of any local functional",
-    "LDA over-binds molecules and over-estimates cohesive energies — partially fixed by GGA / hybrid functionals"
+    "LDA over-binds molecules and over-estimates cohesive energies — partially fixed by GGA / hybrid functionals",
+    "no validation envelope, deliberately: E_xc is an extensive functional of the density, so its value scales with system size and carries no material-independent range. The exchange coefficient -(3/4)(3/pi)^(1/3) IS an exact constant, but it is a property of the functional rather than an output any calculation reports, so bounding it would check nothing a run actually produces"
   ],
   "references": [
     "Hohenberg & Kohn (1964) — Inhomogeneous Electron Gas",

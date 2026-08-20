@@ -29,6 +29,7 @@ import type { TraceTurn } from '../scorer/types.js';
 export type { TraceTurn };
 import { scoreFunctional } from '../scorer/functional.js';
 import { combine, scoreVerification } from '../scorer/verification.js';
+import { combineAdversarial, isAdversarial, scoreRefusal } from '../scorer/refusal.js';
 
 /**
  * Two experimental conditions for the A/B harness.
@@ -92,11 +93,17 @@ export async function runEvaluation(opts: RunOptions): Promise<RunResult> {
 
   for (const prompt of prompts) {
     const { candidate, usage } = await opts.adapter.generate(prompt);
-    const functional = await scoreFunctional(prompt, candidate, {
-      skeletonMode: opts.skeletonMode ?? true,
-    });
-    const verification = await scoreVerification(prompt, candidate);
-    const score = combine(prompt, functional, verification);
+    // Adversarial prompts have no correct answer — they take the refusal
+    // path rather than functional + differential. See scorer/refusal.ts.
+    const score = isAdversarial(prompt)
+      ? combineAdversarial(prompt, scoreRefusal(prompt.adversarial, candidate))
+      : combine(
+          prompt,
+          await scoreFunctional(prompt, candidate, {
+            skeletonMode: opts.skeletonMode ?? true,
+          }),
+          await scoreVerification(prompt, candidate),
+        );
     perPrompt.push({ ...score, candidate, ...(usage ? { usage } : {}) });
   }
 

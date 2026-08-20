@@ -18,7 +18,8 @@
   "expectedLimits": [
     "onset at fundamental gap for semiconductors (J(omega < E_g) = 0)",
     "metallic systems: nonzero at omega -> 0",
-    "high-omega: square-root or parabolic depending on band-edge shape"
+    "high-omega: square-root or parabolic depending on band-edge shape",
+    "no validation envelope, deliberately: the same objection as the single-particle density of states, and one more — J(omega) depends on which valence and conduction bands are included, so two correct calculations of the same material legitimately differ by the band window alone"
   ],
   "references": [
     "Yu & Cardona, Fundamentals of Semiconductors, ch.6",
@@ -32,5 +33,13 @@
       }
     ],
     "tier": "silver"
-  }
+  },
+  "seriesConditions": [
+    {
+      "of": "J",
+      "op": ">=",
+      "value": 0,
+      "basis": "a joint density of states counts transition-matched state pairs per unit energy, so it is non-negative by definition. As with density-of-states the magnitude is system-dependent and deliberately unbounded here; the sign is not"
+    }
+  ]
 }

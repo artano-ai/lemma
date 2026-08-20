@@ -28,9 +28,16 @@ Agent runtime config (Claude Code, Cursor, Codex, …)::
     }
 
 Tools exposed: ``cards_list``, ``cards_get``, ``ops_get``,
-``hypothesis_crosscheck``. ``rag_lookup`` (also provided by the Node
-mcp-server) needs a Postgres + pgvector backend, so it is omitted
-from this lightweight in-process server.
+``hypothesis_crosscheck``, ``usce_check``, ``series_check``,
+``convergence_check``, ``agreement_check`` — eight of the Node
+server's nine, rendering **byte-identical** verdicts, because the two
+are drop-in alternatives: a runtime swaps between them by changing one
+``command``, and a verdict that read differently depending on which was
+installed would make that choice visible when it should be invisible.
+
+``rag_lookup`` is the one omission, and it is deliberate: it needs a
+Postgres + pgvector backend and an embedding model, which this
+lightweight in-process server does not assume.
 """
 
 from __future__ import annotations
@@ -38,18 +45,30 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from mcp.server.fastmcp import FastMCP
+# The server class was renamed in mcp 2.0: `mcp.server.fastmcp.FastMCP` became
+# `mcp.server.MCPServer`, and the `fastmcp` subpackage became `mcpserver`. The
+# constructor kwargs, the `.tool()` decorator and `.run()` are unchanged, so
+# supporting both is an import shim rather than a port.
+#
+# Doing it this way instead of pinning `mcp<2` matters: pinning below the
+# current major would keep anyone on a modern mcp from installing this package
+# at all, to spare a rename.
+try:  # mcp >= 2.0
+    from mcp.server import MCPServer as _McpServer
+except ImportError:  # pragma: no cover - mcp 1.x
+    from mcp.server.fastmcp import FastMCP as _McpServer
 
 from . import tools as _tools
 from .version import __version__
 
 
-mcp = FastMCP(
+mcp = _McpServer(
     "artano-lemma",
     instructions=(
         f"Lemma — open verification substrate for AI-generated scientific code. "
         f"Python distribution v{__version__}. Tools: cards_list, cards_get, "
-        f"ops_get, hypothesis_crosscheck. Call cards_list first to discover "
+        f"ops_get, hypothesis_crosscheck, usce_check, series_check, "
+        f"convergence_check, agreement_check. Call cards_list first to discover "
         f"available cards by id and domain."
     ),
 )
@@ -139,6 +158,82 @@ def hypothesis_crosscheck_tool(
 ) -> str:
     """Either `id` (existing card) or `card` (inline JSON) must be set."""
     return _tools.hypothesis_crosscheck(id=id, card=card)
+
+
+# ---------------------------------------------------------------------------
+# Finished-run checkers
+#
+# Four shapes of evidence about one run. `usce_check` bounds a single value;
+# `series_check` bounds every sample of a reported series and reaches cards that
+# deliberately carry no envelopes; `convergence_check` measures a rate from a
+# refinement study instead of trusting a reported one; `agreement_check`
+# compares independent methods rather than one result against a bound.
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool(
+    name="usce_check",
+    description=(
+        "Run the Universal Sanity Check Engine on a finished numeric output: "
+        "range-check the values against a principle card's validationEnvelopes. "
+        "Pass `id` (a principle card id) and `output` (a map of envelope key to "
+        "number). Returns per-key verdicts and an overall severity."
+    ),
+)
+def usce_check_tool(id: str, output: dict[str, float]) -> str:  # noqa: A002
+    """Range-check a finished output against a card's envelopes."""
+    return _tools.usce_check(id=id, output=output)
+
+
+@mcp.tool(
+    name="series_check",
+    description=(
+        "Check a reported series against the sign and bound conditions a "
+        "principle card declares in `seriesConditions`. Pass `id` and `series` "
+        "(a map of quantity name to its samples — columns of one table, all the "
+        "same length). Distinct from usce_check, which bounds a magnitude: these "
+        "bound a SIGN or relation, which can be universal where a magnitude is "
+        "not. That is why cards deliberately carrying no validationEnvelopes can "
+        "still be checked here — a density of states has no system-independent "
+        "range but cannot be negative in any material."
+    ),
+)
+def series_check_tool(id: str, series: dict[str, list[float]]) -> str:  # noqa: A002
+    """Check a reported series against the card's declared conditions."""
+    return _tools.series_check(id=id, series=series)
+
+
+@mcp.tool(
+    name="convergence_check",
+    description=(
+        "Recompute an observed order of accuracy from a refinement study and "
+        "check it against the order a principle card declares. Pass `id` and "
+        "`refinement` (an array of [h, error] pairs). Differs from reporting the "
+        "order to usce_check: that range-checks a number you supply, this "
+        "measures the order from the study itself. A sequence that is not a clean "
+        "power law returns a warning with the per-level orders attached rather "
+        "than a failure, because a contaminated measurement is not a wrong method."
+    ),
+)
+def convergence_check_tool(id: str, refinement: list[list[float]]) -> str:  # noqa: A002
+    """Measure the convergence order from a refinement study."""
+    return _tools.convergence_check(id=id, refinement=refinement)
+
+
+@mcp.tool(
+    name="agreement_check",
+    description=(
+        "Check whether independent methods agree on the same observables, within "
+        "the tolerances a principle card declares in `crossMethodTolerances`. "
+        "Pass `id` and `outputs` (a map of method name to that method's "
+        "observables). One relation above usce_check: an envelope bounds a single "
+        "run's value, this bounds the DISAGREEMENT between runs. Fewer than two "
+        "methods is an error — a single method cannot corroborate itself."
+    ),
+)
+def agreement_check_tool(id: str, outputs: dict[str, dict[str, float]]) -> str:  # noqa: A002
+    """Check cross-method agreement against the card's tolerances."""
+    return _tools.agreement_check(id=id, outputs=outputs)
 
 
 # ---------------------------------------------------------------------------

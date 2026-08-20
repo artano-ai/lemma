@@ -58,8 +58,8 @@ import { scoreVerification, combine } from '../scorer/verification.js';
 import type {
   CombinedScore,
   PromptDefinition,
-  Severity,
 } from '../scorer/types.js';
+import { PENALTY, type Outcome } from '../scorer/outcome.js';
 import { promptsDir as resolvePromptsDir, resultsDir } from '../runner/paths.js';
 
 const args = argv.slice(2);
@@ -78,10 +78,11 @@ const MAX_PROMPTS = args.includes('--max-prompts')
 const BASE_URL = argVal('--base-url', 'http://127.0.0.1:11434/v1')!;
 const PROMPTS_DIR = resolvePromptsDir();
 
-const SYSTEM_CONTROL =
-  'You are a scientific code generation assistant. Write Python code that solves ' +
-  'the given task. Return ONLY the code, with no Markdown fences and no commentary. ' +
-  'The code must be a complete, runnable function exactly matching the requested signature.';
+// Imported, not re-declared. This was a byte-identical second copy of the
+// adapter's control prompt. It happened to still match, but a silently
+// diverging duplicate of the exact string that defines the baseline arm is
+// how a benchmark stops measuring what it claims to measure.
+import { SYSTEM_CONTROL } from '../runner/adapters/ollama.js';
 
 interface Sample {
   candidate: string;
@@ -211,13 +212,16 @@ function loadPrompts(dir: string): PromptDefinition[] {
   );
 }
 
-function severityToScore(s: Severity): number {
+function severityToScore(s: Outcome): number {
   // Inverse of the severity penalty: a candidate with NONE severity
   // earns 1.0, with HIGH severity earns 0. Lets us use verification
   // alone as the rerank signal — i.e. the score a deployed router
   // could actually see (no ground-truth tests).
-  const penalty = { NONE: 0, LOW: 0.25, MEDIUM: 0.5, HIGH: 1.0 }[s] ?? 1.0;
-  return 1 - penalty;
+  //
+  // Reads the shared table rather than a local copy: a second hardcoded
+  // penalty map here is how the reranker would silently keep scoring on
+  // the old scale after the metric changed underneath it.
+  return 1 - (PENALTY[s] ?? 1.0);
 }
 
 function aggregatePolicies(

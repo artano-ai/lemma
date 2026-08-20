@@ -24,13 +24,20 @@
     "total mechanical energy: E = (1/2) k A^2 = (1/2) m v_max^2, conserved exactly (closed system)",
     "k -> 0: omega -> 0, free particle (no restoring force)",
     "m -> infinity: omega -> 0, infinite-inertia limit",
-    "amplitude A grows unbounded under resonant driving (no damping); damping caps the steady-state amplitude"
+    "amplitude A grows unbounded under resonant driving (no damping); damping caps the steady-state amplitude",
+    "envelope basis: this card already states that E = (1/2) k A^2 = (1/2) m v_max^2 is conserved exactly for the undamped, undriven oscillator, so the residual |E(t) - E(0)| / E(0) is zero and the bound is a double-precision accumulation allowance. Energy drifting upward is the signature of a non-symplectic integrator, not of physics — which is exactly what this catches"
   ],
   "references": [
     "Hooke (1678) — De Potentia Restitutiva — original 'ut tensio sic vis'",
     "Halliday, Resnick & Walker — Fundamentals of Physics, ch.15",
     "Goldstein, Poole & Safko — Classical Mechanics, ch.6"
   ],
+  "validationEnvelopes": {
+    "energyResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

@@ -25,7 +25,13 @@ import type {
   ReferenceCorpusCheckSpec,
   UsceCheck,
 } from './types.js';
-import { deriveDims, DimDerivationError, dimsEqual, stringifyDims } from './dimensional.js';
+import {
+  deriveDims,
+  DimDerivationError,
+  DimInconsistentTermsError,
+  dimsEqual,
+  stringifyDims,
+} from './dimensional.js';
 
 export interface RunHypothesisChecksOptions {
   corpus: PrincipleCard[];
@@ -103,6 +109,15 @@ function checkDimensional(spec: DimensionalCheckSpec): UsceCheck {
         detail: `Dimensional mismatch — the formula ${spec.rhsLabel} derives to ${stringifyDims(derived)}, but LHS [${spec.lhsLabel}] is ${stringifyDims(spec.lhsDims)}. The proposed equation does not hold dimensionally.`,
       };
     } catch (err) {
+      // Order matters: an inconsistency is a finding, not an inability, and
+      // must not be rescued by the declared vectors.
+      if (err instanceof DimInconsistentTermsError) {
+        return {
+          name: 'Hypothesis.dimensional_analysis',
+          severity: 'fail',
+          detail: `Dimensional inconsistency — the formula ${spec.rhsLabel} adds terms of different dimensions (${err.left} vs ${err.right}), so it has no single dimension. This is a defect in the formula itself rather than a limit of the derivation, so the declared vectors are not consulted.`,
+        };
+      }
       if (!(err instanceof DimDerivationError)) throw err;
       return declaredDimensional(
         spec,

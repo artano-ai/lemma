@@ -17,7 +17,12 @@
     "best-of-n-rerank": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/best-of-n-rerank.ts",
     "test-differential": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-differential.ts",
     "test-crosscheck-tool": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-crosscheck-tool.ts",
-    "test-stats": "node --import=tsx scripts/test-stats.ts"
+    "test-stats": "node --import=tsx scripts/test-stats.ts",
+    "test-refusal": "node --import=tsx scripts/test-refusal.ts",
+    "test-contamination": "node --import=tsx scripts/test-contamination.ts",
+    "test-unchecked": "LEMMA_CARDS_DIR=../../cards node --import=tsx scripts/test-unchecked.ts",
+    "test-python-env": "node --import=tsx scripts/test-python-env.ts",
+    "test-preflight": "node --import=tsx scripts/test-preflight.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",

@@ -20,13 +20,20 @@
     "closed system: total mass conserved exactly (delta m = 0)",
     "each element: atom count conserved exactly",
     "ionic / redox reactions: total charge conserved exactly",
-    "nuclear reactions: mass-energy conservation replaces atom conservation (E = delta m c^2)"
+    "nuclear reactions: mass-energy conservation replaces atom conservation (E = delta m c^2)",
+    "envelope basis: conservation of mass makes |mass_products - mass_reactants| / mass_reactants = 0 exactly; the bound is a double-precision accumulation allowance. An unbalanced equation produces a residual of order 1, so this check separates a balancing error from an arithmetic one"
   ],
   "references": [
     "Lavoisier (1789) — Traité Élémentaire de Chimie",
     "Dalton (1808) — A New System of Chemical Philosophy",
     "IUPAC — Quantities, Units and Symbols in Physical Chemistry"
   ],
+  "validationEnvelopes": {
+    "massBalanceResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

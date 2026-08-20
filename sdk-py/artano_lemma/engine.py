@@ -36,9 +36,16 @@ from __future__ import annotations
 
 from typing import Iterable, Mapping, Sequence
 
-from .dimensional import DerivationError, derive_dims, dims_equal, stringify_dims
+from .dimensional import (
+    DerivationError,
+    InconsistentTermsError,
+    derive_dims,
+    dims_equal,
+    stringify_dims,
+)
 from .types import (
     Card,
+    CheckSeverity,
     ConservationLawSpec,
     DerivedFrom,
     DimensionalCheckSpec,
@@ -61,6 +68,7 @@ def run_hypothesis_checks(
     card: HypothesisCard,
     *,
     corpus: Iterable[Card],
+    symbolic: bool = False,
 ) -> EvaluateResult:
     """Run every declared check on ``card`` against ``corpus``.
 
@@ -68,6 +76,19 @@ def run_hypothesis_checks(
     :param corpus: the cards the hypothesis is being cross-checked
         against. Only ``.id`` is consulted, so any iterable of card
         objects (or anything with an ``id`` attribute) works.
+    :param symbolic: opt in to **discharging** limit claims rather than
+        merely recording them (see :mod:`artano_lemma.symbolic`).
+
+        Default ``False``, deliberately. Every committed benchmark landmark
+        and every published description of this engine was produced with
+        limit claims recorded as ``warn``; flipping the default would
+        silently re-baseline severity-derived scores that papers already
+        cite. It also requires SymPy (``pip install artano-lemma[symbolic]``)
+        and has no Node counterpart, so enabling it makes the two
+        implementations diverge — the cross-language parity fixture in
+        ``lemma/parity/`` therefore never enables it.
+
+        Same reasoning as ``require_checks`` on :func:`run_usce_checks`.
     :returns: an :class:`EvaluateResult` aggregating one
         :class:`UsceCheck` per declared check, plus the overall
         roll-up and a diagnosis string.
@@ -81,11 +102,36 @@ def run_hypothesis_checks(
     if spec.referenceCorpus is not None:
         checks.append(_check_reference_corpus(spec.referenceCorpus, corpus_list))
     if spec.limits is not None:
-        for lim in spec.limits:
-            checks.append(_check_limit(lim, corpus_list))
+        if symbolic:
+            # Opt-in: actually take the limit and compare. Anything that cannot
+            # be evaluated comes back `warn`, never `fail` — an unproven claim
+            # is not a disproven one.
+            from .symbolic import symbolic_limit_checks
+
+            parent_expr = spec.dimensional.expr if spec.dimensional else None
+            declared = list(spec.dimensional.symbols or {}) if spec.dimensional else []
+            checks.extend(
+                symbolic_limit_checks(
+                    spec.limits,
+                    parent_expr,
+                    corpus=corpus_list,
+                    declared_symbols=declared,
+                )
+            )
+        else:
+            for lim in spec.limits:
+                checks.append(_check_limit(lim, corpus_list))
     if spec.conservationLaws is not None:
+        declared = list(spec.dimensional.symbols or {}) if spec.dimensional else []
         for cons in spec.conservationLaws:
-            checks.append(_check_conservation_law(cons))
+            if symbolic:
+                from .symbolic import discharge_conservation
+
+                checks.append(
+                    discharge_conservation(cons, declared_symbols=declared)
+                )
+            else:
+                checks.append(_check_conservation_law(cons))
     if card.derivedFrom is not None:
         checks.append(_check_derived_from(card.derivedFrom, corpus_list))
 
@@ -143,6 +189,20 @@ def _check_dimensional(spec: DimensionalCheckSpec) -> UsceCheck:
     if spec.expr and spec.symbols:
         try:
             derived = derive_dims(spec.expr, spec.symbols)
+        except InconsistentTermsError as exc:
+            # Order matters: an inconsistency is a finding, not an inability,
+            # and must not be rescued by the declared vectors.
+            return UsceCheck(
+                name="Hypothesis.dimensional_analysis",
+                severity="fail",
+                detail=(
+                    f"Dimensional inconsistency — the formula {spec.rhsLabel} adds "
+                    f"terms of different dimensions ({exc.left} vs {exc.right}), so "
+                    f"it has no single dimension. This is a defect in the formula "
+                    f"itself rather than a limit of the derivation, so the declared "
+                    f"vectors are not consulted."
+                ),
+            )
         except DerivationError as exc:
             return _declared_dimensional(
                 spec,
@@ -301,7 +361,9 @@ def _envelope_bounds(env: object) -> tuple[float, float] | None:
     return None
 
 
-def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
+def run_usce_checks(
+    output: Mapping[str, float], card: Card, require_checks: bool = False
+) -> EvaluateResult:
     """Run the Universal Sanity Check Engine on a finished output.
 
     Range-checks the numeric values in ``output`` against the
@@ -315,6 +377,19 @@ def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
 
     v1 scope is the envelope (peak-vs-range) check. Causality and
     asymptotic-decay checks over time-series outputs are future work.
+
+    ``require_checks`` guards the case where nothing was checked at all —
+    a card id that did not resolve, a renamed output key, a stale corpus.
+    By default that returns ``NONE``, which is honest ("no problem found")
+    but reads identically to "everything passed", so a caller gating on
+    severity alone cannot tell a clean verification from an absent one.
+    Set it ``True`` wherever a *verification claim* is being made and the
+    empty case becomes ``HIGH`` instead.
+
+    The default is deliberately the permissive one: only 13 of the 40
+    corpus cards declare envelopes at all, so most outputs legitimately
+    have nothing to check, and flipping the default would change every
+    severity-derived score already committed to the benchmark landmarks.
     """
     envelopes = getattr(card, "validationEnvelopes", None) or {}
     checks: list[UsceCheck] = []
@@ -329,7 +404,7 @@ def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
                 UsceCheck(
                     name=f"USCE.envelope.{key}",
                     severity="pass",
-                    detail=f"{key} = {value} is within [{lo}, {hi}].",
+                    detail=f"{key} = {value:g} is within [{lo:g}, {hi:g}].",
                 )
             )
         else:
@@ -338,7 +413,7 @@ def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
                     name=f"USCE.envelope.{key}",
                     severity="fail",
                     detail=(
-                        f"{key} = {value} is outside [{lo}, {hi}] — the output "
+                        f"{key} = {value:g} is outside [{lo:g}, {hi:g}] — the output "
                         f"violates the card's validation envelope."
                     ),
                 )
@@ -350,10 +425,17 @@ def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
     severity: OverallSeverity = "HIGH" if any_fail else "NONE"
 
     if total == 0:
+        severity = "HIGH" if require_checks else severity
         diagnosis = (
             "No validation envelopes overlapped the provided output keys — "
             "nothing to check. Report the keys the card declares to verify them."
         )
+        if require_checks:
+            diagnosis += (
+                " Reported as a failure because this caller requires that a "
+                "verification actually check something: an absent check must not "
+                "be mistaken for a passing one."
+            )
     elif any_fail:
         diagnosis = (
             "The output violates one or more of the card's validation "
@@ -369,7 +451,124 @@ def run_usce_checks(output: Mapping[str, float], card: Card) -> EvaluateResult:
     )
 
 
+def run_agreement_checks(
+    outputs: Mapping[str, Mapping[str, float]], card: Card
+) -> EvaluateResult:
+    """Check whether independent methods agree, per a card's tolerances.
+
+    ``outputs`` maps a method name to that method's observables, e.g.
+    ``{"madar": {"latticeConstant_A": 5.470}, "kavosh": {...}}``. For each
+    key in the card's ``crossMethodTolerances`` reported by at least two
+    methods, the spread (max - min) is tested against the declared
+    tolerance — ``relative`` about the mean, or ``absolute`` in the
+    observable's own unit.
+
+    This is the counterpart to :func:`run_usce_checks`, one relation
+    higher: an envelope bounds a single run's value, this bounds the
+    disagreement *between* runs. Both are generic — the physics lives in
+    the card, never here.
+
+    Observables marked ``gating: false`` are compared and reported but do
+    not decide the verdict, so a quantity whose divergence diagnoses a
+    method can be surfaced honestly without failing the comparison.
+
+    Unlike the envelope check, **an empty result is a failure, not a
+    pass.** Fewer than two methods raises; zero comparable observables
+    returns ``HIGH``. A comparison that checked nothing must never be
+    indistinguishable from one that checked everything and agreed.
+    """
+    if len(outputs) < 2:
+        raise ValueError(
+            f"cross-method agreement needs at least two methods, got {len(outputs)} "
+            f"({', '.join(sorted(outputs))}). A single method cannot corroborate itself."
+        )
+
+    tolerances = getattr(card, "crossMethodTolerances", None) or {}
+    checks: list[UsceCheck] = []
+    skipped: list[str] = []
+
+    for key, tol in tolerances.items():
+        reported = {m: o[key] for m, o in outputs.items() if key in o}
+        if len(reported) < 2:
+            skipped.append(key)
+            continue
+        lo, hi = min(reported.values()), max(reported.values())
+        spread = hi - lo
+        if tol.relative is not None:
+            scale = abs(sum(reported.values()) / len(reported))
+            if scale == 0.0:
+                skipped.append(key)
+                continue
+            spread, limit, unit = spread / scale, tol.relative, "relative"
+        else:
+            limit, unit = tol.absolute or 0.0, "absolute"
+
+        agree = spread <= limit
+        values = ", ".join(f"{m}={v:g}" for m, v in sorted(reported.items()))
+        if agree:
+            severity: CheckSeverity = "pass"
+            verdict = f"spread {spread:.4g} is within the {unit} tolerance {limit:g}"
+        elif tol.gating:
+            severity = "fail"
+            verdict = f"spread {spread:.4g} exceeds the {unit} tolerance {limit:g}"
+        else:
+            severity = "warn"
+            verdict = (
+                f"spread {spread:.4g} exceeds the {unit} tolerance {limit:g}, "
+                f"reported but not gating"
+            )
+        checks.append(
+            UsceCheck(
+                name=f"Agreement.{key}",
+                severity=severity,
+                detail=f"{key}: {values} — {verdict}.",
+            )
+        )
+
+    passing = sum(1 for c in checks if c.severity == "pass")
+    total = len(checks)
+    any_fail = any(c.severity == "fail" for c in checks)
+    any_warn = any(c.severity == "warn" for c in checks)
+
+    if total == 0:
+        severity_overall: OverallSeverity = "HIGH"
+        diagnosis = (
+            "No observable was reported by two or more methods, so nothing was compared. "
+            "This is not agreement — it is an absent comparison, and is reported as a "
+            "failure so it cannot be mistaken for one."
+            + (f" Declared but not comparable: {', '.join(sorted(skipped))}." if skipped else "")
+        )
+    elif any_fail:
+        severity_overall = "HIGH"
+        diagnosis = (
+            "The methods disagree beyond the card's tolerance on at least one gating "
+            "observable. Agreement is evidence of consistency, not correctness — but "
+            "disagreement at this scale means the methods are not describing the same result."
+        )
+    elif any_warn:
+        severity_overall = "LOW"
+        diagnosis = (
+            "The methods agree on every gating observable. A non-gating observable diverges; "
+            "that diagnoses a method rather than invalidating the comparison, and is reported."
+        )
+    else:
+        severity_overall = "NONE"
+        diagnosis = (
+            f"All {total} compared observables agree within the card's tolerances across "
+            f"{len(outputs)} methods."
+        )
+    if skipped and total:
+        diagnosis += f" Not comparable (reported by fewer than two methods): {', '.join(sorted(skipped))}."
+
+    return EvaluateResult(
+        checks=checks,
+        diagnosis=diagnosis,
+        overall=EvaluateOverall(passing=passing, total=total, severity=severity_overall),
+    )
+
+
 __all__ = [
+    "run_agreement_checks",
     "run_hypothesis_checks",
     "run_usce_checks",
 ]

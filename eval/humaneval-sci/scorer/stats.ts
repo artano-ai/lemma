@@ -30,6 +30,13 @@ export interface ConditionStats {
   mean_overall_score: number;
   std_err_overall_score: number;
   severity_distribution: Record<Severity, number>;
+  /** Declined checks summed across observations, and per observation. The
+   *  score no longer carries this — a decline costs nothing — so coverage is
+   *  only visible here. A run where nothing could be checked and a run where
+   *  everything passed both read as severity NONE; these two numbers are what
+   *  tell them apart. */
+  total_unchecked: number;
+  mean_unchecked: number;
   n_observations: number;
 }
 
@@ -43,6 +50,8 @@ export function aggregateRuns(perPromptRuns: CombinedScore[][]): ConditionStats 
       mean_overall_score: 0,
       std_err_overall_score: 0,
       severity_distribution: { NONE: 0, LOW: 0, MEDIUM: 0, HIGH: 0 },
+      total_unchecked: 0,
+      mean_unchecked: 0,
       n_observations: 0,
     };
   }
@@ -61,11 +70,18 @@ export function aggregateRuns(perPromptRuns: CombinedScore[][]): ConditionStats 
   const dist: Record<Severity, number> = { NONE: 0, LOW: 0, MEDIUM: 0, HIGH: 0 };
   for (const s of flat) dist[s.verification.severity]++;
 
+  const totalUnchecked = flat.reduce(
+    (acc, x) => acc + (x.verification.unchecked ?? 0),
+    0,
+  );
+
   return {
     mean_functional_pass_rate: meanFunc,
     mean_overall_score: meanOverall,
     std_err_overall_score: stdErr,
     severity_distribution: dist,
+    total_unchecked: totalUnchecked,
+    mean_unchecked: totalUnchecked / n,
     n_observations: n,
   };
 }

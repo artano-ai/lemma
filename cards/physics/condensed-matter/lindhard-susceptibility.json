@@ -39,5 +39,18 @@
       }
     ],
     "tier": "silver"
-  }
+  },
+  "seriesConditions": [
+    {
+      "of": "imChi0",
+      "op": "<=",
+      "value": 0,
+      "where": {
+        "of": "omega",
+        "op": ">",
+        "value": 0
+      },
+      "basis": "passivity: a system cannot supply energy to the perturbation driving it, so the imaginary part of the response is non-positive at positive frequency. This is the causality statement the card's conventions already record. The domain restriction is essential — Im chi_0 is legitimately positive for omega < 0, where the claim says nothing"
+    }
+  ]
 }

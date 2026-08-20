@@ -21,6 +21,7 @@ import path from 'node:path';
 import { scoreFunctional } from '../scorer/functional.js';
 import type { CombinedScore, PromptDefinition } from '../scorer/types.js';
 import { combine, scoreVerification } from '../scorer/verification.js';
+import { combineAdversarial, isAdversarial, scoreRefusal } from '../scorer/refusal.js';
 import {
   aggregateRuns,
   pairedTTest,
@@ -46,6 +47,18 @@ export interface AbRunOptions {
    *  reproducible across runs. Useful for fast proof-of-concept
    *  runs against slow local models. */
   maxPrompts?: number;
+  /** Keep only prompts at or below this contamination risk.
+   *
+   *  This is what makes the sensitivity analysis runnable: contamination
+   *  inflates the control arm, so a headline computed over memorised exercises
+   *  *under*-states the substrate's effect. Re-running on the low-contamination
+   *  subset says how much of the result survives when that inflation is
+   *  removed.
+   *
+   *  A prompt with **no** assessment is excluded rather than assumed clean —
+   *  treating "unassessed" as "low" would quietly refill the held-out subset
+   *  with exactly the prompts the analysis is meant to exclude. */
+  maxContamination?: 'low' | 'medium' | 'high';
   /** Optional progress hook — called once per (prompt, condition, run). */
   onProgress?: (info: ProgressInfo) => void;
 }
@@ -95,10 +108,11 @@ export async function runAbEvaluation(
 ): Promise<AbRunResult> {
   const startedAt = new Date().toISOString();
   const allPrompts = loadPrompts(opts.promptsDir);
+  const eligible = filterByContamination(allPrompts, opts.maxContamination);
   const prompts =
-    opts.maxPrompts !== undefined && opts.maxPrompts < allPrompts.length
-      ? allPrompts.slice(0, opts.maxPrompts)
-      : allPrompts;
+    opts.maxPrompts !== undefined && opts.maxPrompts < eligible.length
+      ? eligible.slice(0, opts.maxPrompts)
+      : eligible;
   const runsPerCondition = opts.runsPerCondition ?? 1;
   const skeletonMode = opts.skeletonMode ?? true;
   const perPrompt: AbPromptResult[] = [];
@@ -248,15 +262,47 @@ async function runOne(
   skeletonMode: boolean,
 ): Promise<CombinedScore> {
   const { candidate, usage, trace } = await adapter.generate(prompt);
-  const functional = await scoreFunctional(prompt, candidate, { skeletonMode });
-  const verification = await scoreVerification(prompt, candidate);
-  const base = combine(prompt, functional, verification);
+
+  // Adversarial prompts have no correct answer, so the functional and
+  // differential scorers have nothing to measure against. They take the
+  // refusal path instead — see scorer/refusal.ts.
+  const base = isAdversarial(prompt)
+    ? combineAdversarial(prompt, scoreRefusal(prompt.adversarial, candidate))
+    : combine(
+        prompt,
+        await scoreFunctional(prompt, candidate, { skeletonMode }),
+        await scoreVerification(prompt, candidate),
+      );
+
   return {
     ...base,
     candidate,
     ...(usage ? { usage } : {}),
     ...(trace ? { trace } : {}),
   };
+}
+
+const CONTAMINATION_ORDER = { low: 0, medium: 1, high: 2 } as const;
+
+/**
+ * Keep prompts at or below a contamination ceiling.
+ *
+ * Unassessed prompts are **dropped**, not kept. The alternative — treating a
+ * missing assessment as low risk — would silently readmit the memorised
+ * exercises the held-out subset exists to exclude, and the resulting number
+ * would look like a sensitivity analysis while being the original headline.
+ */
+export function filterByContamination(
+  prompts: PromptDefinition[],
+  ceiling?: 'low' | 'medium' | 'high',
+): PromptDefinition[] {
+  if (ceiling === undefined) return prompts;
+  const limit = CONTAMINATION_ORDER[ceiling];
+  return prompts.filter((p) => {
+    const level = p.contamination_risk?.level;
+    if (level === undefined) return false;
+    return CONTAMINATION_ORDER[level] <= limit;
+  });
 }
 
 function loadPrompts(dir: string): PromptDefinition[] {

@@ -8,25 +8,9 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { cardsGetTool } from './tools/cards-get.js';
-import { cardsListTool } from './tools/cards-list.js';
-import { hypothesisCrosscheckTool } from './tools/hypothesis-crosscheck.js';
-import { opsGetTool } from './tools/ops-get.js';
-import { ragLookupTool } from './tools/rag-lookup.js';
-import { usceCheckTool } from './tools/usce-check.js';
 import { disposePool } from './rag/pool.js';
-import type { McpTool } from './tools/types.js';
+import { REGISTRY, TOOLS } from './tools/registry.js';
 
-const TOOLS: McpTool[] = [
-  cardsListTool,
-  cardsGetTool,
-  opsGetTool,
-  hypothesisCrosscheckTool,
-  usceCheckTool,
-  ragLookupTool,
-];
-
-const REGISTRY = new Map(TOOLS.map((t) => [t.name, t]));
 
 const server = new Server(
   {

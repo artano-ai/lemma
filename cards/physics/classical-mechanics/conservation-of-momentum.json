@@ -23,7 +23,8 @@
     "perfectly inelastic collision: bodies stick together; final velocity v_f = (sum m_i v_i) / (sum m_i)",
     "explosion / fragmentation: a single body splits — total momentum of fragments equals initial momentum",
     "centre-of-mass frame: total momentum is zero by definition; collisions look symmetric",
-    "external force present: dp/dt = F_ext (Newton's 2nd law for the centre of mass) — momentum changes at the rate of impulse delivered"
+    "external force present: dp/dt = F_ext (Newton's 2nd law for the centre of mass) — momentum changes at the rate of impulse delivered",
+    "envelope basis: the conserved quantity makes the exact statement |sum p_after - sum p_before| / |sum p_before| = 0. The bound is a double-precision accumulation allowance, not a physical tolerance — a residual above it means momentum was not conserved in the calculation, which is a bug rather than a small effect"
   ],
   "references": [
     "Newton (1687) — Philosophiae Naturalis Principia Mathematica, Book I",
@@ -31,6 +32,12 @@
     "Goldstein, Poole & Safko — Classical Mechanics, ch.1",
     "Noether (1918) — Invariante Variationsprobleme (symmetry/conservation correspondence)"
   ],
+  "validationEnvelopes": {
+    "momentumResidual_relative": [
+      0.0,
+      1e-10
+    ]
+  },
   "metadata": {
     "authors": [
       {

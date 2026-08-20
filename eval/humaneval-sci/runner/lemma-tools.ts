@@ -92,17 +92,44 @@ const cardsList: LemmaTool = {
  *  reduce the distraction-on-K-prompts mechanism documented in the
  *  pilot paper §4.2. Callers that want the whole record can request
  *  `fields: ['*']`. */
+// These MUST be real field names from schema/card.v0.1.json. Four earlier
+// entries here — 'summary', 'symbols', 'dimensions', 'limits' — were names no
+// card has ever carried, so the slice below silently dropped the card's
+// principles, conventions, expectedLimits and validationEnvelopes and returned
+// a bare formula with no conditions of validity. That is not a degraded card,
+// it is a misleading one, and it invalidated three adversarial-tier A/B runs
+// before anyone looked at the payload. assertFieldsExist() below now makes
+// that failure loud. Do not add a name here without checking the schema.
 const DEFAULT_CARD_FIELDS = [
   'id',
   'kind',
   'name',
-  'summary',
-  'formula',
+  'domain',
+  'principles',
   'formulaTeX',
-  'symbols',
-  'dimensions',
-  'limits',
+  'conventions',
+  'expectedLimits',
+  'validationEnvelopes',
 ] as const;
+
+/** Fail loudly if a requested field name exists on no card in the corpus.
+ *  A name that matches nothing is always a mistake — either a typo or schema
+ *  drift — and silently returning fewer fields makes it invisible at exactly
+ *  the moment it matters most. */
+function assertFieldsExist(fields: readonly string[]): void {
+  const present = new Set<string>();
+  for (const card of ALL_CARDS as unknown as Record<string, unknown>[]) {
+    for (const k of Object.keys(card)) present.add(k);
+  }
+  const unknown = fields.filter((f) => f !== '*' && !present.has(f));
+  if (unknown.length > 0) {
+    throw new Error(
+      `lemma_cards_get: field(s) [${unknown.join(', ')}] exist on no card in ` +
+        `the corpus. This is schema drift, not an empty result. Known fields: ` +
+        `${[...present].sort().join(', ')}.`,
+    );
+  }
+}
 
 function sliceCard(
   card: Record<string, unknown> | null,
@@ -112,11 +139,10 @@ function sliceCard(
   // `fields: ['*']` or any wildcard returns the entire record (v0.1
   // behaviour).
   if (fields && fields.length > 0 && fields.includes('*')) return card;
-  const allowed = new Set<string>(
-    fields && fields.length > 0
-      ? fields
-      : (DEFAULT_CARD_FIELDS as readonly string[]),
-  );
+  const requested =
+    fields && fields.length > 0 ? fields : (DEFAULT_CARD_FIELDS as readonly string[]);
+  assertFieldsExist(requested);
+  const allowed = new Set<string>(requested);
   const out: Record<string, unknown> = {};
   for (const key of Object.keys(card)) {
     if (allowed.has(key)) out[key] = card[key];
